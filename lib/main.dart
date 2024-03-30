@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:mathgasing/screens/splash_screen/pages/splashscreen_page.dart';
+import 'package:mathgasing/routes/app_route_const.dart';
+import 'package:mathgasing/routes/app_route_switch.dart';
 
-
-void main()=>runApp( MyApp());
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return  MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Math Gasing App',
-      // theme: AppTheme.lightTheme,
-      home: SplashScreen()
+      title: 'MyApp',
+      // theme: themeData(),
+      initialRoute: AppRouteConstants.splashscreen,
+      onGenerateRoute: AppRouterSwitch.onGenerateRoute,
     );
   }
-
 }
-

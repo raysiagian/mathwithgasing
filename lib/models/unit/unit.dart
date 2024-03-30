@@ -3,21 +3,19 @@ import 'package:http/http.dart' as http;
 import 'package:mathgasing/models/level/level.dart';
 
 class Unit {
-   final int id;
-   final String title;
-   final String explanation;
-   final List<Level> levels; // Menambahkan levels sebagai List<LevelButton>
+  final int id_unit;
+  final String title;
+  final String explanation;
 
-   Unit({
-      required this.id,
-      required this.title,
-      required this.explanation,
-      required this.levels, // Menginisialisasi levels
-   });
+  Unit({
+    required this.id_unit,
+    required this.title,
+    required this.explanation,
+  });
 
- Future<List<Unit>> getUnitFromAPI() async {
+  Future<List<Unit>> getUnitFromAPI() async {
     try {
-      var url = Uri.parse("http://10.0.2.2:8000/api/getUnit");
+      var url = Uri.parse("http://10.0.2.2:8000/api/unit");
       final response = await http.get(url, headers: {"Content-Type": "application/json"});
 
       if (response.statusCode == 200) {
@@ -31,26 +29,22 @@ class Unit {
     }
   }
 
-
-  factory Unit.fromJson(Map<String, dynamic> json){
+  factory Unit.fromJson(Map<String, dynamic> json) {
     return Unit(
-      id: json["id"] as int, 
-      title: json["title"] as String, 
-      explanation: json["explanation"] as String, 
-      levels: [],
+      id_unit: json["id_unit"] as int,
+      title: json["title"] as String,
+      explanation: json["explanation"] as String,
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'title': title,
-    'explanation': explanation,
-
-  };
+        'id_unit': id_unit,
+        'title': title,
+        'explanation': explanation,
+      };
 
   @override
   String toString() {
-    return 'Unit{id: $id, title: $title, explanation: $explanation}';
+    return 'Unit{id_unit: $id_unit, title: $title, explanation: $explanation}';
   }
-
 }
