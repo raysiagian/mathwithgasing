@@ -9,6 +9,8 @@ class AppRouterSwitch {
   
   static dynamic get materi => materi;
   
+  static get pretest => null;
+  
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     if (kDebugMode) {
       print('===> ${settings.name}');
@@ -25,10 +27,16 @@ class AppRouterSwitch {
         return AppRouter.homeScreen();
       case AppRouteConstants.profilescreen:
         return AppRouter.profileScreen();
+      case AppRouteConstants.mapunitlevelscreen:
+        return AppRouter.mapunitlevelScreen( // Provide appropriate value for level
+          materi: materi, // Provide appropriate value for materi
+        );
       case AppRouteConstants.pretestscreen:
         return AppRouter.pretestScreen(
           level: level, // Provide appropriate value for level
-          materi: materi, // Provide appropriate value for materi
+          materi: materi,
+          pretest: pretest, // Provide appropriate value for materi
+          // pretest: pretest,
         );
       case AppRouteConstants.materialscreen:
         return AppRouter.materialScreen(

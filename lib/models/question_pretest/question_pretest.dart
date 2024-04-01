@@ -31,7 +31,7 @@ class QuestionPretest {
 
   static Future<List<QuestionPretest>> getQuestionFromAPI() async {
     try {
-      var url = Uri.parse("http://10.0.2.2:8000/api/getQuestionPrestest");
+      var url = Uri.parse("http://10.0.2.2:8000/api/QuestionPrestest");
       final response = await http.get(url, headers: {"Content-Type": "application/json"});
 
       if (response.statusCode == 200) {

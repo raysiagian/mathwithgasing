@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:mathgasing/models/level/level.dart';
+import 'package:mathgasing/models/level_type/pretest.dart';
 import 'package:mathgasing/models/materi/materi.dart';
 import 'package:mathgasing/models/question_pretest/question_pretest.dart';
 import 'package:mathgasing/models/timer/timer.dart';
@@ -16,11 +17,15 @@ class PreTestLevel extends StatefulWidget {
   const PreTestLevel({
     Key? key,
     required this.level,
-    required this.materi,
+    required this.materi, 
+    required this.pretest, 
+    this.score,
   }) : super(key: key);
 
   final Level level;
   final Materi materi;
+  final PreTest pretest;
+  final int? score;
 
   @override
   State<PreTestLevel> createState() => _PreTestLevelState();
@@ -28,7 +33,7 @@ class PreTestLevel extends StatefulWidget {
 
 class _PreTestLevelState extends State<PreTestLevel> {
   int index = 0;
-  int totalScore = 0;
+  late int totalScore = 0;
   late TimerModel timerModel;
   String? selectedOption;
   late Future<List<QuestionPretest>> _questionsFuture;
@@ -182,6 +187,16 @@ class _PreTestLevelState extends State<PreTestLevel> {
                           question: question.question,
                           indexAction: index,
                           totalQuestion: questions.length,
+                      //  option_1: question.option_1,
+                      //  option_2: question.option_2,
+                      //  option_3: question.option_3,
+                      //  option_4: question.option_4,
+                      //  selectedOption: selectedOption,
+                      //  onOptionSelected: (option) {
+                      //   setState(() {
+                      //     selectedOption = option;
+                      //   });
+                      // },
                         ),
                       ],
                     ),

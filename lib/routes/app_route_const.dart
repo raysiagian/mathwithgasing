@@ -6,6 +6,7 @@ class AppRouteConstants {
   static const String homescreen = '/homeScreen';
   static const String statisticscreen = '/statisticScreen';
   static const String profilescreen = '/profileScreen';
+  static const String mapunitlevelscreen = '/mapunitlevelScreen';
   static const String pretestscreen = '/pretestScreen';
   static const String materialscreen = '/materialScreen';
   static const String posttestscreen = '/posttestScreen';

@@ -16,16 +16,18 @@ class Level {
 
   get number => null;
 
-    Future<List<Level>> getLevelFromAPI() async {
-    try {
-      var url = Uri.parse("http://10.0.2.2:8000/api/Level");
-      final response = await http.get(url, headers: {"Content-type": "application/json"});
+  get id_pretest => null;
 
+    Future<List<Level>> getLevel() async {
+    try {
+      var url = Uri.parse("http://10.0.2.2:8000/api/level");
+      final response = await http.get(url, headers: {"Content-type": "application/json"});
+      
       if (response.statusCode == 200) {
         final List<dynamic> jsonData = json.decode(response.body);
         return jsonData.map((json) => Level.fromJson(json)).toList();
       } else {
-        throw Exception('Failed to load level from API (Status Code: ${response.statusCode})');
+        throw Exception('Failed to load levels from API');
       }
     } catch (e) {
       throw Exception('Error fetching levels: $e');
@@ -39,7 +41,7 @@ class Level {
     );
   }
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
     'id_level': id_level,
     'level_number': level_number,
   };
@@ -60,5 +62,10 @@ class Level {
   //       break;
   //   }
   // }
+
+  @override
+  String toString(){
+    return 'Level{id_level: $id_level, level_number: $level_number}';
+  }
 
 }

@@ -41,11 +41,11 @@ class Materi {
   }
 
   Map<String, dynamic> toJson() => {
-        'id_materi': id_materi,
-        'title': title,
-        'imageCard': imageCard,
-        'imageBackground': imageBackground,
-      };
+    'id_materi': id_materi,
+    'title': title,
+    'imageCard': imageCard,
+    'imageBackground': imageBackground,
+  };
 
   @override
   String toString() {

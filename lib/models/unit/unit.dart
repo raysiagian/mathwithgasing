@@ -6,14 +6,17 @@ class Unit {
   final int id_unit;
   final String title;
   final String explanation;
+  final List<Level> levels;
+  
 
   Unit({
     required this.id_unit,
     required this.title,
     required this.explanation,
+    required this.levels,
   });
 
-  Future<List<Unit>> getUnitFromAPI() async {
+  Future<List<Unit>> getUnit() async {
     try {
       var url = Uri.parse("http://10.0.2.2:8000/api/unit");
       final response = await http.get(url, headers: {"Content-Type": "application/json"});
@@ -34,14 +37,15 @@ class Unit {
       id_unit: json["id_unit"] as int,
       title: json["title"] as String,
       explanation: json["explanation"] as String,
+      levels: [],
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'id_unit': id_unit,
-        'title': title,
-        'explanation': explanation,
-      };
+    'id_unit': id_unit,
+    'title': title,
+    'explanation': explanation,
+  };
 
   @override
   String toString() {
