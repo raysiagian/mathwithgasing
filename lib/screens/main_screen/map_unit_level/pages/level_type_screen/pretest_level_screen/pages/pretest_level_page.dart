@@ -17,8 +17,8 @@ class PreTestLevel extends StatefulWidget {
   const PreTestLevel({
     Key? key,
     required this.level,
-    required this.materi, 
-    required this.pretest, 
+    required this.materi,
+    required this.pretest,
     this.score,
   }) : super(key: key);
 
@@ -52,7 +52,8 @@ class _PreTestLevelState extends State<PreTestLevel> {
 
   Future<List<QuestionPretest>> fetchQuestionPretest() async {
     try {
-      final response = await http.get(Uri.parse('http://10.0.2.2:8000/api/getQuestionPretest'));
+      final response = await http
+          .get(Uri.parse('http://10.0.2.2:8000/api/getQuestionPretest'));
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
@@ -156,71 +157,52 @@ class _PreTestLevelState extends State<PreTestLevel> {
             );
           },
         ),
-        title: Text('Level ${widget.level.number}'),
+        title: Text('Level ${widget.level.level_number}'),
       ),
-      body: FutureBuilder<List<QuestionPretest>>(
-        future: _questionsFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else {
-            final questions = snapshot.data ?? [];
-            if (questions.isEmpty) {
-              return Center(child: Text('No questions available'));
-            }
-            final question = questions[index];
-            return SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: Column(
-                children: [
-                  SizedBox(height: 30),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        TimerWidget(timerModel: timerModel),
-                        QuestionPretestWidget(
-                          question: question.question,
-                          indexAction: index,
-                          totalQuestion: questions.length,
-                      //  option_1: question.option_1,
-                      //  option_2: question.option_2,
-                      //  option_3: question.option_3,
-                      //  option_4: question.option_4,
-                      //  selectedOption: selectedOption,
-                      //  onOptionSelected: (option) {
-                      //   setState(() {
-                      //     selectedOption = option;
-                      //   });
-                      // },
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.only(left: 10.0, right: 10, bottom: 70),
+        child: Padding(
+          padding: const EdgeInsets.only(left: 20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TimerWidget(timerModel: timerModel),
+              ListView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: widget.pretest.questionsPretest.length,
+                itemBuilder: (context, index) {
+                  final question = widget.pretest.questionsPretest[index];
+                  return Column(
+                    children: [
+                      QuestionPretestWidget(
+                        question: question.question,
+                        indexAction: index,
+                        totalQuestion: widget.pretest.questionsPretest.length,
+                      ),
+                      const SizedBox(height: 50),
+                      SizedBox(
+                        child: QuestionOptionPretestWidget(
+                          option_1: question.option_1,
+                          option_2: question.option_2,
+                          option_3: question.option_3,
+                          option_4: question.option_4,
+                          selectedOption: selectedOption,
+                          onOptionSelected: (option) {
+                            setState(() {
+                              selectedOption = option;
+                            });
+                          },
                         ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 100),
-                  Container(
-                    child: QuestionOptionPretestWidget(
-                      option_1: question.option_1,
-                      option_2: question.option_2,
-                      option_3: question.option_3,
-                      option_4: question.option_4,
-                      selectedOption: selectedOption,
-                      onOptionSelected: (option) {
-                        setState(() {
-                          selectedOption = option;
-                        });
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }
-        },
+                      ),
+                    ],
+                  );
+                },
+              )
+            ],
+          ),
+        ),
       ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15),

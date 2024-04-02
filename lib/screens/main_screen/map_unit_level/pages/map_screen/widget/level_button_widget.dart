@@ -3,12 +3,13 @@ import 'package:mathgasing/models/level/level.dart';
 import 'package:mathgasing/models/materi/materi.dart';
 import 'package:mathgasing/models/level_type/posttest.dart';
 import 'package:mathgasing/models/level_type/pretest.dart';
+import 'package:mathgasing/models/question_pretest/question_pretest.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/level_type_screen/material_level_page.dart/pages/material_level_page.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/level_type_screen/posttest_level_screen/pages/posttest_level_page.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/level_type_screen/pretest_level_screen/pages/pretest_level_page.dart';
 
 class LevelButtonWidget extends StatelessWidget {
-  const LevelButtonWidget({
+  LevelButtonWidget({
     Key? key,
     required this.level,
     required this.materi,
@@ -17,12 +18,53 @@ class LevelButtonWidget extends StatelessWidget {
   final Level level;
   final Materi materi;
 
+  PreTest preTest = PreTest(
+    id_pretest: 1,
+    questionsPretest: [
+      QuestionPretest(
+        id_question_pretest: 1,
+        question: "1 + 1",
+        option_1: "2",
+        option_2: "4",
+        option_3: "5",
+        option_4: "6",
+      ),
+      QuestionPretest(
+        id_question_pretest: 2,
+        question: "9 - 3",
+        option_1: "6",
+        option_2: "3",
+        option_3: "2",
+        option_4: "0",
+      ),
+      QuestionPretest(
+        id_question_pretest: 3,
+        question: "1x1+0",
+        option_1: "0",
+        option_2: "1",
+        option_3: "2",
+        option_4: "3",
+      ),
+    ],
+    score: 3,
+  );
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        // Call navigateToScreen to navigate based on the level number
-        navigateToScreen(context);
+        if (level.level_number == 1) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PreTestLevel(
+                level: level,
+                materi: materi,
+                pretest: preTest,
+              ),
+            ),
+          );
+        }
       },
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 20.0),
@@ -71,7 +113,7 @@ class LevelButtonWidget extends StatelessWidget {
   //         context,
   //         MaterialPageRoute(
   //           builder: (context) => MaterialLevel(
-  //             level: level, 
+  //             level: level,
   //             materi: materi,
   //           ),
   //         ),
@@ -119,7 +161,7 @@ class LevelButtonWidget extends StatelessWidget {
 //         context,
 //         MaterialPageRoute(
 //           builder: (context) => MaterialLevel(
-//             level: level, 
+//             level: level,
 //             materi: materi,
 //           ),
 //         ),
@@ -154,7 +196,8 @@ class LevelButtonWidget extends StatelessWidget {
                 materi: materi,
                 pretest: PreTest(
                   id_pretest: level.id_pretest!,
-                  questionsPretest: [], // Provide appropriate list of questions
+                  questionsPretest: [],
+                  // Provide appropriate list of questions
                   score: null, // Provide appropriate score value
                 ),
               ),
@@ -167,7 +210,7 @@ class LevelButtonWidget extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (context) => MaterialLevel(
-              level: level, 
+              level: level,
               materi: materi,
             ),
           ),

@@ -93,7 +93,10 @@ class _LoginWidgetState extends State<LoginWidget> {
               GestureDetector(
                 onTap: () {
                   if (_formKey.currentState!.validate()) {
-                    _login();
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => Home()),
+                    );
                   }else{
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(

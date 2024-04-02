@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mathgasing/models/materi/materi.dart';
@@ -32,20 +33,37 @@ class _HomeState extends State<Home> {
   // }
 
   Future<List<Materi>> fetchMateri() async {
-  try {
-    final response = await http.get(Uri.parse('http://10.0.2.2:8000/api/getMateri'));
+    try {
+      var exampleResponse = [
+        {
+          "id_materi": 1,
+          "title": "Title 1",
+          "imageCard": "image_card_1.png",
+          "imageBackground": "image_background_1.png"
+        },
+        {
+          "id_materi": 2,
+          "title": "Title 2",
+          "imageCard": "image_card_2.png",
+          "imageBackground": "image_background_2.png"
+        },
+        {
+          "id_materi": 3,
+          "title": "Title 3",
+          "imageCard": "image_card_3.png",
+          "imageBackground": "image_background_3.png"
+        }
+      ];
 
-    if (response.statusCode == 200) {
-      final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
-      print(jsonData);
-      return jsonData.map((e) => Materi.fromJson(e)).toList();
-    } else {
-      throw Exception('Failed to load data');
+      List<Materi> data = exampleResponse.map((e) => Materi.fromJson(e)).toList();
+      return data;
+
+    } on SocketException catch (e){
+      throw Exception(e.message);
+    } catch (e) {
+      print(e.toString());
+      return [];
     }
-  } catch (e) {
-    print(e.toString());
-    return [];
-  }
 }
 
   @override

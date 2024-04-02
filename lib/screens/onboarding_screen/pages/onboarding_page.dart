@@ -63,7 +63,7 @@ class _OnboardingState extends State<Onboarding> {
                 },
               ),
             ),
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15),
               child: SelanjutnyaOnboardingButton(
@@ -75,14 +75,14 @@ class _OnboardingState extends State<Onboarding> {
                     );
                   } else {
                     _pageController.nextPage(
-                      duration: Duration(milliseconds: 300),
+                      duration: const Duration(milliseconds: 300),
                       curve: Curves.ease,
                     );
                   }
                 },
               ),
             ),
-            SizedBox(height: 60),
+            const SizedBox(height: 60),
           ],
         ),
       ),

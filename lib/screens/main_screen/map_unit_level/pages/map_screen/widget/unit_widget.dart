@@ -20,108 +20,83 @@ class UnitWidget extends StatelessWidget {
 
   Future<List<Level>> fetchLevel() async {
     try {
-      final response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/api/getLevel'), // Updated endpoint
-      );
+      var example = [
+        {"id_level": 1, "level_number": 1},
+        {"id_level": 2, "level_number": 2},
+        {"id_level": 4, "level_number": 3},
+      ];
 
-      if (response.statusCode == 200) {
-        final jsonData = jsonDecode(response.body);
-
-        if (jsonData is List) {
-          // If jsonData is a list, parse it as a list of units
-          return jsonData.map((e) => Level.fromJson(e)).toList();
-        } else if (jsonData is Map<String, dynamic>) {
-          // If jsonData is a map, check if it contains a 'data' key
-          if (jsonData.containsKey('data')) {
-            final levelData = jsonData['data'];
-            if (levelData is List) {
-              // If 'data' is a list, parse it as a list of units
-              return levelData.map((e) => Level.fromJson(e)).toList();
-            } else {
-              // If 'data' is a single object, parse it as a single unit
-              return [Level.fromJson(levelData)];
-            }
-          } else {
-            throw Exception('Missing "data" key in API response');
-          }
-        } else {
-          throw Exception('Unexpected data format');
-        }
-      } else {
-        throw Exception('Failed to load levels from API');
-      }
+      List<Level> data = example.map((e) => Level.fromJson(e)).toList();
+      return data;
     } catch (e) {
       throw Exception('Error fetching levels: $e');
     }
   }
 
- @override
+  @override
   Widget build(BuildContext context) {
-    // Panggil fungsi fetchLevels() saat UnitWidget dibuat atau dirender
-    return ListView(
-      shrinkWrap: true,
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 20.0), // Margin 20 px ke atas dan ke bawah
-          child: Container(
-            padding: const EdgeInsets.only(left: 10.0, top: 30),
-            height: 170,
-            color: Color.fromRGBO(0, 0, 0, 0.4),
-            child: Column(  
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  unit.title,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: Colors.white,
-                    fontFamily: GoogleFonts.roboto().fontFamily,
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 20.0),
+            child: Container(
+              padding: const EdgeInsets.only(left: 10.0, top: 30),
+              height: 170,
+              width: double.infinity,
+              color: Colors.red,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    unit.title,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          color: Colors.white,
+                          fontFamily: GoogleFonts.roboto().fontFamily,
+                        ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  unit.explanation,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500,
-                  )
-                ),
-              ],
+                  const SizedBox(height: 10),
+                  Text(unit.explanation,
+                      style:
+                          Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                              )),
+                ],
+              ),
             ),
           ),
-        ),
-        const SizedBox(height: 20),
-        // Gunakan FutureBuilder untuk menampilkan widget ketika data level sudah tersedia
-        FutureBuilder<List<Level>>(
-          future: fetchLevel(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: CircularProgressIndicator(), // Tampilkan indikator loading
-              );
-            } else if (snapshot.hasError) {
-              return Center(
-                child: Text('Error: ${snapshot.error}'),
-              );
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(
-                child: Text('No data available'),
-              );
-            } else {
-              // Tampilkan tombol level jika data sudah tersedia
-              return Column(
-                children: snapshot.data!.map((level) {
-                  return LevelButtonWidget(
-                    level: level,
-                    materi: materi,
+          const SizedBox(height: 20),
+          FutureBuilder<List<Level>>(
+            future: fetchLevel(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: Text('lodinggggg.....'));
+              } else {
+                if (snapshot.hasData) {
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (context, index) {
+                      return LevelButtonWidget(
+                        level: snapshot.data![index],
+                        materi: materi,
+                      );
+                      //return const Text('FuckYouuu',style: TextStyle(color: Colors.black),);
+                    },
                   );
-                }).toList(),
-              );
-            }
-          },
-        ),
-      ],
+                } else {
+                  return Center(
+                    child: Text('Error: ${snapshot.error}'),
+                  );
+                }
+              }
+            },
+          ),
+        ],
+      ),
     );
   }
-
 }

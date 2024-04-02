@@ -21,12 +21,46 @@ class Unit {
       var url = Uri.parse("http://10.0.2.2:8000/api/unit");
       final response = await http.get(url, headers: {"Content-Type": "application/json"});
 
-      if (response.statusCode == 200) {
-        final List<dynamic> jsonData = json.decode(response.body);
-        return jsonData.map((json) => Unit.fromJson(json)).toList();
-      } else {
-        throw Exception('Failed to load units from API');
-      }
+      var example = [
+        {
+          "id_unit": 1,
+          "title": "Unit 1",
+          "explanation": "Explanation for Unit 1",
+          "levels": [
+            {
+              "id_level": 1,
+              "title": "Level 1",
+              "description": "Description for Level 1"
+            },
+            {
+              "id_level": 2,
+              "title": "Level 2",
+              "description": "Description for Level 2"
+            }
+          ]
+        },
+        {
+          "id_unit": 2,
+          "title": "Unit 2",
+          "explanation": "Explanation for Unit 2",
+          "levels": [
+            {
+              "id_level": 3,
+              "title": "Level 3",
+              "description": "Description for Level 3"
+            },
+            {
+              "id_level": 4,
+              "title": "Level 4",
+              "description": "Description for Level 4"
+            }
+          ]
+        }
+      ];
+
+      List<Unit> data = example.map((e) => Unit.fromJson(e)).toList();
+      return data;
+
     } catch (e) {
       throw Exception('Error fetching units: $e');
     }

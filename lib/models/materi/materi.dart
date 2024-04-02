@@ -5,14 +5,13 @@ import 'package:mathgasing/models/unit_bonus/unit_bonus.dart';
 
 class Materi {
   final int id_materi;
-  final List<Unit> units;
   final String title;
   final String imageCard;
   final String imageBackground;
 
   Materi({
     required this.id_materi,
-    required this.units,
+
     required this.title,
     required this.imageCard,
     required this.imageBackground,
@@ -24,7 +23,6 @@ class Materi {
       title: json["title"] as String,
       imageCard: json["imageCard"] as String,
       imageBackground: json["imageBackground"] as String,
-      units: [], // You might need to adjust this depending on your data structure
     );
   }
 

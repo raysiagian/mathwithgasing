@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:mathgasing/models/materi/materi.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/map_screen/pages/map_unit_level.dart';
 
+import '../../../../home_screen/pages/home_page.dart';
+
 class DialogQuestionOnClose extends StatelessWidget {
-  const DialogQuestionOnClose({super.key, required this.materi,});
+  const DialogQuestionOnClose({
+    super.key,
+    required this.materi,
+  });
 
   final Materi materi;
 
@@ -42,9 +47,7 @@ class DialogQuestionOnClose extends StatelessWidget {
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(builder: (context) {
-                      return MapUnitLevel(
-                        materi: materi,
-                      );
+                      return Home();
                     }),
                     (route) => false,
                   );
