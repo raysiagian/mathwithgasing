@@ -1,18 +1,23 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:mathgasing/models/user/user.dart';
 import 'package:mathgasing/models/materi/materi.dart';
 import 'package:mathgasing/screens/main_screen/home_screen/widget/card_widget.dart';
 
 class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+  const Home({
+    Key? key,
+    // required this.user,
+    }) : super(key: key);
+    // final User user;
 
   @override
   State<Home> createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  late String _userName;
+  late String name;
 
   // Future<List<Materi>> fetchMateri() async {
   //   try {
@@ -53,7 +58,9 @@ class _HomeState extends State<Home> {
     final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text("Selamat Datang"),
+        title: Text('Selamat Datang'),
+        // title: Text('Level ${widget.user.name}'),
+        backgroundColor: Colors.white,
         centerTitle: false,
         leading: Container(
           margin: EdgeInsets.all(10),

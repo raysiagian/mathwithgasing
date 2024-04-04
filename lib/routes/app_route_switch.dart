@@ -11,6 +11,8 @@ class AppRouterSwitch {
   
   static get pretest => null;
   
+  static dynamic get user => user;
+  
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     if (kDebugMode) {
       print('===> ${settings.name}');
@@ -24,7 +26,9 @@ class AppRouterSwitch {
       case AppRouteConstants.registerscreen:
         return AppRouter.registerScreen();
       case AppRouteConstants.homescreen:
-        return AppRouter.homeScreen();
+        return AppRouter.homeScreen(
+          user: user,
+        );
       case AppRouteConstants.profilescreen:
         return AppRouter.profileScreen();
       case AppRouteConstants.mapunitlevelscreen:

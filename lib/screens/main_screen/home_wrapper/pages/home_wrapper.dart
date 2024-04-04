@@ -14,6 +14,8 @@ class HomeWrapper extends StatefulWidget {
 class _HomeWrapperState extends State<HomeWrapper> {
   int selectedIndex = 0;
   final pageViewController = PageController();
+  
+  get user => null;
 
   @override
   void initState() {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SelanjutnyaButton extends StatelessWidget {
-  const SelanjutnyaButton({Key? key, required this.pertanyaanSelanjutnya}) : super(key: key);
+  const SelanjutnyaButton({Key? key, required this.pertanyaanSelanjutnya, required Null Function() onPressed}) : super(key: key);
   final VoidCallback pertanyaanSelanjutnya;
 
   @override

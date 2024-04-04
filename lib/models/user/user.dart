@@ -30,6 +30,18 @@ class User {
     );
   }
 
+  
+  //   static Future<User> fetchUser() async {
+  //   final response = await http.get(Uri.parse('http://10.0.2.2:8000/api/'));
+
+  //   if (response.statusCode == 200) {
+  //     final jsonData = jsonDecode(response.body);
+  //     return User.fromJson(jsonData);
+  //   } else {
+  //     throw Exception('Failed to fetch user data');
+  //   }
+  // }
+
   Map<String, dynamic> toJson() {
     return {
       'id_user': id_user,

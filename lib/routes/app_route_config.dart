@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mathgasing/models/level/level.dart';
 import 'package:mathgasing/models/level_type/pretest.dart';
 import 'package:mathgasing/models/materi/materi.dart';
+import 'package:mathgasing/models/user/user.dart';
 import 'package:mathgasing/routes/app_route_const.dart';
 import 'package:mathgasing/screens/auth/login_screen/pages/login_page.dart';
 import 'package:mathgasing/screens/auth/registration_screen/pages/registration_page.dart';
@@ -45,7 +46,7 @@ class AppRouter {
     );
   }
 
-  static Route<dynamic>? homeScreen(){
+  static Route<dynamic>? homeScreen({required User user}){
     return MaterialPageRoute(
       settings: RouteSettings(name: AppRouteConstants.homescreen),
       builder: (context) => Home(),
@@ -73,10 +74,10 @@ class AppRouter {
     );
   }
 
-  static Route<dynamic>? pretestScreen({required Level level, required Materi materi, required PreTest pretest, int? score}) {
+  static Route<dynamic>? pretestScreen({required Level level, required Materi materi, required PreTest pretest, int? score_pretest}) {
     return MaterialPageRoute(
       settings: RouteSettings(name: AppRouteConstants.pretestscreen),
-      builder: (context) => PreTestLevel(level: level, materi: materi, pretest:pretest ,score: score),
+      builder: (context) => PreTestLevel(level: level, materi: materi, pretest:pretest ,score_pretest: score_pretest),
     );
   }
 

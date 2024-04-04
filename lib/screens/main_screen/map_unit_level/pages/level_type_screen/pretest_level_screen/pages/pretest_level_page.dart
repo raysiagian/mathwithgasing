@@ -8,24 +8,23 @@ import 'package:mathgasing/models/materi/materi.dart';
 import 'package:mathgasing/models/question_pretest/question_pretest.dart';
 import 'package:mathgasing/models/timer/timer.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/map_screen/widget/dialog_question_on_close_popup_widget.dart';
-import 'package:mathgasing/screens/main_screen/map_unit_level/pages/map_screen/widget/selanjutnya_button_widget.dart';
-import 'package:mathgasing/screens/main_screen/map_unit_level/pages/level_type_screen/pretest_level_screen/widget/question_option_pretest_widget.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/level_type_screen/pretest_level_screen/widget/question_pretest_widget.dart';
+import 'package:mathgasing/screens/main_screen/map_unit_level/pages/map_screen/widget/selanjutnya_button_widget.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/map_screen/widget/timer_widget.dart';
 
 class PreTestLevel extends StatefulWidget {
   const PreTestLevel({
     Key? key,
     required this.level,
-    required this.materi, 
-    required this.pretest, 
-    this.score,
+    required this.materi,
+    required this.pretest,
+    this.score_pretest,
   }) : super(key: key);
 
   final Level level;
   final Materi materi;
   final PreTest pretest;
-  final int? score;
+  final int? score_pretest;
 
   @override
   State<PreTestLevel> createState() => _PreTestLevelState();
@@ -50,27 +49,11 @@ class _PreTestLevelState extends State<PreTestLevel> {
     timerModel.startTimer();
   }
 
-  Future<List<QuestionPretest>> fetchQuestionPretest() async {
-    try {
-      final response = await http.get(Uri.parse('http://10.0.2.2:8000/api/getQuestionPretest'));
-
-      if (response.statusCode == 200) {
-        final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
-        return jsonData.map((e) => QuestionPretest.fromJson(e)).toList();
-      } else {
-        throw Exception('Failed to load questions');
-      }
-    } catch (e) {
-      print(e.toString());
-      return [];
-    }
-  }
-
   void updateTimerUI(int remainingTime) {
     setState(() {});
   }
 
-  void timerFinishAction() async {
+    void timerFinishAction() async {
     timerModel.dispose();
 
     await Future.delayed(Duration(seconds: 1));
@@ -96,19 +79,13 @@ class _PreTestLevelState extends State<PreTestLevel> {
     }
   }
 
-  int calculateScore() {
-    int currentScore = 0;
-    final currentQuestion = widget.level.questionsPretest[index];
-
-    currentQuestion.options.forEach((key, value) {
-      if (value && selectedOption == key) {
-        currentScore += 10;
-      }
-    });
-    return currentScore;
+    @override
+  void dispose() {
+    timerModel.dispose();
+    super.dispose();
   }
 
-  void pertanyaanSelanjutnya() {
+    void pertanyaanSelanjutnya() {
     if (index < widget.level.questionsPretest.length - 1) {
       setState(() {
         index++;
@@ -125,16 +102,40 @@ class _PreTestLevelState extends State<PreTestLevel> {
     }
   }
 
-  @override
-  void dispose() {
-    timerModel.dispose();
-    super.dispose();
+
+  int calculateScore() {
+    int currentScore = 0;
+    final currentQuestion = widget.level.questionsPretest[index];
+
+    currentQuestion.options.forEach((key, value) {
+      if (value && selectedOption == key) {
+        currentScore += 10;
+      }
+    });
+    return currentScore;
+  }
+
+  Future<List<QuestionPretest>> fetchQuestionPretest() async {
+    try {
+      final response = await http.get(Uri.parse('http://10.0.2.2:8000/api/getQuestionPretest'));
+
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
+        return jsonData.map((e) => QuestionPretest.fromJson(e)).toList();
+      } else {
+        throw Exception('Failed to load questions');
+      }
+    } catch (e) {
+      print(e.toString());
+      return [];
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
             bottom: Radius.circular(20),
@@ -156,7 +157,7 @@ class _PreTestLevelState extends State<PreTestLevel> {
             );
           },
         ),
-        title: Text('Level ${widget.level.number}'),
+        title: Text('Level ${widget.level.level_number}'),
       ),
       body: FutureBuilder<List<QuestionPretest>>(
         future: _questionsFuture,
@@ -166,58 +167,26 @@ class _PreTestLevelState extends State<PreTestLevel> {
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
-            final questions = snapshot.data ?? [];
-            if (questions.isEmpty) {
-              return Center(child: Text('No questions available'));
-            }
-            final question = questions[index];
-            return SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: Column(
-                children: [
-                  SizedBox(height: 30),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20),
+            final questions = snapshot.data!;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         TimerWidget(timerModel: timerModel),
+                        SizedBox(height: 20),
                         QuestionPretestWidget(
-                          question: question.question,
+                          question: questions[index],
                           indexAction: index,
                           totalQuestion: questions.length,
-                      //  option_1: question.option_1,
-                      //  option_2: question.option_2,
-                      //  option_3: question.option_3,
-                      //  option_4: question.option_4,
-                      //  selectedOption: selectedOption,
-                      //  onOptionSelected: (option) {
-                      //   setState(() {
-                      //     selectedOption = option;
-                      //   });
-                      // },
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(height: 100),
-                  Container(
-                    child: QuestionOptionPretestWidget(
-                      option_1: question.option_1,
-                      option_2: question.option_2,
-                      option_3: question.option_3,
-                      option_4: question.option_4,
-                      selectedOption: selectedOption,
-                      onOptionSelected: (option) {
-                        setState(() {
-                          selectedOption = option;
-                        });
-                      },
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             );
           }
         },
@@ -225,7 +194,9 @@ class _PreTestLevelState extends State<PreTestLevel> {
       floatingActionButton: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15),
         child: SelanjutnyaButton(
-          pertanyaanSelanjutnya: pertanyaanSelanjutnya,
+          pertanyaanSelanjutnya: pertanyaanSelanjutnya, onPressed: () {
+            
+          },
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

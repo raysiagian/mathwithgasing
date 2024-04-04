@@ -1,4 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:mathgasing/models/level/level.dart';
 import 'package:mathgasing/models/materi/materi.dart';
 import 'package:mathgasing/models/level_type/posttest.dart';
@@ -17,12 +21,145 @@ class LevelButtonWidget extends StatelessWidget {
   final Level level;
   final Materi materi;
 
+  Future<List<PreTest>> fetchPretest() async {
+  try {
+    final response = await http.get(Uri.parse('http://10.0.2.2:8000/api/getPretest'));
+
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
+      print(jsonData);
+      return jsonData.map((e) => PreTest.fromJson(e)).toList();
+    } else {
+      throw Exception('${response.headers}');
+    }
+  } catch (e) {
+    print(e.toString());
+    return [];
+  }
+}
+
+// Future<List<PreTest>> fetchPretest() async {
+//   try {
+//     final response = await http.get(Uri.parse('http://10.0.2.2:8000/api/getPretest'));
+
+//     print('Response received from server:');
+//     print('Status Code: ${response.statusCode} - ${getStatusCodeMessage(response.statusCode)}');
+
+//     if (response.statusCode == 200) {
+//       final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
+//       print(jsonData);
+//       return jsonData.map((e) => PreTest.fromJson(e)).toList();
+//     } else {
+//       throw Exception('Failed to fetch pretest. Response code: ${response.statusCode}');
+//     }
+//   } catch (e) {
+//     print(e.toString());
+//     return [];
+//   }
+// }
+
+// String getStatusCodeMessage(int statusCode) {
+//   switch (statusCode) {
+//     case 200:
+//       return 'OK';
+//     case 201:
+//       return 'Created';
+//     case 204:
+//       return 'No Content';
+//     case 400:
+//       return 'Bad Request';
+//     case 401:
+//       return 'Unauthorized';
+//     case 403:
+//       return 'Forbidden';
+//     case 404:
+//       return 'Not Found';
+//     case 500:
+//       return 'Internal Server Error';
+//     default:
+//       return 'Unknown';
+//   }
+// }
+
+
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        // Call navigateToScreen to navigate based on the level number
-        navigateToScreen(context);
+      onTap: () async {
+        if (level.level_number == 1) {
+        try {
+          print('Fetching pretest data...');
+          List<PreTest> preTests = await PreTest.getPretest();
+          print('Pretest data fetched successfully: $preTests');
+          
+          PreTest preTest = preTests.firstWhere((preTest) => preTest.id_level == level.id_level);
+          print('Pretest for current level found: $preTest');
+          
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Pretest ID: ${preTest.id_pretest}'),
+            ),
+          );
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PreTestLevel(
+                level: level,
+                materi: materi,
+                pretest: preTest,
+              ),
+            ),
+          );
+        } catch (e) {
+          // Handle error
+          print('$e');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('$e'),
+            ),
+          );
+        }
+
+
+          // try {
+          //   List<PreTest> preTests = await PreTest.getPretest();
+          //   PreTest preTest = preTests.firstWhere((preTest) => preTest.id_level == level.id_level);
+          //   Navigator.push(
+          //     context,
+          //     MaterialPageRoute(
+          //       builder: (context) => PreTestLevel(
+          //         level: level,
+          //         materi: materi,
+          //         pretest: preTest,
+          //       ),
+          //     ),
+          //   );
+          // } catch (e) {
+          //   // Handle error
+          //   print('Error loading pretest: $e');
+          // }
+        } else if (level.level_number == 2) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MaterialLevel(
+                level: level,
+                materi: materi,
+              ),
+            ),
+          );
+        } else if (level.level_number == 3) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PostTestLevel(
+                level: level,
+                materi: materi,
+              ),
+            ),
+          );
+        }
       },
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 20.0),
@@ -46,148 +183,5 @@ class LevelButtonWidget extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  // void navigateToScreen(BuildContext context) {
-  //   switch (level.level_number) {
-  //     case 1:
-  //       Navigator.push(
-  //         context,
-  //         MaterialPageRoute(
-  //           builder: (context) => PreTestLevel(
-  //             level: level,
-  //             materi: materi,
-  //             pretest: PreTest(
-  //               id_pretest: level.id_pretest,
-  //               questionsPretest: [], // Provide appropriate list of questions
-  //               score: null, // Provide appropriate score value
-  //             ),
-  //           ),
-  //         ),
-  //       );
-  //       break;
-  //     case 2:
-  //       Navigator.push(
-  //         context,
-  //         MaterialPageRoute(
-  //           builder: (context) => MaterialLevel(
-  //             level: level, 
-  //             materi: materi,
-  //           ),
-  //         ),
-  //       );
-  //       break;
-  //     case 3:
-  //        Navigator.push(
-  //         context,
-  //         MaterialPageRoute(
-  //           builder: (context) => PostTestLevel(
-  //             level: level,
-  //             materi: materi,
-  //           ),
-  //         ),
-  //       );
-  //       break;
-  //     default:
-  //       // Handle other cases if needed
-  //       break;
-  //   }
-  // }
-
-//   void navigateToScreen(BuildContext context) {
-//   switch (level.level_number) {
-//     case 1:
-//       if (level.id_pretest != null) {
-//         Navigator.push(
-//           context,
-//           MaterialPageRoute(
-//             builder: (context) => PreTestLevel(
-//               level: level,
-//               materi: materi,
-//               pretest: PreTest(
-//                 id_pretest: level.id_pretest!,
-//                 questionsPretest: [], // Provide appropriate list of questions
-//                 score: null, // Provide appropriate score value
-//               ),
-//             ),
-//           ),
-//         );
-//       }
-//       break;
-//     case 2:
-//       Navigator.push(
-//         context,
-//         MaterialPageRoute(
-//           builder: (context) => MaterialLevel(
-//             level: level, 
-//             materi: materi,
-//           ),
-//         ),
-//       );
-//       break;
-//     case 3:
-//        Navigator.push(
-//         context,
-//         MaterialPageRoute(
-//           builder: (context) => PostTestLevel(
-//             level: level,
-//             materi: materi,
-//           ),
-//         ),
-//       );
-//       break;
-//     default:
-//       // Handle other cases if needed
-//       break;
-//   }
-// }
-
-  void navigateToScreen(BuildContext context) {
-    switch (level.level_number) {
-      case 1:
-        if (level.id_pretest != null) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => PreTestLevel(
-                level: level,
-                materi: materi,
-                pretest: PreTest(
-                  id_pretest: level.id_pretest!,
-                  questionsPretest: [], // Provide appropriate list of questions
-                  score: null, // Provide appropriate score value
-                ),
-              ),
-            ),
-          );
-        }
-        break;
-      case 2:
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => MaterialLevel(
-              level: level, 
-              materi: materi,
-            ),
-          ),
-        );
-        break;
-      case 3:
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PostTestLevel(
-              level: level,
-              materi: materi,
-            ),
-          ),
-        );
-        break;
-      default:
-        // Handle other cases if needed
-        print("Unsupported level number: ${level.level_number}");
-        break;
-    }
   }
 }

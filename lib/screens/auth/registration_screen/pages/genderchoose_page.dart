@@ -23,6 +23,8 @@ class GenderChoose extends StatefulWidget {
 class _GenderChooseState extends State<GenderChoose> {
   final List<Gender> listGender = Gender.listGender;
   String selectedGender = 'P';
+  
+  get user => null;
 
   Future<void> _registerUser() async {
     try {

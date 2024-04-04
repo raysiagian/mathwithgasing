@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mathgasing/screens/auth/registration_screen/pages/registration_page.dart';
 import 'package:mathgasing/screens/main_screen/home_screen/pages/home_page.dart';
-
 class LoginWidget extends StatefulWidget {
   const LoginWidget({
     Key? key,
@@ -18,7 +17,7 @@ class _LoginWidgetState extends State<LoginWidget> {
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  Future<void> _login() async {
+  Future<void> _login(BuildContext context) async {
     try {
       final response = await http.post(
         Uri.parse('http://10.0.2.2:8000/api/login'),
@@ -41,7 +40,7 @@ class _LoginWidgetState extends State<LoginWidget> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(errorMessage),
-            backgroundColor:  Colors.white,
+            backgroundColor: Colors.white,
           ),
         );
       }
@@ -93,8 +92,8 @@ class _LoginWidgetState extends State<LoginWidget> {
               GestureDetector(
                 onTap: () {
                   if (_formKey.currentState!.validate()) {
-                    _login();
-                  }else{
+                    _login(context); // Pass context here
+                  } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text('Email atau password salah'),
@@ -104,7 +103,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                   }
                 },
                 child: Container(
-                  height: 44, 
+                  height: 44,
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   decoration: BoxDecoration(

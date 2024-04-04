@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mathgasing/screens/auth/login_screen/pages/login_page.dart';
@@ -35,12 +36,18 @@ class _RegisterWidgetState extends State<RegisterWidget> {
 
   Future<bool> _isEmailAvailable(String email) async {
     try {
-      final response = await http.get('http://10.0.2.2:8000/api/checkemail' as Uri);
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2:8000/api/check-email-availability'),
+        body: jsonEncode({'email': email}),
+        headers: {'Content-Type': 'application/json'},
+      );
       if (response.statusCode == 200) {
-        // Email available
-        return true;
+        // Parsing respons JSON
+        final Map<String, dynamic> data = json.decode(response.body);
+        final bool isAvailable = data['status'];
+        return isAvailable;
       } else {
-        // Email not available
+        // Handle other status codes
         return false;
       }
     } catch (e) {
@@ -88,7 +95,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                 onTap: () async {
                   if (!_formKey.currentState!.validate()) return;
 
-                  bool isEmailValid = _isEmailValid(widget.email);
+                  bool isEmailValid = _isEmailValid(_emailController.text);
                   if (!isEmailValid) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -98,7 +105,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                     return;
                   }
 
-                  bool isEmailAvailable = await _isEmailAvailable(widget.email);
+                  bool isEmailAvailable = await _isEmailAvailable(_emailController.text);
                   if (!isEmailAvailable) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
