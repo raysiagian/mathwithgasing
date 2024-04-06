@@ -98,10 +98,37 @@ class _HomeState extends State<Home> {
         centerTitle: false,
         leading: Container(
           margin: const EdgeInsets.all(10),
-          child: Image.asset(
-            "assets/images/icon_profile man.png",
-            fit: BoxFit.cover,
+          // child: Image.asset(
+          //   "assets/images/icon_profile man.png",
+          //   fit: BoxFit.cover,
+          // ),
+          child: FutureBuilder<List<User>>(
+            future: fetchUser(),
+            builder: (context, snapshot){
+              if(snapshot.connectionState == ConnectionState.waiting){
+                return CircularProgressIndicator();
+              }else if (snapshot.hasError){
+                return Text('Error: $snapshot.error');
+              }else{
+                final user = snapshot.data!.first;
+                String gender = user.gender.toLowerCase(); // Menggunakan variabel 'user' bukan 'User'
+                String imagePath;
+                if (gender == 'laki-laki'){
+                  imagePath = "assets/images/icon_profile man.png";
+                }else if (gender == 'perempuan'){
+                  imagePath = "assets/images/icon_profile woman.png";
+                }else{
+                  // Default image or handle other cases
+                  imagePath = "assets/images/icon_profile_man.png";
+                }
+                return Image.asset(
+                  imagePath,
+                  fit: BoxFit.cover,
+                );
+              }
+            },
           ),
+
         ),
       ),
       backgroundColor: theme.colorScheme.secondary,
