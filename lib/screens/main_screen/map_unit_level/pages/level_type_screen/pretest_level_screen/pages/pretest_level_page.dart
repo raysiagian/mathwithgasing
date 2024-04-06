@@ -157,7 +157,12 @@ class _PreTestLevelState extends State<PreTestLevel> {
             );
           },
         ),
-        title: Text('Level ${widget.level.level_number}'),
+        title: Text(
+          'Level ${widget.level.level_number}',
+          style: TextStyle(
+             color: Theme.of(context).primaryColor,
+          ),
+          ),
       ),
       body: FutureBuilder<List<QuestionPretest>>(
         future: _questionsFuture,

@@ -6,64 +6,98 @@ import 'package:mathgasing/models/materi/materi.dart';
 import 'package:mathgasing/screens/main_screen/home_screen/widget/card_widget.dart';
 
 class Home extends StatefulWidget {
-  const Home({
-    Key? key,
-    // required this.user,
-    }) : super(key: key);
-    // final User user;
+  const Home({Key? key}) : super(key: key);
 
   @override
   State<Home> createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  late String name;
 
-  // Future<List<Materi>> fetchMateri() async {
-  //   try {
-  //     final response =
-  //         await http.get(Uri.parse('http://10.0.2.2:8000/api/getMateri'));
+  
+  static Future<List<User>> fetchUser() async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://10.0.2.2:8000/api/getUser'),
+      );
 
-  //     if (response.statusCode == 200) {
-  //       final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
-  //       return jsonData.map((e) => Materi.fromJson(e)).toList();
-  //     } else {
-  //       throw Exception('Failed to load data');
-  //     }
-  //   } catch (e) {
-  //     print(e.toString());
-  //     return [];
-  //   }
-  // }
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body);
 
-  Future<List<Materi>> fetchMateri() async {
-  try {
-    final response = await http.get(Uri.parse('http://10.0.2.2:8000/api/getMateri'));
-
-    if (response.statusCode == 200) {
-      final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
-      print(jsonData);
-      return jsonData.map((e) => Materi.fromJson(e)).toList();
-    } else {
-      throw Exception('Failed to load data');
+        if (jsonData != null) {
+          if (jsonData is List) {
+            return jsonData.map((e) => User.fromJson(e)).toList();
+          } else if (jsonData is Map<String, dynamic>) {
+            if (jsonData.containsKey('data')) {
+              final userData = jsonData['data'];
+              if (userData != null) {
+                if (userData is List) {
+                  return userData.map((e) => User.fromJson(e)).toList();
+                } else {
+                  return [User.fromJson(userData)];
+                }
+              } else {
+                throw Exception('Null user data received from API');
+              }
+            } else {
+              throw Exception('Missing "data" key in API response');
+            }
+          } else {
+            throw Exception('Unexpected data format');
+          }
+        } else {
+          throw Exception('Null JSON data received from API');
+        }
+      } else {
+        throw Exception('Failed to load users from API: ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      throw Exception('Error fetching users: $e');
     }
-  } catch (e) {
-    print(e.toString());
-    return [];
   }
-}
+
+
+  
+  Future<List<Materi>> fetchMateri() async {
+    try {
+      final response = await http.get(Uri.parse('http://10.0.2.2:8000/api/getMateri'));
+
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
+        return jsonData.map((e) => Materi.fromJson(e)).toList();
+      } else {
+        throw Exception('Failed to load materi from API: ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      throw Exception('Error fetching materi: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Selamat Datang'),
-        // title: Text('Level ${widget.user.name}'),
+        title: FutureBuilder<List<User>>(
+          future: fetchUser(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Text('Loading...'); // Placeholder text while loading
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else {
+              final user = snapshot.data!.first; // Assuming only one user is fetched
+              return Text(user.name,
+                style: TextStyle(
+              color: Theme.of(context).primaryColor,
+          ),);
+            }
+          },
+        ),
         backgroundColor: Colors.white,
         centerTitle: false,
         leading: Container(
-          margin: EdgeInsets.all(10),
+          margin: const EdgeInsets.all(10),
           child: Image.asset(
             "assets/images/icon_profile man.png",
             fit: BoxFit.cover,
@@ -84,23 +118,22 @@ class _HomeState extends State<Home> {
             future: fetchMateri(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
+                return const Center(
                   child: CircularProgressIndicator(),
                 );
+              } else if (snapshot.hasError) {
+                return Center(
+                  child: Text('Error: ${snapshot.error}'),
+                );
               } else {
-                if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                  return ListView.builder(
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final materi = snapshot.data![index];
-                      return CardWidget(materi: materi);
-                    },
-                  );
-                } else {
-                  return Center(
-                    child: Text('Error: ${snapshot.error}'),
-                  );
-                }
+                final materiList = snapshot.data!;
+                return ListView.builder(
+                  itemCount: materiList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final materi = materiList[index];
+                    return CardWidget(materi: materi);
+                  },
+                );
               }
             },
           ),

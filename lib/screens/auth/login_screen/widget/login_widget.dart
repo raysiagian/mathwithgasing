@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mathgasing/screens/auth/registration_screen/pages/registration_page.dart';
-import 'package:mathgasing/screens/main_screen/home_screen/pages/home_page.dart';
+import 'package:mathgasing/screens/main_screen/home_wrapper/pages/home_wrapper.dart';
 class LoginWidget extends StatefulWidget {
   const LoginWidget({
     Key? key,
@@ -31,7 +31,7 @@ class _LoginWidgetState extends State<LoginWidget> {
         // Login berhasil, lanjutkan ke halaman berikutnya
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => Home()),
+          MaterialPageRoute(builder: (context) => HomeWrapper()),
         );
       } else {
         // Login gagal, tampilkan pesan kesalahan kepada pengguna

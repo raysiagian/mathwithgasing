@@ -74,16 +74,16 @@ class MapUnitLevel extends StatelessWidget {
         automaticallyImplyLeading: false,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          }
           // onPressed: () {
-          //   Navigator.pushAndRemoveUntil(
-          //     context,
-          //     MaterialPageRoute(builder: (context) => HomeWrapper()),
-          //     (route) => false,
-          //   );
-          // },
+          //   Navigator.pop(context);
+          // }
+          onPressed: () {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => HomeWrapper()),
+              (route) => false,
+            );
+          },
         ),
       ),
       body: Stack(
