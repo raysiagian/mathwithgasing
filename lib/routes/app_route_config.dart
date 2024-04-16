@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:mathgasing/models/level/level.dart';
 import 'package:mathgasing/models/level_type/pretest.dart';
+import 'package:mathgasing/models/level_type/material_video.dart';
+import 'package:mathgasing/models/level_type/posttest.dart';
 import 'package:mathgasing/models/materi/materi.dart';
 import 'package:mathgasing/models/user/user.dart';
 import 'package:mathgasing/routes/app_route_const.dart';
 import 'package:mathgasing/screens/auth/login_screen/pages/login_page.dart';
 import 'package:mathgasing/screens/auth/registration_screen/pages/registration_page.dart';
-import 'package:mathgasing/screens/main_screen/map_unit_level/pages/level_type_screen/material_level_page.dart/pages/material_level_page.dart';
+import 'package:mathgasing/screens/main_screen/map_unit_level/pages/level_type_screen/material_level_screen/pages/material_level_page.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/level_type_screen/posttest_level_screen/pages/posttest_level_page.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/level_type_screen/pretest_level_screen/pages/pretest_level_page.dart';
 import 'package:mathgasing/screens/main_screen/home_screen/pages/home_page.dart';
@@ -88,10 +90,10 @@ class AppRouter {
     );
   }
 
-  static Route<dynamic>? posttestScreen({required Materi materi, required Level level}){
+  static Route<dynamic>? posttestScreen({required Level level, required Materi materi, required PostTest posttest, int? score_posttest}) {
     return MaterialPageRoute(
       settings: RouteSettings(name: AppRouteConstants.posttestscreen),
-      builder: (context) => PostTestLevel(materi: materi, level: level),
+      builder: (context) => PostTestLevel(level: level, materi: materi, posttest:posttest ,score_posttest: score_posttest),
     );
   }
 }

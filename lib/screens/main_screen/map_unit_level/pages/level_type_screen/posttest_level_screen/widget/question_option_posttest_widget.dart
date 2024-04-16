@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mathgasing/core/color/color.dart';
 
-class QuestionOptionPretestWidget extends StatefulWidget {
-  const QuestionOptionPretestWidget({
+
+class QuestionOptionPosttestWidget extends StatefulWidget {
+  const QuestionOptionPosttestWidget({
     Key? key,
     required this.option_1,
     required this.option_2,
@@ -20,10 +21,10 @@ class QuestionOptionPretestWidget extends StatefulWidget {
   final Function(String) onOptionSelected;
 
   @override
-  _QuestionOptionPretestWidgetState createState() => _QuestionOptionPretestWidgetState();
+  _QuestionOptionPosttestWidgetState createState() => _QuestionOptionPosttestWidgetState();
 }
 
-class _QuestionOptionPretestWidgetState extends State<QuestionOptionPretestWidget> {
+class _QuestionOptionPosttestWidgetState extends State<QuestionOptionPosttestWidget> {
 
   @override
   Widget build(BuildContext context) {

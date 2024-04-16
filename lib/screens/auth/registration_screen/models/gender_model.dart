@@ -13,12 +13,12 @@ class Gender{
   Gender(
     code: 'P',
     imageGender: 'assets/images/icon_profile woman.png',
-    explanation: 'Perempuan',
+    explanation: 'perempuan',
   ),
   Gender(
     code: 'L',
     imageGender: 'assets/images/icon_profile man.png',
-    explanation: 'Laki - Laki',
+    explanation: 'laki-laki',
   ),
  ];
 }

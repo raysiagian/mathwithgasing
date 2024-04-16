@@ -10,6 +10,9 @@ class AppRouterSwitch {
   static dynamic get materi => materi;
   
   static get pretest => null;
+  static get posttest => null;
+  static get materialvideo => null;
+
   
   static dynamic get user => user;
   
@@ -50,7 +53,8 @@ class AppRouterSwitch {
       case AppRouteConstants.posttestscreen:
         return AppRouter.posttestScreen(
           level: level, // Provide appropriate value for level
-          materi: materi, // Provide appropriate value for materi
+          materi: materi,
+          posttest: posttest, // Provide appropriate value for materi
         );
       default:
         return onErrorRoute();

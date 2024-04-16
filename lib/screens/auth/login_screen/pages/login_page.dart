@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mathgasing/screens/auth/login_screen/widget/login_widget.dart';
+import 'package:mathgasing/core/color/color.dart';
+
 
 
 
@@ -15,7 +17,7 @@ class _LoginState extends State<Login> {
   @override
   Widget build (BuildContext context){
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primary,
+      backgroundColor: AppColors.primaryColor,
       body: Container(
         child: Column(children: <Widget>[
           SizedBox(height: MediaQuery.of(context).padding.top),

@@ -4,18 +4,11 @@ import 'package:http/http.dart' as http;
 import 'package:mathgasing/screens/auth/login_screen/pages/login_page.dart';
 import 'package:mathgasing/screens/auth/registration_screen/pages/genderchoose_page.dart';
 import 'package:mathgasing/screens/auth/registration_screen/widget/textfield_registration_widget.dart';
+import 'package:mathgasing/core/color/color.dart';
+
 
 class RegisterWidget extends StatefulWidget {
-  const RegisterWidget({
-    Key? key,
-    required this.name,
-    required this.email,
-    required this.password,
-  }) : super(key: key);
-
-  final String name;
-  final String email;
-  final String password;
+  const RegisterWidget({Key? key}) : super(key: key);
 
   @override
   State<RegisterWidget> createState() => _RegisterWidgetState();
@@ -37,12 +30,12 @@ class _RegisterWidgetState extends State<RegisterWidget> {
   Future<bool> _isEmailAvailable(String email) async {
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8000/api/check-email-availability'),
+        Uri.parse('http://127.0.0.1:8000/api/check-email-availability'),
         body: jsonEncode({'email': email}),
         headers: {'Content-Type': 'application/json'},
       );
       if (response.statusCode == 200) {
-        // Parsing respons JSON
+        // Parsing response JSON
         final Map<String, dynamic> data = json.decode(response.body);
         final bool isAvailable = data['status'];
         return isAvailable;
@@ -105,7 +98,8 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                     return;
                   }
 
-                  bool isEmailAvailable = await _isEmailAvailable(_emailController.text);
+                  bool isEmailAvailable =
+                      await _isEmailAvailable(_emailController.text);
                   if (!isEmailAvailable) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -131,7 +125,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor,
+                    color: AppColors.primaryColor,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(

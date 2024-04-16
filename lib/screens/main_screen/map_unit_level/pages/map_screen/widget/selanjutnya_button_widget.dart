@@ -1,19 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:mathgasing/core/color/color.dart';
+
 
 class SelanjutnyaButton extends StatelessWidget {
-  const SelanjutnyaButton({Key? key, required this.pertanyaanSelanjutnya, required Null Function() onPressed}) : super(key: key);
-  final VoidCallback pertanyaanSelanjutnya;
+  final VoidCallback onPressed;
+
+  const SelanjutnyaButton({
+    Key? key,
+    required this.onPressed,
+  }) : super(key: key);
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: pertanyaanSelanjutnya,
+      onTap: onPressed,
       child: Container(
         height: 44,
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 10.0),
         decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
+          color: AppColors.primaryColor,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Text(

@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:mathgasing/models/user/user.dart';
 import 'package:mathgasing/models/materi/materi.dart';
 import 'package:mathgasing/screens/main_screen/home_screen/widget/card_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -13,54 +15,77 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  late String _token;
+  User? _loggedInUser;
 
-  
-  static Future<List<User>> fetchUser() async {
+  @override
+  void initState() {
+    super.initState();
+    _loadTokenAndFetchUser();
+  }
+
+  Future<void> _loadTokenAndFetchUser() async {
+    try {
+      // Simpan token dari SharedPreferences
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? storedToken = prefs.getString('token');
+
+      if (storedToken != null && storedToken.isNotEmpty) {
+        setState(() {
+          _token = storedToken;
+        });
+
+        // Setelah token dimuat, panggil fungsi untuk mendapatkan pengguna yang login
+        await fetchUser();
+      } else {
+        print('Stored token is empty or null.');
+      }
+    } catch (e) {
+      print('Error loading token and fetching user: $e');
+    }
+  }
+
+  Future<void> _saveToken(String token) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', token);
+    } catch (e) {
+      print('Error saving token: $e');
+    }
+  }
+
+  Future<User> fetchUser() async {
     try {
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/api/getUser'),
+        Uri.parse('http://127.0.0.1:8000/api/getLoggedInUserName'),
+        headers: {
+          'Authorization': 'Bearer $_token', // Menggunakan token sebagai bagian dari header Authorization
+        },
       );
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
 
-        if (jsonData != null) {
-          if (jsonData is List) {
-            return jsonData.map((e) => User.fromJson(e)).toList();
-          } else if (jsonData is Map<String, dynamic>) {
-            if (jsonData.containsKey('data')) {
-              final userData = jsonData['data'];
-              if (userData != null) {
-                if (userData is List) {
-                  return userData.map((e) => User.fromJson(e)).toList();
-                } else {
-                  return [User.fromJson(userData)];
-                }
-              } else {
-                throw Exception('Null user data received from API');
-              }
-            } else {
-              throw Exception('Missing "data" key in API response');
-            }
-          } else {
-            throw Exception('Unexpected data format');
-          }
+        if (jsonData != null && jsonData['user'] != null) {
+          final user = User.fromJson(jsonData['user']);
+          setState(() {
+            _loggedInUser = user;
+          });
+          return user;
         } else {
-          throw Exception('Null JSON data received from API');
+          throw Exception('Invalid JSON data received from API');
         }
       } else {
-        throw Exception('Failed to load users from API: ${response.reasonPhrase}');
+        throw Exception('Failed to load user from API: ${response.reasonPhrase}');
       }
     } catch (e) {
-      throw Exception('Error fetching users: $e');
+      throw Exception('Error fetching user: $e');
     }
   }
 
-
-  
   Future<List<Materi>> fetchMateri() async {
     try {
-      final response = await http.get(Uri.parse('http://10.0.2.2:8000/api/getMateri'));
+      final response = await http.get(Uri.parse('http://127.0.0.1:8000/api/getMateri'));
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
@@ -78,57 +103,15 @@ class _HomeState extends State<Home> {
     final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: FutureBuilder<List<User>>(
-          future: fetchUser(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Text('Loading...'); // Placeholder text while loading
-            } else if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            } else {
-              final user = snapshot.data!.first; // Assuming only one user is fetched
-              return Text(user.name,
-                style: TextStyle(
-              color: Theme.of(context).primaryColor,
-          ),);
-            }
-          },
-        ),
+        title: _loggedInUser != null ? Text(_loggedInUser!.name) : Text('Loading...'),
         backgroundColor: Colors.white,
         centerTitle: false,
         leading: Container(
           margin: const EdgeInsets.all(10),
-          // child: Image.asset(
-          //   "assets/images/icon_profile man.png",
-          //   fit: BoxFit.cover,
-          // ),
-          child: FutureBuilder<List<User>>(
-            future: fetchUser(),
-            builder: (context, snapshot){
-              if(snapshot.connectionState == ConnectionState.waiting){
-                return CircularProgressIndicator();
-              }else if (snapshot.hasError){
-                return Text('Error: $snapshot.error');
-              }else{
-                final user = snapshot.data!.first;
-                String gender = user.gender.toLowerCase(); // Menggunakan variabel 'user' bukan 'User'
-                String imagePath;
-                if (gender == 'laki-laki'){
-                  imagePath = "assets/images/icon_profile man.png";
-                }else if (gender == 'perempuan'){
-                  imagePath = "assets/images/icon_profile woman.png";
-                }else{
-                  // Default image or handle other cases
-                  imagePath = "assets/images/icon_profile_man.png";
-                }
-                return Image.asset(
-                  imagePath,
-                  fit: BoxFit.cover,
-                );
-              }
-            },
-          ),
-
+          child: _loggedInUser != null ? Image.asset(
+            _getImagePath(_loggedInUser!.gender),
+            fit: BoxFit.cover,
+          ) : CircularProgressIndicator(),
         ),
       ),
       backgroundColor: theme.colorScheme.secondary,
@@ -167,5 +150,16 @@ class _HomeState extends State<Home> {
         ],
       ),
     );
+  }
+
+  String _getImagePath(String gender) {
+    switch (gender.toLowerCase()) {
+      case 'laki-laki':
+        return "assets/images/icon_profile man.png";
+      case 'perempuan':
+        return "assets/images/icon_profile woman.png";
+      default:
+        return "assets/images/icon_profile_man.png";
+    }
   }
 }

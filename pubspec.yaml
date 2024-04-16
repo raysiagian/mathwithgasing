@@ -38,6 +38,12 @@ dependencies:
   go_router: ^13.2.0
   http: ^1.1.0
   google_fonts: 6.1.0
+  shared_preferences: ^2.0.0
+  appinio_video_player: ^1.2.2
+  video_player: ^2.8.1
+  youtube_player_flutter: ^9.0.1
+  flutter_inappwebview_web: ^1.0.8
+
 
 dev_dependencies:
   flutter_test:
@@ -63,7 +69,7 @@ flutter:
   uses-material-design: true
   assets:
   - assets/images/
-  - D:/Semester 6/API/apimathapp/storage/app/
+  - D:/Gasing/mathgasing/API/APIMathLearningApp/storage/app/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

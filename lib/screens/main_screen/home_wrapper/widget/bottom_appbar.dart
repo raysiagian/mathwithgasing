@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mathgasing/core/color/color.dart';
+
 
 class AppBottomNavigationBar extends StatelessWidget {
   const AppBottomNavigationBar({
@@ -14,7 +16,7 @@ class AppBottomNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      selectedItemColor: Theme.of(context).colorScheme.primary,
+      selectedItemColor: AppColors.primaryColor,
       unselectedItemColor: Theme.of(context).colorScheme.onSurface,
       currentIndex: selectedIndex,
       elevation: 0,

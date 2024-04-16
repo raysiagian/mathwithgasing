@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mathgasing/core/color/color.dart';
 
 
 class SelanjutnyaOnboardingButton extends StatelessWidget {
@@ -18,7 +19,7 @@ class SelanjutnyaOnboardingButton extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 10.0),
         decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
+          color: AppColors.primaryColor,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Text(

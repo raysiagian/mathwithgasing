@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mathgasing/models/materi/materi.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/map_screen/pages/map_unit_level.dart';
+import 'package:mathgasing/core/color/color.dart';
+
 
 class DialogQuestionOnClose extends StatelessWidget {
   const DialogQuestionOnClose({super.key, required this.materi,});
@@ -55,7 +57,7 @@ class DialogQuestionOnClose extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: Theme.of(context).primaryColor,
+                      color: AppColors.primaryColor,
                     ),
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -63,7 +65,7 @@ class DialogQuestionOnClose extends StatelessWidget {
                     'Keluar',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: Theme.of(context).primaryColor,
+                      color: AppColors.primaryColor,
                       fontSize: 16,
                     ),
                   ),
@@ -79,7 +81,7 @@ class DialogQuestionOnClose extends StatelessWidget {
                   width: 130,
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor,
+                    color: AppColors.primaryColor,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(

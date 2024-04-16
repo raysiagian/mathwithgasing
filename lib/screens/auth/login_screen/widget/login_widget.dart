@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mathgasing/screens/auth/registration_screen/pages/registration_page.dart';
 import 'package:mathgasing/screens/main_screen/home_wrapper/pages/home_wrapper.dart';
+import 'package:mathgasing/core/color/color.dart';
+
+
 class LoginWidget extends StatefulWidget {
   const LoginWidget({
     Key? key,
@@ -20,7 +23,7 @@ class _LoginWidgetState extends State<LoginWidget> {
   Future<void> _login(BuildContext context) async {
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8000/api/login'),
+        Uri.parse('http://127.0.0.1:8000/api/login'),
         body: {
           'email': _emailController.text,
           'password': _passwordController.text,
@@ -107,7 +110,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor,
+                    color: AppColors.primaryColor,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(

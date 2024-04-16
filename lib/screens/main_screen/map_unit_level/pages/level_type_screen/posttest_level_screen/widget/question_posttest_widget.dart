@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:mathgasing/models/question_posttest/question_posttest.dart';
 import 'package:mathgasing/core/color/color.dart';
-import 'package:mathgasing/models/question_pretest/question_pretest.dart';
 
-class QuestionPretestWidget extends StatefulWidget {
-  const QuestionPretestWidget({
+
+class QuestionPosttestWidget extends StatefulWidget {
+  const QuestionPosttestWidget({
     Key? key,
     required this.question,
     required this.indexAction,
@@ -11,22 +12,22 @@ class QuestionPretestWidget extends StatefulWidget {
     required this.onOptionSelected,
   }) : super(key: key);
 
-  final QuestionPretest question;
+  final QuestionPosttest question;
   final int indexAction;
   final int totalQuestion;
   final Function(String) onOptionSelected;
 
   @override
-  _QuestionPretestWidgetState createState() => _QuestionPretestWidgetState();
+  _QuestionPosttestWidgetState createState() => _QuestionPosttestWidgetState();
 }
 
-class _QuestionPretestWidgetState extends State<QuestionPretestWidget> {
-  late String selectedOption;
+class _QuestionPosttestWidgetState extends State<QuestionPosttestWidget> {
+  late String selectedOption; // State untuk menyimpan opsi yang dipilih
 
   @override
   void initState() {
     super.initState();
-    selectedOption = '';
+    selectedOption = ''; // Set opsi yang dipilih ke string kosong pada awalnya
   }
 
   @override
@@ -56,8 +57,8 @@ class _QuestionPretestWidgetState extends State<QuestionPretestWidget> {
           children: [
             OptionWidget(
               option: widget.question.option_1,
-              isSelected: selectedOption == widget.question.option_1,
-              onOptionSelected: () => setSelectedOption(widget.question.option_1),
+              isSelected: selectedOption == widget.question.option_1, // Tentukan isSelected berdasarkan opsi yang dipilih
+              onOptionSelected: () => setSelectedOption(widget.question.option_1), // Saat opsi dipilih, set opsi yang dipilih
             ),
             OptionWidget(
               option: widget.question.option_2,
@@ -76,15 +77,6 @@ class _QuestionPretestWidgetState extends State<QuestionPretestWidget> {
             ),
           ],
         ),
-        // SizedBox(height: 20),
-        // if (selectedOption.isNotEmpty)
-        //   Text(
-        //     'Anda memilih: $selectedOption',
-        //     style: TextStyle(
-        //       fontSize: 16.0,
-        //       color: Colors.black,
-        //     ),
-        //   ),
       ],
     );
   }
@@ -93,14 +85,14 @@ class _QuestionPretestWidgetState extends State<QuestionPretestWidget> {
     setState(() {
       selectedOption = option;
     });
-    widget.onOptionSelected(option); // Notify the parent widget about the selected option
+    widget.onOptionSelected(option);
   }
 }
 
 class OptionWidget extends StatelessWidget {
   final String option;
   final bool isSelected;
-  final VoidCallback onOptionSelected;
+  final VoidCallback onOptionSelected; // Callback untuk menangani pemilihan opsi
 
   const OptionWidget({
     Key? key,
@@ -112,7 +104,7 @@ class OptionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onOptionSelected,
+      onTap: onOptionSelected, // Panggil callback saat opsi dipilih
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 20),
         child: Container(
