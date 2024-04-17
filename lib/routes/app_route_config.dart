@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mathgasing/models/level/level.dart';
+import 'package:mathgasing/models/level_type/posttest.dart';
 import 'package:mathgasing/models/level_type/pretest.dart';
 import 'package:mathgasing/models/materi/materi.dart';
 import 'package:mathgasing/models/user/user.dart';
@@ -81,17 +82,17 @@ class AppRouter {
     );
   }
 
-  static Route<dynamic>? materialScreen({required Materi materi, required Level level}){
+  static Route<dynamic>? materialScreen({required Materi materi, required Level level,}){
     return MaterialPageRoute(
       settings: RouteSettings(name: AppRouteConstants.materialscreen),
       builder: (context) => MaterialLevel(materi: materi, level: level),
     );
   }
 
-  static Route<dynamic>? posttestScreen({required Materi materi, required Level level}){
+  static Route<dynamic>? posttestScreen({required Materi materi, required Level level,required PostTest posttest, int? score_posttest}){
     return MaterialPageRoute(
       settings: RouteSettings(name: AppRouteConstants.posttestscreen),
-      builder: (context) => PostTestLevel(materi: materi, level: level),
+      builder: (context) => PostTestLevel(materi: materi, level: level, posttest: posttest, score_posttest: score_posttest,),
     );
   }
 }

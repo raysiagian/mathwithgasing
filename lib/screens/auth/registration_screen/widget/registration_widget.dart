@@ -34,27 +34,49 @@ class _RegisterWidgetState extends State<RegisterWidget> {
     return regExp.hasMatch(email);
   }
 
+  // Future<bool> _isEmailAvailable(String email) async {
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse('http://10.0.2.2:8000/api/check-email-availability'),
+  //       body: jsonEncode({'email': email}),
+  //       headers: {'Content-Type': 'application/json'},
+  //     );
+  //     if (response.statusCode == 200) {
+  //       // Parsing respons JSON
+  //       final Map<String, dynamic> data = json.decode(response.body);
+  //       final bool isAvailable = data['status'];
+  //       return isAvailable;
+  //     } else {
+  //       // Handle other status codes
+  //       return false;
+  //     }
+  //   } catch (e) {
+  //     // Error occurred, handle accordingly
+  //     return false;
+  //   }
+  // }
+
   Future<bool> _isEmailAvailable(String email) async {
-    try {
-      final response = await http.post(
-        Uri.parse('http://10.0.2.2:8000/api/check-email-availability'),
-        body: jsonEncode({'email': email}),
-        headers: {'Content-Type': 'application/json'},
-      );
-      if (response.statusCode == 200) {
-        // Parsing respons JSON
-        final Map<String, dynamic> data = json.decode(response.body);
-        final bool isAvailable = data['status'];
-        return isAvailable;
-      } else {
-        // Handle other status codes
-        return false;
-      }
-    } catch (e) {
-      // Error occurred, handle accordingly
-      return false;
+  try {
+    final response = await http.post(
+      Uri.parse('http://10.0.2.2:8000/api/check-email-availability'),
+      body: jsonEncode({'email': email}),
+      headers: {'Content-Type': 'application/json'},
+    );
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final bool isAvailable = data['status'];
+      return isAvailable;
+    } else {
+      // Penanganan kesalahan berdasarkan status kode respons
+      throw Exception('Terjadi kesalahan saat memeriksa ketersediaan email: ${response.body}');
     }
+  } catch (e) {
+    // Penanganan kesalahan lainnya
+    throw Exception('Terjadi kesalahan saat memeriksa ketersediaan email: $e');
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

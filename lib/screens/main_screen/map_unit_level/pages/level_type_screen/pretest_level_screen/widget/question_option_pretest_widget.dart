@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mathgasing/core/color/color.dart';
 
 class QuestionOptionPretestWidget extends StatefulWidget {
   const QuestionOptionPretestWidget({
@@ -49,7 +50,7 @@ class _QuestionOptionPretestWidgetState extends State<QuestionOptionPretestWidge
           width: 80,
           height: 80,
           decoration: BoxDecoration(
-            color: isSelected ? Colors.green : Theme.of(context).colorScheme.primary,
+            color: isSelected ? Colors.green : AppColors.primaryColor,
             shape: BoxShape.circle,
           ),
           child: Center(

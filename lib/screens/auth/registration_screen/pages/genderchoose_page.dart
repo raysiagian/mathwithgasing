@@ -1,8 +1,10 @@
+//genderchoose_page
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:mathgasing/screens/auth/login_screen/pages/login_page.dart';
 import 'package:mathgasing/screens/auth/registration_screen/models/gender_model.dart';
 import 'package:mathgasing/screens/auth/registration_screen/widget/genderchoose_widget.dart';
-import 'package:mathgasing/screens/main_screen/home_screen/pages/home_page.dart';
+
 
 class GenderChoose extends StatefulWidget {
   const GenderChoose({
@@ -22,9 +24,7 @@ class GenderChoose extends StatefulWidget {
 
 class _GenderChooseState extends State<GenderChoose> {
   final List<Gender> listGender = Gender.listGender;
-  String selectedGender = 'P';
-  
-  get user => null;
+  String selectedGender = 'perempuan';
 
   Future<void> _registerUser() async {
     try {
@@ -43,17 +43,16 @@ class _GenderChooseState extends State<GenderChoose> {
         // Registrasi berhasil, arahkan pengguna ke halaman beranda
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => Home()),
+          MaterialPageRoute(builder: (context) => Login()),
         );
       } else {
         // Gagal mendaftar, tampilkan pesan kesalahan
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Gagal mendaftar. Silakan coba lagi.'),
+          content: Text('${response.body}'),
         ));
       }
     } catch (e) {
       // Error lainnya, tangani sesuai kebutuhan Anda
-      print(e.toString());
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Terjadi kesalahan. Silakan coba lagi nanti.'),
       ));
@@ -91,7 +90,10 @@ class _GenderChooseState extends State<GenderChoose> {
               }),
             ),
             SizedBox(height: 10),
-            GestureDetector(
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Column(children: [
+              GestureDetector(
               onTap: _registerUser, // Panggil fungsi registrasi saat tombol ditekan
               child: Container(
                 height: 44,
@@ -110,6 +112,39 @@ class _GenderChooseState extends State<GenderChoose> {
                   ),
                 ),
               ),
+            ),
+             SizedBox(height: 20),
+              OutlinedButton(
+                onPressed: () {
+                  Navigator.pop(
+                    context,
+                    // MaterialPageRoute(builder: (context) => Register()),
+                  );
+                },
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: Theme.of(context).colorScheme.secondary),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: SizedBox(
+                  height: 44,
+                  width: double.infinity,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Text(
+                      'Kembali',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.secondary,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              ],),
+              
             )
           ],
         ),

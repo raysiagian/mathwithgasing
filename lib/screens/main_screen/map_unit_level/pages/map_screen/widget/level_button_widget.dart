@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'package:mathgasing/models/level/level.dart';
 import 'package:mathgasing/models/materi/materi.dart';
 import 'package:mathgasing/models/level_type/posttest.dart';
+import 'package:mathgasing/models/level_type/material_video.dart';
 import 'package:mathgasing/models/level_type/pretest.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/level_type_screen/material_level_page.dart/pages/material_level_page.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/level_type_screen/posttest_level_screen/pages/posttest_level_page.dart';
@@ -29,6 +30,24 @@ class LevelButtonWidget extends StatelessWidget {
       final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
       print(jsonData);
       return jsonData.map((e) => PreTest.fromJson(e)).toList();
+    } else {
+      throw Exception('${response.headers}');
+    }
+  } catch (e) {
+    print(e.toString());
+    return [];
+  }
+}
+
+
+  Future<List<PostTest>> fetchPosttest() async {
+  try {
+    final response = await http.get(Uri.parse('http://10.0.2.2:8000/api/getPosttest'));
+
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
+      print(jsonData);
+      return jsonData.map((e) => PostTest.fromJson(e)).toList();
     } else {
       throw Exception('${response.headers}');
     }
@@ -82,78 +101,83 @@ class LevelButtonWidget extends StatelessWidget {
 // }
 
 
-
-  @override
+@override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () async {
         if (level.level_number == 1) {
-        try {
-          print('Fetching pretest data...');
-          List<PreTest> preTests = await PreTest.getPretest();
-          print('Pretest data fetched successfully: $preTests');
-          
-          PreTest preTest = preTests.firstWhere((preTest) => preTest.id_level == level.id_level);
-          print('Pretest for current level found: $preTest');
-          
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Pretest ID: ${preTest.id_pretest}'),
-            ),
-          );
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => PreTestLevel(
-                level: level,
-                materi: materi,
-                pretest: preTest,
+          try {
+            print('Fetching pretest data...');
+            List<PreTest> preTests = await fetchPretest();
+            print('Pretest data fetched successfully: $preTests');
+
+            PreTest preTest =
+                preTests.firstWhere((preTest) => preTest.id_level == level.id_level);
+            print('Pretest for current level found: $preTest');
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Pretest ID: ${preTest.id_pretest}'),
               ),
-            ),
-          );
-        } catch (e) {
-          // Handle error
-          print('$e');
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('$e'),
-            ),
-          );
-        }
+            );
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PreTestLevel(
+                  level: level,
+                  materi: materi,
+                  pretest: preTest,
+                ),
+              ),
+            );
+          } catch (e) {
+            // Handle error
+            print('$e');
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('$e'),
+              ),
+            );
+          }
+        } else if (level.level_number == 3) {
+          try {
+            print('Fetching posttest data...');
+            List<PostTest> postTests = await fetchPosttest();
+            print('Posttest data fetched successfully: $postTests');
 
+            PostTest postTest = postTests
+                .firstWhere((postTest) => postTest.id_level == level.id_level);
+            print('Posttest for current level found: $postTest');
 
-          // try {
-          //   List<PreTest> preTests = await PreTest.getPretest();
-          //   PreTest preTest = preTests.firstWhere((preTest) => preTest.id_level == level.id_level);
-          //   Navigator.push(
-          //     context,
-          //     MaterialPageRoute(
-          //       builder: (context) => PreTestLevel(
-          //         level: level,
-          //         materi: materi,
-          //         pretest: preTest,
-          //       ),
-          //     ),
-          //   );
-          // } catch (e) {
-          //   // Handle error
-          //   print('Error loading pretest: $e');
-          // }
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Posttest ID: ${postTest.id_posttest}'),
+              ),
+            );
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PostTestLevel(
+                  level: level,
+                  materi: materi,
+                  posttest: postTest,
+                ),
+              ),
+            );
+          } catch (e) {
+            // Handle error
+            print('$e');
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('$e'),
+              ),
+            );
+          }
         } else if (level.level_number == 2) {
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => MaterialLevel(
-                level: level,
-                materi: materi,
-              ),
-            ),
-          );
-        } else if (level.level_number == 3) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => PostTestLevel(
                 level: level,
                 materi: materi,
               ),

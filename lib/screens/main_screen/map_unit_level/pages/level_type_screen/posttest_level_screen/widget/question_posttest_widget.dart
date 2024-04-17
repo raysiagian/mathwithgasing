@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mathgasing/core/color/color.dart';
-import 'package:mathgasing/models/question_pretest/question_pretest.dart';
+import 'package:mathgasing/models/question_posttest/question_posttest.dart';
 
-class QuestionPretestWidget extends StatefulWidget {
-  const QuestionPretestWidget({
+class QuestionPostTestWidget extends StatefulWidget {
+  const QuestionPostTestWidget({
     Key? key,
     required this.question,
     required this.indexAction,
@@ -11,16 +11,16 @@ class QuestionPretestWidget extends StatefulWidget {
     required this.onOptionSelected,
   }) : super(key: key);
 
-  final QuestionPretest question;
+  final QuestionPostTest question;
   final int indexAction;
   final int totalQuestion;
   final Function(String) onOptionSelected;
 
   @override
-  _QuestionPretestWidgetState createState() => _QuestionPretestWidgetState();
+  _QuestionPostTestWidget createState() => _QuestionPostTestWidget();
 }
 
-class _QuestionPretestWidgetState extends State<QuestionPretestWidget> {
+class _QuestionPostTestWidget extends State<QuestionPostTestWidget> {
   late String selectedOption;
 
   @override

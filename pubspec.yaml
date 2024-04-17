@@ -38,6 +38,10 @@ dependencies:
   go_router: ^13.2.0
   http: ^1.1.0
   google_fonts: 6.1.0
+  shared_preferences: ^2.2.3
+  syncfusion_flutter_charts: 22.2.12
+  video_player: ^2.8.5
+  youtube_player_flutter: ^9.0.0
 
 dev_dependencies:
   flutter_test:

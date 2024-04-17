@@ -9,6 +9,7 @@ class Materi {
   final String title;
   final String imageCard;
   final String imageBackground;
+  final String imageStatistic;
 
   Materi({
     required this.id_materi,
@@ -16,6 +17,7 @@ class Materi {
     required this.title,
     required this.imageCard,
     required this.imageBackground,
+    required this.imageStatistic,
   });
 
   factory Materi.fromJson(Map<String, dynamic> json) {
@@ -24,9 +26,11 @@ class Materi {
       title: json["title"] as String,
       imageCard: json["imageCard"] as String,
       imageBackground: json["imageBackground"] as String,
+      imageStatistic: json["imageStatistic"] as String,
       units: [], // You might need to adjust this depending on your data structure
     );
   }
+
 
   static Future<List<Materi>> getMateri() async {
     var url = Uri.parse("http://10.0.2.2:8000/api/materi"); // Adjusted URL
@@ -45,6 +49,7 @@ class Materi {
     'title': title,
     'imageCard': imageCard,
     'imageBackground': imageBackground,
+    'imageStatistic': imageStatistic,
   };
 
   @override
