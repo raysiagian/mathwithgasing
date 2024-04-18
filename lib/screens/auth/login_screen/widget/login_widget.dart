@@ -1,11 +1,17 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:mathgasing/core/constants/constants.dart';
 import 'package:mathgasing/screens/auth/registration_screen/pages/registration_page.dart';
 import 'package:mathgasing/screens/main_screen/home_wrapper/pages/home_wrapper.dart';
+
 class LoginWidget extends StatefulWidget {
+  final ValueChanged<String> onLoginSuccess;
+
   const LoginWidget({
     Key? key,
+    required this.onLoginSuccess,
   }) : super(key: key);
 
   @override
@@ -16,11 +22,12 @@ class _LoginWidgetState extends State<LoginWidget> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final storage = FlutterSecureStorage();
 
   Future<void> _login(BuildContext context) async {
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8000/api/login'),
+        Uri.parse('https://mathgasing.cloud/api/login'),
         body: {
           'email': _emailController.text,
           'password': _passwordController.text,
@@ -28,31 +35,42 @@ class _LoginWidgetState extends State<LoginWidget> {
       );
 
       if (response.statusCode == 200) {
-        // Login berhasil, lanjutkan ke halaman berikutnya
+        final responseData = json.decode(response.body);
+        final authToken = responseData['token'];
+        final refreshToken = responseData['refresh_token'];
+        
+        // Simpan token
+        await storage.write(key: 'access_token', value: authToken);
+        await storage.write(key: 'refresh_token', value: refreshToken);
+
+        widget.onLoginSuccess(authToken); // Notify the parent widget about login success
+        // Arahkan pengguna ke halaman HomeWrapper
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => HomeWrapper()),
         );
       } else {
-        // Login gagal, tampilkan pesan kesalahan kepada pengguna
         final responseData = json.decode(response.body);
         final errorMessage = responseData['message'] ?? 'Login gagal';
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(errorMessage),
+              backgroundColor: Colors.red, // Changed to a contrasting color
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      print('Error: $e');
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(errorMessage),
-            backgroundColor: Colors.white,
+            content: Text('Terjadi kesalahan. Silakan coba lagi.'),
+            backgroundColor: Colors.red, // Changed to a contrasting color
           ),
         );
       }
-    } catch (e) {
-      // Tangani kesalahan koneksi atau kesalahan lainnya
-      print('Error: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Terjadi kesalahan. Silakan coba lagi.'),
-          backgroundColor: Colors.white,
-        ),
-      );
     }
   }
 
@@ -92,14 +110,16 @@ class _LoginWidgetState extends State<LoginWidget> {
               GestureDetector(
                 onTap: () {
                   if (_formKey.currentState!.validate()) {
-                    _login(context); // Pass context here
+                    _login(context);
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Email atau password salah'),
-                        backgroundColor: Colors.white,
-                      ),
-                    );
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Email atau password salah'),
+                          backgroundColor: Colors.red, // Changed to a contrasting color
+                        ),
+                      );
+                    }
                   }
                 },
                 child: Container(

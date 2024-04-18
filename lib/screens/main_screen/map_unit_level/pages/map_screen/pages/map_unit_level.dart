@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:mathgasing/core/constants/constants.dart';
 import 'dart:convert';
 import 'package:mathgasing/models/materi/materi.dart';
 import 'package:mathgasing/models/unit/unit.dart';
@@ -32,7 +33,7 @@ class MapUnitLevel extends StatelessWidget {
   Future<List<Unit>> fetchUnit() async {
     try {
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/api/getUnit'), // Updated endpoint
+        Uri.parse('https://mathgasing.cloud/api/getUnit'), // Updated endpoint
       );
 
       if (response.statusCode == 200) {
@@ -91,7 +92,7 @@ class MapUnitLevel extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           Image.network(
-            'http://10.0.2.2:8000/storage/' +
+            baseurl +'storage/' +
                 materi.imageBackground.replaceFirst('public/', ''),
             height: 150,
             fit: BoxFit.cover,

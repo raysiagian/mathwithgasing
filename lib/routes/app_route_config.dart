@@ -50,7 +50,7 @@ class AppRouter {
   static Route<dynamic>? homeScreen({required User user}){
     return MaterialPageRoute(
       settings: RouteSettings(name: AppRouteConstants.homescreen),
-      builder: (context) => Home(),
+      builder: (context) => Home(authToken: 'authToken',),
     );
   }
 

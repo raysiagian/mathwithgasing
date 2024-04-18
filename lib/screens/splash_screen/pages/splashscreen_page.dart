@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:mathgasing/core/constants/constants.dart';
 import 'package:mathgasing/screens/auth/login_screen/pages/login_page.dart';
 import 'package:mathgasing/screens/main_screen/home_wrapper/pages/home_wrapper.dart';
 import 'package:mathgasing/screens/onboarding_screen/pages/onboarding_page.dart';
@@ -60,7 +61,7 @@ class _SplashScreenState extends State<SplashScreen> {
       // Jika token tersedia, lakukan pengecekan validitas token
       try {
         final response = await http.get(
-          Uri.parse('http://10.0.2.2:8000/api/profile'),
+          Uri.parse(baseurl +'api/profile'),
           headers: {
             'Authorization': 'Bearer $token',
           },

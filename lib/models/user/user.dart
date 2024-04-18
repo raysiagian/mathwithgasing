@@ -1,14 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:mathgasing/core/constants/constants.dart';
 class User {
   final int id_user;
   final String name;
   final String email;
-  // final String password;
   final String gender;
 
-  // final String createdAt;
-  // final String? updatedAt;
 
   User({
     required this.id_user,
@@ -23,7 +21,7 @@ class User {
   static Future<List<User>> fetchUser() async {
     try {
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/api/getUser'),
+        Uri.parse(baseurl +'api/getUser'),
       );
 
       if (response.statusCode == 200) {

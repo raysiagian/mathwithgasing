@@ -155,7 +155,7 @@ class _PreTestLevelState extends State<PreTestLevel> {
 
     // Make the HTTP POST request
     final response = await http.put(
-      Uri.parse('http://10.0.2.2:8000/api/pretest/${widget.pretest.id_pretest}/update-final-score'),
+      Uri.parse('https://mathgasing.cloud/api/pretest/${widget.pretest.id_pretest}/update-final-score'),
       body: jsonEncode(postData),
       headers: {'Content-Type': 'application/json'},
     );
@@ -202,7 +202,7 @@ class _PreTestLevelState extends State<PreTestLevel> {
 
   Future<void> fetchQuestionPretest() async {
     try {
-      final response = await http.get(Uri.parse('http://10.0.2.2:8000/api/getQuestionPretest'));
+      final response = await http.get(Uri.parse('https://mathgasing.cloud/api/getQuestionPretest'));
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;

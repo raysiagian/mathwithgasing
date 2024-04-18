@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http; // Import http package
+import 'package:mathgasing/core/constants/constants.dart';
 import 'package:mathgasing/models/level/level.dart';
 import 'package:mathgasing/models/materi/materi.dart';
 import 'package:mathgasing/models/unit/unit.dart';
@@ -21,7 +22,7 @@ class UnitWidget extends StatelessWidget {
   Future<List<Level>> fetchLevel() async {
     try {
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/api/getLevel'), // Updated endpoint
+        Uri.parse('https://mathgasing.cloud/api/getLevel'), // Updated endpoint
       );
 
       if (response.statusCode == 200) {

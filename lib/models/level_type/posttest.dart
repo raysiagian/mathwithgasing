@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:mathgasing/core/constants/constants.dart';
 import 'package:mathgasing/models/question_posttest/question_posttest.dart';
 
 class PostTest {
@@ -18,14 +19,14 @@ class PostTest {
   factory PostTest.fromJson(Map<String, dynamic> json){
     return PostTest(
       id_posttest: json["id_posttest"] as int, 
-      id_level: json["id_level"]as int,
+      id_level: int.parse(json["id_level"]),
       questionsPosttest: [],
       // score_pretest: json["score_pretest"] as int?,
     );
   }
 
-    static Future<List<PostTest>>getPretest()async{
-    var url = Uri.parse("http://10.0.2.2:8000/api/getPosttest"); // Adjusted URL
+    static Future<List<PostTest>>getPosttest()async{
+    var url = Uri.parse("https://mathgasing.cloud/api/getPosttest"); // Adjusted URL
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -36,9 +37,9 @@ class PostTest {
     }
   }
 
-    Map<String, dynamic> toJson()=> {
+  Map<String, dynamic> toJson()=> {
     'id_posttest': id_posttest,
-    // 'score_pretest': score_pretest,
+    // 'score_posttest': score_posttest,
     'id_level': id_level,
   };
 
@@ -52,6 +53,5 @@ class PostTest {
   String toString() {
     return 'Materi{id_posttest: $id_posttest, id_level: $id_level}';
   }
-
 
 }

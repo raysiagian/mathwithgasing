@@ -1,9 +1,11 @@
-//genderchoose_page
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:mathgasing/core/constants/constants.dart';
 import 'package:mathgasing/screens/auth/login_screen/pages/login_page.dart';
 import 'package:mathgasing/screens/auth/registration_screen/models/gender_model.dart';
 import 'package:mathgasing/screens/auth/registration_screen/widget/genderchoose_widget.dart';
+import 'package:mathgasing/screens/main_screen/home_screen/pages/home_page.dart';
+import 'package:mathgasing/core/color/color.dart';
 
 
 class GenderChoose extends StatefulWidget {
@@ -30,7 +32,7 @@ class _GenderChooseState extends State<GenderChoose> {
     try {
       // Kirim data registrasi ke backend
       var response = await http.post(
-        Uri.parse('http://10.0.2.2:8000/api/register'), // Ganti dengan URL API registrasi Anda
+        Uri.parse('https://mathgasing.cloud/api/register'), // Ganti dengan URL API registrasi Anda
         body: {
           'name': widget.name,
           'email': widget.email,
@@ -39,12 +41,15 @@ class _GenderChooseState extends State<GenderChoose> {
         },
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         // Registrasi berhasil, arahkan pengguna ke halaman beranda
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => Login()),
         );
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Berhasil Mendaftar'),
+        ));
       } else {
         // Gagal mendaftar, tampilkan pesan kesalahan
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -79,7 +84,7 @@ class _GenderChooseState extends State<GenderChoose> {
                 return GestureDetector(
                   onTap: () {
                     setState(() {
-                      selectedGender = gender.code;
+                      selectedGender = gender.explanation;
                     });
                   },
                   child: GenderWidget(
@@ -89,62 +94,29 @@ class _GenderChooseState extends State<GenderChoose> {
                 );
               }),
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 50),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: Column(children: [
-              GestureDetector(
-              onTap: _registerUser, // Panggil fungsi registrasi saat tombol ditekan
-              child: Container(
-                height: 44,
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 10.0),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  'Daftar',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-            ),
-             SizedBox(height: 20),
-              OutlinedButton(
-                onPressed: () {
-                  Navigator.pop(
-                    context,
-                    // MaterialPageRoute(builder: (context) => Register()),
-                  );
-                },
-                style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: Theme.of(context).colorScheme.secondary),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: SizedBox(
+               padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: GestureDetector(
+                onTap: _registerUser, // Panggil fungsi registrasi saat tombol ditekan
+                child: Container(
                   height: 44,
                   width: double.infinity,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Text(
-                      'Kembali',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary,
-                        fontSize: 18,
-                      ),
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryColor,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    'Daftar',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
                     ),
                   ),
                 ),
               ),
-              ],),
-              
             )
           ],
         ),

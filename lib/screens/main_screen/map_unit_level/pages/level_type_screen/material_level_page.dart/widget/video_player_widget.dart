@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:mathgasing/core/constants/constants.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class VideoPlayer extends StatefulWidget {
@@ -35,7 +36,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
   }
 
   Future<void> _fetchVideoData() async {
-    final response = await http.get(Uri.parse('http://10.0.2.2:8000/api/getMaterialVideo'));
+    final response = await http.get(Uri.parse(baseurl +'api/getMaterialVideo'));
 
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);

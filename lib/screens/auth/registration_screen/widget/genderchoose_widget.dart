@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mathgasing/screens/auth/registration_screen/models/gender_model.dart';
+import 'package:mathgasing/core/color/color.dart';
+
 
 class GenderWidget extends StatelessWidget {
   const GenderWidget({
@@ -17,8 +19,8 @@ class GenderWidget extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(
-          color: selectedGender == gender.code ?
-            Theme.of(context).colorScheme.primary :
+          color: selectedGender == gender.explanation ?
+            AppColors.primaryColor :
             Colors.white,
         )
       ),
@@ -37,7 +39,7 @@ class GenderWidget extends StatelessWidget {
           Text(
             gender.explanation,
             style: theme.textTheme.titleMedium?.copyWith(
-              color: theme.colorScheme.primary,
+              color: AppColors.primaryColor,
               fontWeight: FontWeight.bold,
             )
           ),

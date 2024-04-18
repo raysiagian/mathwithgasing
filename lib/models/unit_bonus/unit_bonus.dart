@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:mathgasing/core/constants/constants.dart';
 import 'package:mathgasing/models/level_bonus/level_bonus.dart';
 
 class UnitBonus {
@@ -17,7 +18,7 @@ class UnitBonus {
 
  Future<List<UnitBonus>> getUnitFromAPI() async {
     try {
-      var url = Uri.parse("http://10.0.2.2:8000/api/getUnit");
+      var url = Uri.parse(baseurl +"api/getUnit");
       final response = await http.get(url, headers: {"Content-Type": "application/json"});
 
       if (response.statusCode == 200) {

@@ -17,7 +17,7 @@ class FinalScorePage extends StatelessWidget {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => Home()),
+              MaterialPageRoute(builder: (context) => Home(authToken: '',)),
             ); // Navigate back to the previous page
           },
         ),

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:mathgasing/core/constants/constants.dart';
 import 'package:mathgasing/models/unit/unit.dart';
 import 'package:mathgasing/models/unit_bonus/unit_bonus.dart';
 
@@ -33,7 +34,7 @@ class Materi {
 
 
   static Future<List<Materi>> getMateri() async {
-    var url = Uri.parse("http://10.0.2.2:8000/api/materi"); // Adjusted URL
+    var url = Uri.parse("https://mathgasing.cloud/api/getMateri"); // Adjusted URL
     final response = await http.get(url);
 
     if (response.statusCode == 200) {

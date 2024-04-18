@@ -33,7 +33,7 @@ class _MaterialLevelState extends State<MaterialLevel> {
   Future<List<MaterialVideo>> fetchMaterialVideo() async {
     try {
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/api/getMaterialVideo'),
+        Uri.parse('https://mathgasing.cloud/api/getMaterialVideo'),
       );
 
       if (response.statusCode == 200) {

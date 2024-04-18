@@ -42,6 +42,7 @@ dependencies:
   syncfusion_flutter_charts: 22.2.12
   video_player: ^2.8.5
   youtube_player_flutter: ^9.0.0
+  flutter_secure_storage: ^9.0.0
 
 dev_dependencies:
   flutter_test:

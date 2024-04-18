@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mathgasing/core/constants/constants.dart';
 import 'package:mathgasing/models/materi/materi.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/map_screen/pages/map_unit_level.dart';
 
@@ -36,7 +37,7 @@ class CardWidget extends StatelessWidget {
                   topLeft: Radius.circular(20),
                 ),
                 child: Image.network(
-                  'http://10.0.2.2:8000/storage/${materi.imageCard.replaceFirst('public/', '')}',
+                  baseurl +'storage/${materi.imageCard.replaceFirst('public/', '')}',
                   height: 150,
                   fit: BoxFit.cover,
                   width: double.infinity,

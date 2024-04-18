@@ -1,14 +1,15 @@
+// text_field_widget.dart
 
 import 'package:flutter/material.dart';
 
 class TextFieldWidget extends StatelessWidget {
   const TextFieldWidget({
-    super.key,
+    Key? key,
     required this.controller,
     required this.label,
     this.isPassword = false,
     this.validator,
-  });
+  }) : super(key: key);
 
   final TextEditingController controller;
   final String label;
@@ -21,7 +22,7 @@ class TextFieldWidget extends StatelessWidget {
       controller: controller,
       obscureText: isPassword,
       validator: (value) {
-        if(value!.isEmpty){
+        if (value!.isEmpty) {
           return 'field harus diisi';
         }
         return validator?.call(value);

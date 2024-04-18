@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:mathgasing/core/constants/constants.dart';
 
 class QuestionPostTest {
   final int id_question_posttest;
@@ -41,7 +42,7 @@ class QuestionPostTest {
 
     static Future<List<QuestionPostTest>> getQuestionFromAPI() async {
     try {
-      var url = Uri.parse("http://10.0.2.2:8000/api/questionposttest");
+      var url = Uri.parse("https://mathgasing.cloud/api/getQuestionPosttest");
       final response = await http.get(url, headers: {"Content-Type": "application/json"});
 
       if (response.statusCode == 200) {

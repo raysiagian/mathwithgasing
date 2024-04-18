@@ -1,12 +1,11 @@
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:mathgasing/core/constants/constants.dart';
 import 'dart:convert';
 import 'package:mathgasing/models/level/level.dart';
 import 'package:mathgasing/models/materi/materi.dart';
 import 'package:mathgasing/models/level_type/posttest.dart';
-import 'package:mathgasing/models/level_type/material_video.dart';
 import 'package:mathgasing/models/level_type/pretest.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/level_type_screen/material_level_page.dart/pages/material_level_page.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/level_type_screen/posttest_level_screen/pages/posttest_level_page.dart';
@@ -24,7 +23,7 @@ class LevelButtonWidget extends StatelessWidget {
 
   Future<List<PreTest>> fetchPretest() async {
   try {
-    final response = await http.get(Uri.parse('http://10.0.2.2:8000/api/getPretest'));
+    final response = await http.get(Uri.parse('https://mathgasing.cloud/api/getPretest'));
 
     if (response.statusCode == 200) {
       final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
@@ -42,7 +41,7 @@ class LevelButtonWidget extends StatelessWidget {
 
   Future<List<PostTest>> fetchPosttest() async {
   try {
-    final response = await http.get(Uri.parse('http://10.0.2.2:8000/api/getPosttest'));
+    final response = await http.get(Uri.parse('https://mathgasing.cloud/api/getPosttest'));
 
     if (response.statusCode == 200) {
       final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;

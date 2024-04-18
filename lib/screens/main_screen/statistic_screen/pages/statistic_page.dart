@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:mathgasing/core/constants/constants.dart';
 import 'package:mathgasing/models/materi/materi.dart';
 import 'dart:convert';
 
@@ -23,7 +24,7 @@ class _StatisticState extends State<Statistic> {
 
   Future<List<Materi>> fetchMateri() async {
     try {
-      final response = await http.get(Uri.parse('http://10.0.2.2:8000/api/getMateri'));
+      final response = await http.get(Uri.parse(baseurl +'api/getMateri'));
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;

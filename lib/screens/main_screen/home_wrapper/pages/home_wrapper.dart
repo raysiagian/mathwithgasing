@@ -33,7 +33,7 @@ class _HomeWrapperState extends State<HomeWrapper> {
           });
         },
         children: [
-          Home(),
+          Home(authToken: 'authToken',),
           Statistic(),
           Profile(),
         ],

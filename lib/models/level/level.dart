@@ -5,25 +5,31 @@ import 'package:http/http.dart' as http;
 class Level {
   final int id_level;
   final int level_number;
+  final int id_unit;
 
   Level({
     required this.id_level,
     required this.level_number,
+    required this.id_unit,
   });
 
-  get number => null;
+  factory Level.fromJson(Map<String, dynamic> json) {
+  return Level(
+    id_level: int.parse(json["id_level"].toString()),
+    level_number: int.parse(json["level_number"].toString()),
+    id_unit: int.parse(json["id_unit"].toString()),
+  );
+}
 
-  get id_pretest => null;
 
-  get questionsPretest => null;
-
-  Future<List<Level>> getLevel() async {
+  static Future<List<Level>> getLevels() async {
     try {
-      var url = Uri.parse("http://10.0.2.2:8000/api/level");
+      var url = Uri.parse("https://mathgasing.cloud/api/getLevel");
       final response = await http.get(url, headers: {"Content-type": "application/json"});
 
       if (response.statusCode == 200) {
-        final List<dynamic> jsonData = json.decode(response.body);
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        final List<dynamic> jsonData = responseData['data'];
         return jsonData.map((json) => Level.fromJson(json)).toList();
       } else {
         throw Exception('Failed to load levels from API');
@@ -33,20 +39,14 @@ class Level {
     }
   }
 
-  factory Level.fromJson(Map<String, dynamic> json) {
-    return Level(
-      id_level: json["id_level"] as int,
-      level_number: json["level_number"] as int,
-    );
-  }
-
   Map<String, dynamic> toJson() => {
     'id_level': id_level,
     'level_number': level_number,
+    'id_unit': id_unit,
   };
 
   @override
-  String toString(){
-    return 'Level{id_level: $id_level, level_number: $level_number}';
+  String toString() {
+    return 'Level{id_level: $id_level, level_number: $level_number, id_unit: $id_unit}';
   }
 }

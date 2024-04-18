@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:mathgasing/core/constants/constants.dart';
 import 'dart:convert';
 
 import 'package:mathgasing/models/level/level.dart';
@@ -12,7 +13,6 @@ import 'package:mathgasing/screens/main_screen/map_unit_level/pages/level_type_s
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/map_screen/widget/dialog_question_on_close_popup_widget.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/map_screen/widget/selanjutnya_button_widget.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/map_screen/widget/timer_widget.dart';
-// import 'package:mathgasing/screens/main_screen/map_unit_level/pages/level_type_screen/pretest_level_screen/pages/final_score_page.dart';
 import 'package:mathgasing/core/color/color.dart';
 
 
@@ -44,7 +44,7 @@ class _PostTestLevelState extends State<PostTestLevel> {
   @override
   void initState() {
     super.initState();
-    fetchQuestionPretest();
+    fetchQuestionPosttest();
     timerModel = TimerModel(
       durationInSeconds: 10,
       onTimerUpdate: updateTimerUI,
@@ -114,7 +114,6 @@ class _PostTestLevelState extends State<PostTestLevel> {
       });
       print("Moving to next question. Index: $index");
     } else {
-      // Pretest selesai, kirim skor ke server
       try {
         await sendScoreToServer();
       } catch (e) {
@@ -146,14 +145,14 @@ class _PostTestLevelState extends State<PostTestLevel> {
 
     // Create data to be sent in the POST request
     Map<String, dynamic> postData = {
-      'id_pretest': widget.posttest.id_posttest,
+      'id_posttest': widget.posttest.id_posttest,
       'id_level': widget.level.id_level,
       'score_posttest': totalScore,
     };
 
     // Make the HTTP POST request
     final response = await http.put(
-      Uri.parse('http://10.0.2.2:8000/api/posttest/${widget.posttest.id_posttest}/update-final-score'),
+      Uri.parse('https://mathgasing.cloud/api/posttest/${widget.posttest.id_posttest}/update-final-score'),
       body: jsonEncode(postData),
       headers: {'Content-Type': 'application/json'},
     );
@@ -196,9 +195,9 @@ class _PostTestLevelState extends State<PostTestLevel> {
     );
   }
 }
-    Future<void> fetchQuestionPretest() async {
+    Future<void> fetchQuestionPosttest() async {
     try {
-      final response = await http.get(Uri.parse('http://10.0.2.2:8000/api/getQuestionPosttest'));
+      final response = await http.get(Uri.parse('https://mathgasing.cloud/api/getQuestionPosttest'));
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;

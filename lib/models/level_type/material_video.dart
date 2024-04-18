@@ -18,7 +18,7 @@ class MaterialVideo {
 
   Future<List<MaterialVideo>> getMaterialVideo() async {
     try {
-      var url = Uri.parse("http://10.0.2.2:8000/api/getMaterialVideo");
+      var url = Uri.parse("https://mathgasing.cloud/api/getMaterialVideo");
       final response = await http.get(url, headers: {"Content-Type": "application/json"});
 
       if (response.statusCode == 200) {
@@ -38,10 +38,9 @@ class MaterialVideo {
       video_Url: json["video_Url"] as String, 
       title: json["title"] as String, 
       explanation: json["explanation"] as String,
-      id_level: json["id_level"]as int,
+      id_level: int.parse(json["id_level"]),
     );
   }
-
 
   Map<String, dynamic> toJson()=> {
     'id_material_video': id_material_video,
