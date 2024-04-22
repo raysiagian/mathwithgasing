@@ -31,7 +31,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
   Future<bool> _isEmailAvailable(String email) async {
   try {
     final response = await http.post(
-      Uri.parse(baseurl+'api/check-email-availability'),
+      Uri.parse(baseurl +'api/check-email'),
       body: jsonEncode({'email': email}),
       headers: {'Content-Type': 'application/json'},
     );

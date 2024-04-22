@@ -4,7 +4,6 @@ import 'package:mathgasing/core/constants/constants.dart';
 import 'package:mathgasing/screens/auth/login_screen/pages/login_page.dart';
 import 'package:mathgasing/screens/auth/registration_screen/models/gender_model.dart';
 import 'package:mathgasing/screens/auth/registration_screen/widget/genderchoose_widget.dart';
-import 'package:mathgasing/screens/main_screen/home_screen/pages/home_page.dart';
 import 'package:mathgasing/core/color/color.dart';
 
 
@@ -32,7 +31,7 @@ class _GenderChooseState extends State<GenderChoose> {
     try {
       // Kirim data registrasi ke backend
       var response = await http.post(
-        Uri.parse('https://mathgasing.cloud/api/register'), // Ganti dengan URL API registrasi Anda
+        Uri.parse(baseurl + 'api/register'), // Ganti dengan URL API registrasi Anda
         body: {
           'name': widget.name,
           'email': widget.email,

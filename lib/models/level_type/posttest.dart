@@ -26,7 +26,7 @@ class PostTest {
   }
 
     static Future<List<PostTest>>getPosttest()async{
-    var url = Uri.parse("https://mathgasing.cloud/api/getPosttest"); // Adjusted URL
+    var url = Uri.parse(baseurl + "api/getPosttest"); // Adjusted URL
     final response = await http.get(url);
 
     if (response.statusCode == 200) {

@@ -16,10 +16,42 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
+  //  late Future<String> _usernameFuture;
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _usernameFuture = fetchUsername(widget.authToken);
+  // }
+
+  // Future<String> fetchUsername(String authToken) async {
+  //   try {
+  //     final response = await http.get(
+  //       Uri.parse(baseurl+'api/username'),
+  //       headers: {
+  //         'Authorization': 'Bearer $authToken',
+  //         'Content-Type': 'application/json',
+  //         'Accept': 'application/json',
+  //       },
+  //     );
+
+  //     if (response.statusCode == 200) {
+  //       final jsonData = jsonDecode(response.body);
+  //       final username = jsonData['name'];
+  //       return username;
+  //     } else {
+  //       throw Exception('Failed to fetch username: ${response.headers}');
+  //     }
+  //   } catch (e) {
+  //     throw Exception('Error fetching name: $e');
+  //   }
+  // }
+
  
   Future<List<Materi>> fetchMateri() async {
     try {
-      final response = await http.get(Uri.parse('https://mathgasing.cloud/api/getMateri'));
+      final response = await http.get(Uri.parse(baseurl + 'api/getMateri'));
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
@@ -36,6 +68,29 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
+      // appBar: AppBar(
+      //   title: FutureBuilder<String>(
+      //     future: _usernameFuture,
+      //     builder: (context, snapshot) {
+      //       if (snapshot.connectionState == ConnectionState.waiting) {
+      //         return const Text('Loading...');
+      //       } else if (snapshot.hasError) {
+      //         return Text('Error fetching username: ${snapshot.error}');
+      //       } else {
+      //         final name = snapshot.data!;
+      //         return Text(
+      //           'Welcome, $name',
+      //           style: TextStyle(
+      //             color: Theme.of(context).primaryColor,
+      //           ),
+      //         );
+      //       }
+      //     },
+      //   ),
+      //   backgroundColor: Colors.white,
+      //   centerTitle: true,
+      // ),
+
       appBar: AppBar(
         title: Text(
           'Selamat Datang',

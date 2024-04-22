@@ -15,9 +15,8 @@ import 'package:mathgasing/screens/main_screen/map_unit_level/pages/map_screen/w
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/map_screen/widget/timer_widget.dart';
 import 'package:mathgasing/core/color/color.dart';
 
-
 class PostTestLevel extends StatefulWidget {
-    const PostTestLevel({
+  const PostTestLevel({
     Key? key,
     required this.level,
     required this.materi,
@@ -41,10 +40,27 @@ class _PostTestLevelState extends State<PostTestLevel> {
   late List<QuestionPostTest> questions = [];
   String? selectedOption;
 
-  @override
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   questions = [];
+  //   fetchQuestionPostTest().then((value) {
+  //     setState(() {
+  //       questions = value;
+  //     });
+  //   });
+  //   timerModel = TimerModel(
+  //     durationInSeconds: 10,
+  //     onTimerUpdate: updateTimerUI,
+  //     onTimerFinish: timerFinishAction,
+  //   );
+  //   timerModel.startTimer();
+  // }
+
+    @override
   void initState() {
     super.initState();
-    fetchQuestionPosttest();
+    fetchQuestionPostTest();
     timerModel = TimerModel(
       durationInSeconds: 10,
       onTimerUpdate: updateTimerUI,
@@ -57,7 +73,7 @@ class _PostTestLevelState extends State<PostTestLevel> {
     setState(() {});
   }
 
-    void timerFinishAction() async {
+  void timerFinishAction() async {
     timerModel.dispose();
     await Future.delayed(Duration(seconds: 1));
     moveToNextQuestion();
@@ -67,13 +83,30 @@ class _PostTestLevelState extends State<PostTestLevel> {
     moveToNextQuestion();
   }
 
-    void setSelectedOption(String option) {
+  void setSelectedOption(String option) {
     setState(() {
       selectedOption = option;
       final currentQuestion = questions[index];
       checkAnswer(currentQuestion, selectedOption);
     });
   }
+
+  // void checkAnswer(QuestionPostTest currentQuestion, String? selectedOption) {
+  //   if (selectedOption != null) {
+  //     if (selectedOption == currentQuestion.correct_index) {
+  //       increaseScore();
+  //       print("Correct answer! Score increased by 10. Total Score: $totalScore");
+  //     } else {
+  //       print("Wrong answer. Total Score: $totalScore");
+  //     }
+  //     // Reset selected option after checking the answer
+  //     setState(() {
+  //       selectedOption = null;
+  //     });
+  //   } else {
+  //     print("No answer given. Total Score: $totalScore");
+  //   }
+  // }
 
   void checkAnswer(QuestionPostTest currentQuestion, String? selectedOption) {
     if (selectedOption != null) {
@@ -92,13 +125,15 @@ class _PostTestLevelState extends State<PostTestLevel> {
     }
   }
 
+
+
   void increaseScore() {
     setState(() {
       totalScore += 10;
     });
   }
 
-   void moveToNextQuestion() async {
+  void moveToNextQuestion() async {
     if (index < questions.length - 1) {
       setState(() {
         index++;
@@ -139,53 +174,140 @@ class _PostTestLevelState extends State<PostTestLevel> {
       }
     }
   }
+
   Future<void> sendScoreToServer() async {
+    try {
+      print('Sending score to server...');
+
+      // Create data to be sent in the POST request
+      Map<String, dynamic> postData = {
+        'id_posttest': widget.posttest.id_posttest,
+        'id_level': widget.level.id_level,
+        'score_posttest': totalScore,
+      };
+
+      // Make the HTTP POST request
+      final response = await http.put(
+        Uri.parse(baseurl + 'api/posttest/${widget.posttest.id_posttest}/update-final-score'),
+        body: jsonEncode(postData),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      print('Request URL: ${response.request?.url}');
+      // print('Request Data: ${jsonEncode(postData)}');
+
+      if (response.statusCode == 200) {
+        // Handle successful response
+        print('Score successfully saved.');
+        // Navigate to the final score page
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => FinalScorePosttest(score_posttest: totalScore, materi: widget.materi),
+          ),
+        );
+      } else {
+        // Handle error response
+        throw Exception('Failed to save score. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle exceptions
+      print('Error: $e');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Error'),
+            content: Text('Failed to save score. Please try again later.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
+  // Future<List<QuestionPostTest>> fetchQuestionPretest() async {
+  //   try {
+  //     final response = await http
+  //         .get(Uri.parse('https://mathgasing.cloud/api/getQuestionPosttest'));
+
+  //     if (response.statusCode == 200) {
+  //       final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
+  //       return jsonData.map((e) => QuestionPostTest.fromJson(e)).toList();
+  //     } else {
+  //       throw Exception('Failed to load questions');
+  //     }
+  //   } catch (e) {
+  //     print(e.toString());
+  //     return [];
+  //   }
+  // }
+
+//   Future<List<QuestionPostTest>> fetchQuestionPostTest() async {
+//   try {
+//     final response = await http
+//         .get(Uri.parse('https://mathgasing.cloud/api/getQuestionPosttest'));
+
+//     if (response.statusCode == 200) {
+//       final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
+//       final questions = jsonData.map((e) => QuestionPostTest.fromJson(e)).toList();
+      
+//       // Cetak pertanyaan yang diterima
+//       print('Pertanyaan yang diterima:');
+//       questions.forEach((question) {
+//         print(question); // atau print(question.toJson()) tergantung pada struktur data QuestionPostTest
+//       });
+      
+//       return questions;
+//     } else {
+//       throw Exception('Failed to load questions');
+//     }
+//   } catch (e) {
+//     print(e.toString());
+//     return [];
+//   }
+// }
+
+Future<void> fetchQuestionPostTest() async {
   try {
-    print('Sending score to server...');
-
-    // Create data to be sent in the POST request
-    Map<String, dynamic> postData = {
-      'id_posttest': widget.posttest.id_posttest,
-      'id_level': widget.level.id_level,
-      'score_posttest': totalScore,
-    };
-
-    // Make the HTTP POST request
-    final response = await http.put(
-      Uri.parse('https://mathgasing.cloud/api/posttest/${widget.posttest.id_posttest}/update-final-score'),
-      body: jsonEncode(postData),
-      headers: {'Content-Type': 'application/json'},
-    );
-
-    print('Request URL: ${response.request?.url}');
-    print('Request Data: ${jsonEncode(postData)}');
+    final response = await http.get(Uri.parse('https://mathgasing.cloud/api/getQuestionPosttest'));
 
     if (response.statusCode == 200) {
-      // Handle successful response
-      print('Score successfully saved.');
-      // Navigate to the final score page
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => FinalScorePosttest(score_posttest: totalScore, materi: widget.materi),
-        ),
-      );
+      final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
+      print('Response Data: $jsonData'); // Menampilkan data yang diterima dari respons API
+
+      // Debugging: Menampilkan pertanyaan dari respons API
+      for (var i = 0; i < jsonData.length; i++) {
+        final questionData = jsonData[i];
+        final question = QuestionPostTest.fromJson(questionData);
+        print('Question ${i + 1}: ${question.question}');
+      }
+
+      setState(() {
+        questions = jsonData.map((e) => QuestionPostTest.fromJson(e)).toList();
+      });
     } else {
-      // Handle error response
-      throw Exception('Failed to save score. Status code: ${response.statusCode}');
+      throw Exception('Failed to load questions');
     }
   } catch (e) {
-    // Handle exceptions
     print('Error: $e');
+    // Tampilkan pesan kesalahan jika gagal memuat pertanyaan
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: Text('Error'),
-          content: Text('Failed to save score. Please try again later.'),
+          content: Text('Failed to load questions'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(dialogContext).pop();
               },
               child: Text('OK'),
             ),
@@ -195,22 +317,6 @@ class _PostTestLevelState extends State<PostTestLevel> {
     );
   }
 }
-    Future<void> fetchQuestionPosttest() async {
-    try {
-      final response = await http.get(Uri.parse('https://mathgasing.cloud/api/getQuestionPosttest'));
-
-      if (response.statusCode == 200) {
-        final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
-        setState(() {
-          questions = jsonData.map((e) => QuestionPostTest.fromJson(e)).toList();
-        });
-      } else {
-        throw Exception('Failed to load questions');
-      }
-    } catch (e) {
-      print(e.toString());
-    }
-  }
 
 
 
@@ -277,7 +383,7 @@ class _PostTestLevelState extends State<PostTestLevel> {
               )
             : ElevatedButton(
                 onPressed: pertanyaanSelanjutnya,
-                child:Container(
+                child: Container(
                   height: 44,
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -296,7 +402,6 @@ class _PostTestLevelState extends State<PostTestLevel> {
                 ),
               ),
       ),
-
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }

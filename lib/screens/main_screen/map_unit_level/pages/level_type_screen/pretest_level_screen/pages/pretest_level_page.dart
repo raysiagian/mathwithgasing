@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:mathgasing/core/constants/constants.dart';
 import 'dart:convert';
 
 import 'package:mathgasing/models/level/level.dart';
@@ -155,7 +156,7 @@ class _PreTestLevelState extends State<PreTestLevel> {
 
     // Make the HTTP POST request
     final response = await http.put(
-      Uri.parse('https://mathgasing.cloud/api/pretest/${widget.pretest.id_pretest}/update-final-score'),
+      Uri.parse(baseurl + 'api/pretest/${widget.pretest.id_pretest}/update-final-score'),
       body: jsonEncode(postData),
       headers: {'Content-Type': 'application/json'},
     );

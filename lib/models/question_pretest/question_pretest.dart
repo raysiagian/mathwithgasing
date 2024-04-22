@@ -43,7 +43,7 @@ class QuestionPretest {
 
   static Future<List<QuestionPretest>> getQuestionFromAPI() async {
     try {
-      var url = Uri.parse("https://mathgasing.cloud/api/getQuestionPretest");
+      var url = Uri.parse(baseurl + "api/getQuestionPretest");
       final response = await http.get(url, headers: {"Content-Type": "application/json"});
 
       if (response.statusCode == 200) {

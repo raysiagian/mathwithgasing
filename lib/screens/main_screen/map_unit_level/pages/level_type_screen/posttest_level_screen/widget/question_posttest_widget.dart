@@ -17,10 +17,10 @@ class QuestionPostTestWidget extends StatefulWidget {
   final Function(String) onOptionSelected;
 
   @override
-  _QuestionPostTestWidget createState() => _QuestionPostTestWidget();
+  _QuestionPostTestWidgetState createState() => _QuestionPostTestWidgetState();
 }
 
-class _QuestionPostTestWidget extends State<QuestionPostTestWidget> {
+class _QuestionPostTestWidgetState extends State<QuestionPostTestWidget> {
   late String selectedOption;
 
   @override

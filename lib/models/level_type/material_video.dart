@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:mathgasing/core/constants/constants.dart';
 
 class MaterialVideo {
   final int id_material_video;
@@ -18,7 +19,7 @@ class MaterialVideo {
 
   Future<List<MaterialVideo>> getMaterialVideo() async {
     try {
-      var url = Uri.parse("https://mathgasing.cloud/api/getMaterialVideo");
+      var url = Uri.parse(baseurl + "api/getMaterialVideo");
       final response = await http.get(url, headers: {"Content-Type": "application/json"});
 
       if (response.statusCode == 200) {

@@ -19,7 +19,7 @@ class Unit {
 
   Future<List<Unit>> getUnit() async {
     try {
-      var url = Uri.parse("https://mathgasing.cloud/api/getUnit");
+      var url = Uri.parse(baseurl + "api/getUnit");
       final response = await http.get(url, headers: {"Content-Type": "application/json"});
 
       if (response.statusCode == 200) {

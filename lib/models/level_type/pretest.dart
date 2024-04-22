@@ -26,7 +26,7 @@ class PreTest {
 }
 
   static Future<List<PreTest>>getPretest()async{
-    var url = Uri.parse("https://mathgasing.cloud/api/getPretest"); // Adjusted URL
+    var url = Uri.parse(baseurl + "api/getPretest"); // Adjusted URL
     final response = await http.get(url);
 
     if (response.statusCode == 200) {

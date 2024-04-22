@@ -34,7 +34,7 @@ class Materi {
 
 
   static Future<List<Materi>> getMateri() async {
-    var url = Uri.parse("https://mathgasing.cloud/api/getMateri"); // Adjusted URL
+    var url = Uri.parse(baseurl + "api/getMateri"); // Adjusted URL
     final response = await http.get(url);
 
     if (response.statusCode == 200) {

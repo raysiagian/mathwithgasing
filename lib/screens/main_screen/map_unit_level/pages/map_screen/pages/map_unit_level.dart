@@ -33,7 +33,7 @@ class MapUnitLevel extends StatelessWidget {
   Future<List<Unit>> fetchUnit() async {
     try {
       final response = await http.get(
-        Uri.parse('https://mathgasing.cloud/api/getUnit'), // Updated endpoint
+        Uri.parse(baseurl + 'api/getUnit'), // Updated endpoint
       );
 
       if (response.statusCode == 200) {

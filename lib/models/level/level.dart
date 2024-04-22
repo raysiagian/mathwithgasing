@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:mathgasing/core/constants/constants.dart';
 
 class Level {
   final int id_level;
@@ -24,7 +25,7 @@ class Level {
 
   static Future<List<Level>> getLevels() async {
     try {
-      var url = Uri.parse("https://mathgasing.cloud/api/getLevel");
+      var url = Uri.parse(baseurl + "api/getLevel");
       final response = await http.get(url, headers: {"Content-type": "application/json"});
 
       if (response.statusCode == 200) {
