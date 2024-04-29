@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mathgasing/models/materi/materi.dart';
 import 'package:mathgasing/screens/main_screen/statistic_screen/widget/chart_widget.dart';
+import 'package:mathgasing/screens/main_screen/statistic_screen/widget/table_widget.dart';
 
 class StatisticDetail extends StatefulWidget {
   const StatisticDetail({
@@ -45,9 +46,9 @@ class _StatisticDetailState extends State<StatisticDetail> {
       body: Stack(children: [
         Column(
           children: [
-            // ChartWidget(),    
-          ],
-        )
+            // ChartWidget(),
+            TableWidget()
+          ],),
       ],),
     );
   }

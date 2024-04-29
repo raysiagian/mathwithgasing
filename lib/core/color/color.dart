@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class AppColors {
   static const int _primaryValue = 0xFF228DEA;
   static const int _mySecondaryValue = 0xFF6193C1;
+  static const int _logoutValue = 0xFFF03A55;
 
   static const MaterialColor primaryColor = MaterialColor(
     _primaryValue,
@@ -36,5 +37,14 @@ class AppColors {
       900: Color(0xFF2A4980),
     },
   );
+
+  
+
+static const MaterialColor logoutColor = MaterialColor(
+  _logoutValue,
+  <int, Color>{
+    500: Color(_logoutValue),
+  },
+);
 
 }

@@ -212,7 +212,7 @@ class _PreTestLevelState extends State<PreTestLevel> {
         });
       } else {
         throw Exception('Failed to load questions');
-      }
+      } 
     } catch (e) {
       print(e.toString());
     }
@@ -222,6 +222,7 @@ class _PreTestLevelState extends State<PreTestLevel> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(

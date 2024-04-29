@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:mathgasing/core/color/color.dart';
 import 'package:mathgasing/core/constants/constants.dart';
 import 'dart:convert';
 import 'package:mathgasing/models/materi/materi.dart';
@@ -72,10 +73,15 @@ class MapUnitLevel extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(materi.title),
+        title: Text(materi.title,
+         style: TextStyle(
+            color: Theme.of(context).primaryColor,
+        ),),
         automaticallyImplyLeading: false,
+        backgroundColor: Colors.white,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back_ios,
+          color: AppColors.primaryColor,),
           // onPressed: () {
           //   Navigator.pop(context);
           // }
