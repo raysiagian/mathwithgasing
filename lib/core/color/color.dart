@@ -4,6 +4,7 @@ class AppColors {
   static const int _primaryValue = 0xFF228DEA;
   static const int _mySecondaryValue = 0xFF6193C1;
   static const int _logoutValue = 0xFFF03A55;
+  static const int _greenValue = 0xFF20A612;
 
   static const MaterialColor primaryColor = MaterialColor(
     _primaryValue,
@@ -44,6 +45,14 @@ static const MaterialColor logoutColor = MaterialColor(
   _logoutValue,
   <int, Color>{
     500: Color(_logoutValue),
+  },
+);
+
+
+static const MaterialColor greenColor = MaterialColor(
+  _greenValue,
+  <int, Color>{
+    500: Color(_greenValue),
   },
 );
 

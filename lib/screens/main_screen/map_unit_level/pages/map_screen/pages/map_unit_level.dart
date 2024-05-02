@@ -111,7 +111,7 @@ class MapUnitLevel extends StatelessWidget {
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(
-                      child: CircularProgressIndicator(), // or any loading indicator
+                      child: CircularProgressIndicator(),
                     );
                   }else{
                     if (snapshot.hasData && snapshot.data!.isNotEmpty){

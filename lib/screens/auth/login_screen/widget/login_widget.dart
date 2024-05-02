@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mathgasing/core/constants/constants.dart';
 import 'package:mathgasing/screens/auth/registration_screen/pages/registration_page.dart';
 import 'package:mathgasing/screens/main_screen/home_wrapper/pages/home_wrapper.dart';
@@ -38,6 +39,8 @@ class _LoginWidgetState extends State<LoginWidget> {
         final responseData = json.decode(response.body);
         final authToken = responseData['token'];
         final refreshToken = responseData['refresh_token'];
+        final token = responseData['token'];
+        await _saveToken(token);
         
         // Simpan token
         await storage.write(key: 'access_token', value: authToken);
@@ -73,6 +76,32 @@ class _LoginWidgetState extends State<LoginWidget> {
       }
     }
   }
+
+    Future<void> _saveToken(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('token', token);
+  }
+
+  Future<String?> _getToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token');
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Cek apakah token sudah ada saat inisialisasi widget
+    _getToken().then((token) {
+      if (token != null) {
+        // Token sudah ada, beralih ke halaman beranda
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomeWrapper()),
+        );
+      }
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {

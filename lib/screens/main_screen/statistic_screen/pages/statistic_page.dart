@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mathgasing/core/constants/constants.dart';
 import 'package:mathgasing/models/materi/materi.dart';
+import 'package:mathgasing/screens/main_screen/statistic_screen/widget/leaderboard_table_widget.dart';
 import 'dart:convert';
 
 import 'package:mathgasing/screens/main_screen/statistic_screen/widget/statistic_widget.dart';
@@ -67,39 +68,43 @@ class _StatisticState extends State<Statistic> {
               ),
             ),
           ),
-          FutureBuilder<List<Materi>>(
-            future: futureMateri,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              } else {
-                final materiList = snapshot.data!;
-                return LayoutBuilder(
-                  builder: (context, constraints) {
-                    return SingleChildScrollView(
+          Column(
+            children: [
+              // Leaderboard
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    Container(
+                                            padding: EdgeInsets.all(15),
+                      color: Colors.white,
+                    ),
+
+
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal:16),
+                      color: Colors.white,
                       child: Column(
                         children: [
-                          SizedBox(
-                            height: constraints.maxHeight * .6,
-                            child: GridView.count(
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              crossAxisCount: 2,
-                              crossAxisSpacing: 4,
-                              mainAxisSpacing: 2,
-                              children: materiList.map((materi) => StatisticWidget(materi: materi)).toList(),
+                          Text(
+                            "Leaderboard",
+                            style: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                              fontSize: 20,
                             ),
                           ),
+                          LeaderboardTableWidget(),
                         ],
-                      ),
-                    );
-                  },
-                );
-              }
-            },
-          ),
+                      )
+                    ),
+                  ],
+                ),
+              ),
+
+              SizedBox(height: 15,),
+
+            ],
+          )
         ],
       ),
     );

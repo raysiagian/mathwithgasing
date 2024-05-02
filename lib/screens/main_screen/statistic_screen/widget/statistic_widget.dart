@@ -20,8 +20,8 @@ class StatisticWidget extends StatelessWidget {
         }));
       },
       child: Container(
-        height: 160,
-        width: 160,
+        height: 130,
+        width: 130,
         child: Image.network(
          baseurl +'storage/${materi.imageStatistic.replaceFirst('public/', '')}',
           fit: BoxFit.cover,

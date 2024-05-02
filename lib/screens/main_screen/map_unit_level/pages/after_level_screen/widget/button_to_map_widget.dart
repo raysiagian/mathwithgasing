@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mathgasing/core/color/color.dart';
 import 'package:mathgasing/models/materi/materi.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/map_screen/pages/map_unit_level.dart';
 
@@ -27,7 +28,7 @@ class BackToMap extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 10.0),
         decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
+          color: AppColors.greenColor,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Text(
