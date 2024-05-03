@@ -28,11 +28,11 @@ class _LenacanaPageState extends State<LenacanaPage> {
           //   Navigator.pop(context);
           // }
           onPressed: () {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) =>Profile()),
-              (route) => false,
-            );
+            Navigator.pop(context);
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(builder: (context) =>Profile()),
+            // );
           },
         ),
       ),
