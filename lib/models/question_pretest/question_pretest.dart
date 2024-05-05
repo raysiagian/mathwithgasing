@@ -10,6 +10,7 @@ class QuestionPretest {
   final String option_3;
   final String option_4;
   final String correct_index;
+  final int id_pretest;
 
   QuestionPretest({
     required this.id_question_pretest,
@@ -19,6 +20,8 @@ class QuestionPretest {
     required this.option_3,
     required this.option_4,
     required this.correct_index,
+    required this.id_pretest,
+
   }) : options = {
     'option_1': option_1,
     'option_2': option_2,
@@ -38,27 +41,12 @@ class QuestionPretest {
       option_3: json['option_3'] as String,
       option_4: json['option_4'] as String,
       correct_index: json['correct_index'] as String,
+      id_pretest: json['id_pretest'] as int,
     );
-  }
-
-  static Future<List<QuestionPretest>> getQuestionFromAPI() async {
-    try {
-      var url = Uri.parse(baseurl + "api/getQuestionPretest");
-      final response = await http.get(url, headers: {"Content-Type": "application/json"});
-
-      if (response.statusCode == 200) {
-        final List<dynamic> jsonData = json.decode(response.body);
-        return jsonData.map((json) => QuestionPretest.fromJson(json)).toList();
-      } else {
-        throw Exception('Failed to load questions from API');
-      }
-    } catch (e) {
-      throw Exception('Error fetching questions: $e');
-    }
   }
    
   @override
   String toString() {
-    return 'Question(id_question_prestest: $id_question_pretest, question: $question, option_1: $option_1, option_2: $option_2, option_3: $option_3, option_4: $option_4, correct_index: $correct_index)';
+    return 'Question(id_question_prestest: $id_question_pretest, question: $question, option_1: $option_1, option_2: $option_2, option_3: $option_3, option_4: $option_4, correct_index: $correct_index, id_pretest: $id_pretest)';
   }
 }

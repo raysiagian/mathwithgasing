@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mathgasing/core/constants/constants.dart';
@@ -22,85 +21,40 @@ class LevelButtonWidget extends StatelessWidget {
   final Materi materi;
 
   Future<List<PreTest>> fetchPretest() async {
-  try {
-    final response = await http.get(Uri.parse('https://mathgasing.cloud/api/getPretest'));
+    try {
+      final response = await http.get(Uri.parse(baseurl + 'api/getPretest?id_level=${level.id_level}'));
 
-    if (response.statusCode == 200) {
-      final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
-      print(jsonData);
-      return jsonData.map((e) => PreTest.fromJson(e)).toList();
-    } else {
-      throw Exception('${response.headers}');
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
+        print(jsonData);
+        return jsonData.map((e) => PreTest.fromJson(e)).toList();
+      } else {
+        throw Exception('${response.headers}');
+      }
+    } catch (e) {
+      print(e.toString());
+      return [];
     }
-  } catch (e) {
-    print(e.toString());
-    return [];
   }
-}
-
 
   Future<List<PostTest>> fetchPosttest() async {
-  try {
-    final response = await http.get(Uri.parse('https://mathgasing.cloud/api/getPosttest'));
+    try {
+      final response = await http.get(Uri.parse(baseurl + 'api/getPosttest?id_level=${level.id_level}'));
 
-    if (response.statusCode == 200) {
-      final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
-      print(jsonData);
-      return jsonData.map((e) => PostTest.fromJson(e)).toList();
-    } else {
-      throw Exception('${response.headers}');
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
+        print(jsonData);
+        return jsonData.map((e) => PostTest.fromJson(e)).toList();
+      } else {
+        throw Exception('${response.headers}');
+      }
+    } catch (e) {
+      print(e.toString());
+      return [];
     }
-  } catch (e) {
-    print(e.toString());
-    return [];
   }
-}
 
-// Future<List<PreTest>> fetchPretest() async {
-//   try {
-//     final response = await http.get(Uri.parse('http://10.0.2.2:8000/api/getPretest'));
-
-//     print('Response received from server:');
-//     print('Status Code: ${response.statusCode} - ${getStatusCodeMessage(response.statusCode)}');
-
-//     if (response.statusCode == 200) {
-//       final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
-//       print(jsonData);
-//       return jsonData.map((e) => PreTest.fromJson(e)).toList();
-//     } else {
-//       throw Exception('Failed to fetch pretest. Response code: ${response.statusCode}');
-//     }
-//   } catch (e) {
-//     print(e.toString());
-//     return [];
-//   }
-// }
-
-// String getStatusCodeMessage(int statusCode) {
-//   switch (statusCode) {
-//     case 200:
-//       return 'OK';
-//     case 201:
-//       return 'Created';
-//     case 204:
-//       return 'No Content';
-//     case 400:
-//       return 'Bad Request';
-//     case 401:
-//       return 'Unauthorized';
-//     case 403:
-//       return 'Forbidden';
-//     case 404:
-//       return 'Not Found';
-//     case 500:
-//       return 'Internal Server Error';
-//     default:
-//       return 'Unknown';
-//   }
-// }
-
-
-@override
+  @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () async {

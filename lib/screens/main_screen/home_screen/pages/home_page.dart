@@ -21,7 +21,7 @@ class _HomeState extends State<Home> {
   late String _token;
   User? _loggedInUser;
 
-    @override
+  @override
   void initState() {
     super.initState();
     _loadTokenAndFetchUser(); // Panggil metode untuk memuat token dan pengguna
@@ -47,7 +47,7 @@ class _HomeState extends State<Home> {
     Future<User> fetchUser(String token) async {
     try {
       final response = await http.get(
-        Uri.parse('https://mathgasing.cloud/api/user'),
+        Uri.parse(baseurl+'api/user'),
         headers: {
           'Authorization': 'Bearer $token',
         },

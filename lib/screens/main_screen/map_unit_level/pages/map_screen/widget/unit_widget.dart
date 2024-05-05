@@ -22,7 +22,7 @@ class UnitWidget extends StatelessWidget {
   Future<List<Level>> fetchLevel() async {
     try {
       final response = await http.get(
-        Uri.parse('https://mathgasing.cloud/api/getLevel'), // Updated endpoint
+        Uri.parse(baseurl + 'api/getLevel?id_unit=${unit.id_unit}'), // Updated endpoint
       );
 
       if (response.statusCode == 200) {

@@ -203,10 +203,12 @@ class _PreTestLevelState extends State<PreTestLevel> {
 
   Future<void> fetchQuestionPretest() async {
     try {
-      final response = await http.get(Uri.parse('https://mathgasing.cloud/api/getQuestionPretest'));
+      final response = await http.get(
+        Uri.parse(baseurl + 'api/getQuestionPretest?id_pretest=${widget.pretest.id_pretest}'),
+      );
 
       if (response.statusCode == 200) {
-        final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
+       final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
         setState(() {
           questions = jsonData.map((e) => QuestionPretest.fromJson(e)).toList();
         });

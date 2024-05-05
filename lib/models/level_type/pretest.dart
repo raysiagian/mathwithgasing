@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:mathgasing/core/constants/constants.dart';
 import 'package:mathgasing/models/question_pretest/question_pretest.dart';
 
 class PreTest {
@@ -19,23 +16,11 @@ class PreTest {
   factory PreTest.fromJson(Map<String, dynamic> json){
   return PreTest(
     id_pretest: json["id_pretest"] as int, 
-    id_level: int.parse(json["id_level"]), // Parse id_level as an integer
+    id_level: json["id_level"] as int,
     questionsPretest: [], 
     // score_pretest: json["score_pretest"] as int?,
   );
 }
-
-  static Future<List<PreTest>>getPretest()async{
-    var url = Uri.parse(baseurl + "api/getPretest"); // Adjusted URL
-    final response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      final List<dynamic> body = json.decode(response.body)["data"];
-      return body.map((dynamic item) => PreTest.fromJson(item)).toList();
-      } else {
-        throw Exception('${response.statusCode}');
-    }
-  }
 
   Map<String, dynamic> toJson()=> {
     'id_pretest': id_pretest,

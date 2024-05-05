@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:mathgasing/core/constants/constants.dart';
 import 'package:mathgasing/models/level/level.dart';
 import 'package:mathgasing/models/level_type/material_video.dart';
 import 'package:mathgasing/models/materi/materi.dart';
@@ -33,7 +34,7 @@ class _MaterialLevelState extends State<MaterialLevel> {
   Future<List<MaterialVideo>> fetchMaterialVideo() async {
     try {
       final response = await http.get(
-        Uri.parse('https://mathgasing.cloud/api/getMaterialVideo'),
+         Uri.parse(baseurl + 'api/getMaterialVideo?id_level=${widget.level.id_level}'),
       );
 
       if (response.statusCode == 200) {

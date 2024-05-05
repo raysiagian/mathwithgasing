@@ -32,19 +32,6 @@ class Materi {
     );
   }
 
-
-  static Future<List<Materi>> getMateri() async {
-    var url = Uri.parse(baseurl + "api/getMateri"); // Adjusted URL
-    final response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      final List<dynamic> body = json.decode(response.body)["data"];
-      return body.map((dynamic item) => Materi.fromJson(item)).toList();
-    } else {
-      throw Exception('Failed to load materi');
-    }
-  }
-
   Map<String, dynamic> toJson() => {
     'id_materi': id_materi,
     'title': title,

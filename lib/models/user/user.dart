@@ -17,47 +17,7 @@ class User {
     // required this.createdAt,
     // this.updatedAt,
   });
-
-  static Future<List<User>> fetchUser() async {
-    try {
-      final response = await http.get(
-        Uri.parse(baseurl +'api/getUser'),
-      );
-
-      if (response.statusCode == 200) {
-        final jsonData = jsonDecode(response.body);
-
-        if (jsonData != null) {
-          if (jsonData is List) {
-            return jsonData.map((e) => User.fromJson(e)).toList();
-          } else if (jsonData is Map<String, dynamic>) {
-            if (jsonData.containsKey('data')) {
-              final userData = jsonData['data'];
-              if (userData != null) {
-                if (userData is List) {
-                  return userData.map((e) => User.fromJson(e)).toList();
-                } else {
-                  return [User.fromJson(userData)];
-                }
-              } else {
-                throw Exception('Null user data received from API');
-              }
-            } else {
-              throw Exception('Missing "data" key in API response');
-            }
-          } else {
-            throw Exception('Unexpected data format');
-          }
-        } else {
-          throw Exception('Null JSON data received from API');
-        }
-      } else {
-        throw Exception('Failed to load users from API: ${response.reasonPhrase}');
-      }
-    } catch (e) {
-      throw Exception('Error fetching users: $e');
-    }
-  }
+  
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       id_user: json['id_user'],

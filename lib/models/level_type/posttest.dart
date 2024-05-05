@@ -19,23 +19,12 @@ class PostTest {
   factory PostTest.fromJson(Map<String, dynamic> json){
     return PostTest(
       id_posttest: json["id_posttest"] as int, 
-      id_level: int.parse(json["id_level"]),
+      id_level: json["id_level"] as int,
       questionsPosttest: [],
       // score_pretest: json["score_pretest"] as int?,
     );
   }
 
-    static Future<List<PostTest>>getPosttest()async{
-    var url = Uri.parse(baseurl + "api/getPosttest"); // Adjusted URL
-    final response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      final List<dynamic> body = json.decode(response.body)["data"];
-      return body.map((dynamic item) => PostTest.fromJson(item)).toList();
-      } else {
-        throw Exception('${response.statusCode}');
-    }
-  }
 
   Map<String, dynamic> toJson()=> {
     'id_posttest': id_posttest,

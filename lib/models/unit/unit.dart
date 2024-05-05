@@ -17,22 +17,6 @@ class Unit {
     required this.levels,
   });
 
-  Future<List<Unit>> getUnit() async {
-    try {
-      var url = Uri.parse(baseurl + "api/getUnit");
-      final response = await http.get(url, headers: {"Content-Type": "application/json"});
-
-      if (response.statusCode == 200) {
-        final List<dynamic> jsonData = json.decode(response.body);
-        return jsonData.map((json) => Unit.fromJson(json)).toList();
-      } else {
-        throw Exception('Failed to load units from API');
-      }
-    } catch (e) {
-      throw Exception('Error fetching units: $e');
-    }
-  }
-
   factory Unit.fromJson(Map<String, dynamic> json) {
     return Unit(
       id_unit: json["id_unit"] as int,

@@ -1,8 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mathgasing/models/user/user.dart';
 
 class ProfileData extends StatelessWidget {
-  const ProfileData({super.key});
+
+  final User user;
+
+  const ProfileData({
+    super.key,
+    required this.user,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +21,7 @@ class ProfileData extends StatelessWidget {
                 padding: EdgeInsets.only(left: 16.0),
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Player Name',
+                  user.name,
                   style: TextStyle(
                     color: Theme.of(context).primaryColor,
                     fontWeight: FontWeight.bold,
@@ -23,7 +30,7 @@ class ProfileData extends StatelessWidget {
                   textAlign: TextAlign.left,
                 ),
               ),
-              SizedBox(height: 10,),
+              SizedBox(height: 5,),
               Container(
                 padding: EdgeInsets.only(left: 16.0),
                 child: Row(
@@ -59,7 +66,7 @@ class ProfileData extends StatelessWidget {
                             ),
                             SizedBox(width: 5),
                             Text(
-                              "user@gmail.com",
+                              user.email,
                               style: TextStyle(
                                 fontSize: 16,
                               ),
@@ -71,7 +78,9 @@ class ProfileData extends StatelessWidget {
                     Container(
                       alignment: Alignment.centerRight,
                       child: Image.asset(
-                        "assets/images/icon_profile man.png",
+                        user.gender == 'laki-laki' ? "assets/images/icon_profile man.png" :
+                        user.gender == 'perempuan' ? "assets/images/icon_profile woman.png" :
+                        "assets/images/icon_profile_man.png",
                         width: 100,
                         height: 100,
                       ),

@@ -17,21 +17,6 @@ class MaterialVideo {
     required this.id_level,
   });
 
-  Future<List<MaterialVideo>> getMaterialVideo() async {
-    try {
-      var url = Uri.parse(baseurl + "api/getMaterialVideo");
-      final response = await http.get(url, headers: {"Content-Type": "application/json"});
-
-      if (response.statusCode == 200) {
-        final List<dynamic> jsonData = json.decode(response.body);
-        return jsonData.map((json) => MaterialVideo.fromJson(json)).toList();
-      } else {
-        throw Exception('Failed to load units from API');
-      }
-    } catch (e) {
-      throw Exception('Error fetching material videos: $e');
-    }
-  }
 
   factory MaterialVideo.fromJson(Map<String, dynamic> json){
     return MaterialVideo(
@@ -39,7 +24,7 @@ class MaterialVideo {
       video_Url: json["video_Url"] as String, 
       title: json["title"] as String, 
       explanation: json["explanation"] as String,
-      id_level: int.parse(json["id_level"]),
+      id_level: json["id_level"] as int,
     );
   }
 

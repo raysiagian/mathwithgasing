@@ -1,9 +1,14 @@
+import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mathgasing/core/constants/constants.dart';
+import 'package:mathgasing/models/user/user.dart';
+import 'package:http/http.dart' as http;
 import 'package:mathgasing/screens/main_screen/profile_screen/widget/button_logout_widget.dart';
 import 'package:mathgasing/screens/main_screen/profile_screen/widget/dialog_logout_popup_widget.dart';
 import 'package:mathgasing/screens/main_screen/profile_screen/widget/lencana_onprofile_widget.dart';
 import 'package:mathgasing/screens/main_screen/profile_screen/widget/profile_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -13,6 +18,55 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+
+      late String _token;
+  User? _loggedInUser;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTokenAndFetchUser(); // Panggil metode untuk memuat token dan pengguna
+  }
+
+  _loadTokenAndFetchUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+
+    if (token != null) {
+      setState(() {
+        _token = token;
+      });
+
+      // Load user using token
+      final user = await fetchUser(token);
+      setState(() {
+        _loggedInUser = user;
+      });
+    }
+  }
+
+
+      Future<User> fetchUser(String token) async {
+    try {
+      final response = await http.get(
+        Uri.parse(baseurl + 'api/user'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body);
+        return User.fromJson(jsonData);
+      } else {
+        throw Exception('Failed to load user from API: ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      throw Exception('Error fetching user: $e');
+    }
+  }
+ 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,8 +89,9 @@ class _ProfileState extends State<Profile> {
         fit: StackFit.expand,
         children: [
          Column(children: [
-          ProfileData(),
-          SizedBox(height: 30,),
+          if (_loggedInUser != null) // Tambahkan penanganan kondisional di sini
+            ProfileData(user: _loggedInUser!),
+          SizedBox(height: 15,),
 
           Container(
             padding: EdgeInsets.all(15),

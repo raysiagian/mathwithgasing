@@ -276,7 +276,7 @@ class _PostTestLevelState extends State<PostTestLevel> {
 
 Future<void> fetchQuestionPostTest() async {
   try {
-    final response = await http.get(Uri.parse('https://mathgasing.cloud/api/getQuestionPosttest'));
+    final response = await http.get(Uri.parse(baseurl + 'api/getQuestionPosttest?id_posttest=${widget.posttest.id_posttest}'));
 
     if (response.statusCode == 200) {
       final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;

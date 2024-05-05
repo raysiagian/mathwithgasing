@@ -6,16 +6,18 @@ import 'package:mathgasing/screens/auth/login_screen/pages/login_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DialogLogout extends StatelessWidget {
-  const DialogLogout({super.key});
+  const DialogLogout({
+    super.key
+  });
 
   Future<String?> _getToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('access_token');
+    return prefs.getString('token');
   }
 
   Future<void> _removeToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove('access_token');
+    await prefs.remove('token');
   }
 
   @override
