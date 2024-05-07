@@ -6,7 +6,7 @@ import 'package:mathgasing/models/level/level.dart';
 import 'package:mathgasing/models/materi/materi.dart';
 import 'package:mathgasing/models/level_type/posttest.dart';
 import 'package:mathgasing/models/level_type/pretest.dart';
-import 'package:mathgasing/screens/main_screen/map_unit_level/pages/level_type_screen/material_level_page.dart/pages/material_level_page.dart';
+import 'package:mathgasing/screens/main_screen/map_unit_level/pages/level_type_screen/material_level_screen/pages/material_level_page.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/level_type_screen/posttest_level_screen/pages/posttest_level_page.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/level_type_screen/pretest_level_screen/pages/pretest_level_page.dart';
 

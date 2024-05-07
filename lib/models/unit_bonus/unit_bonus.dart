@@ -4,54 +4,35 @@ import 'package:mathgasing/core/constants/constants.dart';
 import 'package:mathgasing/models/level_bonus/level_bonus.dart';
 
 class UnitBonus {
-   final int id;
+   final int id_unit_Bonus;
    final String title;
    final String explanation;
-   final List<LevelBonus> levelbonuses; // Menambahkan levelbonuses sebagai List<LevelButton>
+   final List<LevelBonus> levelsbonus; // Menambahkan levelbonus sebagai List<LevelButton>
 
    UnitBonus({
-      required this.id,
+      required this.id_unit_Bonus,
       required this.title,
       required this.explanation,
-      required this.levelbonuses, // Menginisialisasi levelbonuses
+      required this.levelsbonus, // Menginisialisasi levelbonus
    });
 
- Future<List<UnitBonus>> getUnitFromAPI() async {
-    try {
-      var url = Uri.parse(baseurl +"api/getUnit");
-      final response = await http.get(url, headers: {"Content-Type": "application/json"});
-
-      if (response.statusCode == 200) {
-        final List<dynamic> jsonData = json.decode(response.body);
-        return jsonData.map((json) => UnitBonus.fromJson(json)).toList();
-      } else {
-        throw Exception('Failed to load units from API');
-      }
-    } catch (e) {
-      throw Exception('Error fetching units: $e');
-    }
-  }
-
-
-  factory UnitBonus.fromJson(Map<String, dynamic> json){
+  factory UnitBonus.fromJson(Map<String, dynamic> json) {
     return UnitBonus(
-      id: json["id"] as int, 
-      title: json["title"] as String, 
-      explanation: json["explanation"] as String, 
-      levelbonuses: [],
+      id_unit_Bonus: json["id_unit_Bonus"] as int,
+      title: json["title"] as String,
+      explanation: json["explanation"] as String,
+      levelsbonus: [],
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
+    'id_unit_Bonus': id_unit_Bonus,
     'title': title,
     'explanation': explanation,
-
   };
 
   @override
   String toString() {
-    return 'UnitBonus{id: $id, title: $title, explanation: $explanation}';
+    return 'Unit{id_unit_Bonus: $id_unit_Bonus, title: $title, explanation: $explanation}';
   }
-
 }

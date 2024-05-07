@@ -28,7 +28,7 @@ class ButtonLogout extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
-              'Logout',
+              'Keluar',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white,

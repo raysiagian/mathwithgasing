@@ -5,7 +5,7 @@ import 'package:mathgasing/core/constants/constants.dart';
 import 'package:mathgasing/models/level/level.dart';
 import 'package:mathgasing/models/level_type/material_video.dart';
 import 'package:mathgasing/models/materi/materi.dart';
-import 'package:mathgasing/screens/main_screen/map_unit_level/pages/level_type_screen/material_level_page.dart/widget/material_video_widget.dart';
+import 'package:mathgasing/screens/main_screen/map_unit_level/pages/level_type_screen/material_level_screen/widget/material_video_widget.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/map_screen/widget/dialog_question_on_close_popup_widget.dart';
 
 class MaterialLevel extends StatefulWidget {

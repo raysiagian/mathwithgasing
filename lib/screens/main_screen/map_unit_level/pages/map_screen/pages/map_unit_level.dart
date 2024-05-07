@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 import 'package:mathgasing/core/color/color.dart';
 import 'package:mathgasing/core/constants/constants.dart';
-import 'dart:convert';
 import 'package:mathgasing/models/materi/materi.dart';
 import 'package:mathgasing/models/unit/unit.dart';
+import 'package:mathgasing/models/unit_bonus/unit_bonus.dart';
 import 'package:mathgasing/screens/main_screen/home_wrapper/pages/home_wrapper.dart';
+import 'package:mathgasing/screens/main_screen/map_unit_level/pages/map_screen/widget/unit_bonus_widget.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/map_screen/widget/unit_widget.dart';
 
 class MapUnitLevel extends StatelessWidget {
@@ -13,45 +16,23 @@ class MapUnitLevel extends StatelessWidget {
 
   final Materi materi;
 
-  // Future<List<Unit>> fetchUnit() async {
-  //   try {
-  //     final response =
-  //         await http.get(Uri.parse('http://10.0.2.2:8000/api/getUnit'));
-
-  //     if (response.statusCode == 200) {
-  //       final jsonData = jsonDecode(response.body) as List<dynamic>;
-  //       print(jsonData);
-  //       return jsonData.map((e) => Unit.fromJson(e)).toList();
-  //     } else {
-  //       throw Exception('Failed to load data');
-  //     }
-  //   } catch (e) {
-  //     print(e.toString());
-  //     return [];
-  //   }
-  // }
-
   Future<List<Unit>> fetchUnit() async {
     try {
       final response = await http.get(
-        Uri.parse(baseurl + 'api/getUnit?id_materi=${materi.id_materi}'), // Updated endpoint
+        Uri.parse(baseurl + 'api/getUnit?id_materi=${materi.id_materi}'),
       );
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
 
         if (jsonData is List) {
-          // If jsonData is a list, parse it as a list of units
           return jsonData.map((e) => Unit.fromJson(e)).toList();
         } else if (jsonData is Map<String, dynamic>) {
-          // If jsonData is a map, check if it contains a 'data' key
           if (jsonData.containsKey('data')) {
             final unitData = jsonData['data'];
             if (unitData is List) {
-              // If 'data' is a list, parse it as a list of units
               return unitData.map((e) => Unit.fromJson(e)).toList();
             } else {
-              // If 'data' is a single object, parse it as a single unit
               return [Unit.fromJson(unitData)];
             }
           } else {
@@ -68,23 +49,57 @@ class MapUnitLevel extends StatelessWidget {
     }
   }
 
+  Future<List<UnitBonus>> fetchUnitBonus() async {
+    try {
+      final response = await http.get(
+        Uri.parse(baseurl + 'api/getUnitBonus?id_materi=${materi.id_materi}'),
+      );
+
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body);
+
+        if (jsonData is List) {
+          return jsonData.map((e) => UnitBonus.fromJson(e)).toList();
+        } else if (jsonData is Map<String, dynamic>) {
+          if (jsonData.containsKey('data')) {
+            final unitBonusData = jsonData['data'];
+            if (unitBonusData is List) {
+              return unitBonusData.map((e) => UnitBonus.fromJson(e)).toList();
+            } else {
+              return [UnitBonus.fromJson(unitBonusData)];
+            }
+          } else {
+            throw Exception('Missing "data" key in API response');
+          }
+        } else {
+          throw Exception('Unexpected data format');
+        }
+      } else {
+        throw Exception('Failed to load unit bonuses from API');
+      }
+    } catch (e) {
+      throw Exception('Error fetching unit bonuses: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(materi.title,
-         style: TextStyle(
+        title: Text(
+          materi.title,
+          style: TextStyle(
             color: Theme.of(context).primaryColor,
-        ),),
+          ),
+        ),
         automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios,
-          color: AppColors.primaryColor,),
-          // onPressed: () {
-          //   Navigator.pop(context);
-          // }
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: AppColors.primaryColor,
+          ),
           onPressed: () {
             Navigator.pushAndRemoveUntil(
               context,
@@ -94,51 +109,70 @@ class MapUnitLevel extends StatelessWidget {
           },
         ),
       ),
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          Image.network(
-            baseurl +'storage/' +
+      body: Stack(children: [
+        Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image:NetworkImage(
+              baseurl +'storage/' +
                 materi.imageBackground.replaceFirst('public/', ''),
-            height: 150,
-            fit: BoxFit.cover,
-            width: double.infinity,
+            ),
+              fit: BoxFit.cover,
+            ),
           ),
-          Column(
-            children: [
-              FutureBuilder<List<Unit>>(
-                future: fetchUnit(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }else{
-                    if (snapshot.hasData && snapshot.data!.isNotEmpty){
-                      return ListView.builder(
-                      itemCount: snapshot.data!.length,
-                      shrinkWrap: true,
-                        itemBuilder: (BuildContext context, int index) {
-                          final unit = snapshot.data![index];
-                          return UnitWidget(unit: unit, materi: materi);
-                        },
-                      );
-                    } else{
-                    print('data kosong');
+        ),
+        SingleChildScrollView(
+          child: Container(
+            color: Colors.transparent,
+            constraints: BoxConstraints(
+               minHeight: MediaQuery.of(context).size.height,
+            ),
+            child: Column(children: [
+                 FutureBuilder<List<Unit>>(
+                  future: fetchUnit(),
+                  builder: (context, unitSnapshot) {
+                    if (unitSnapshot.connectionState == ConnectionState.waiting) {
                       return Center(
-                        child:  Text('Error: ${snapshot.error}'),
+                        child: CircularProgressIndicator(),
+                      );
+                    } else if (unitSnapshot.hasError) {
+                      return Center(
+                        child: Text('Error: ${unitSnapshot.error}'),
+                      );
+                    } else {
+                      return Column(
+                        children: unitSnapshot.data!
+                            .map((unit) => UnitWidget(unit: unit, materi: materi))
+                            .toList(),
                       );
                     }
-                  }
-                },
-              ),
-              // Future Builder Level Pretest
-              // Future Builder Level Material
-              // Future Builder Level Posttest
-            ],
-          )
-        ], 
-      ),
+                  },
+                ),
+                FutureBuilder<List<UnitBonus>>(
+                  future: fetchUnitBonus(),
+                  builder: (context, bonusUnitSnapshot) {
+                    if (bonusUnitSnapshot.connectionState == ConnectionState.waiting) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else if (bonusUnitSnapshot.hasError) {
+                      return Center(
+                        child: Text('Error: ${bonusUnitSnapshot.error}'),
+                      );
+                    } else {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: bonusUnitSnapshot.data!
+                          .map((unitBonus) => UnitBonusWidget(unitBonus: unitBonus, materi: materi))
+                          .toList(),
+                      );
+                    }
+                  },
+                ),
+            ]),
+          ),
+        )
+      ]),
     );
   }
 }
