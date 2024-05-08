@@ -1,9 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:flutter/widgets.dart';
 
 import 'package:mathgasing/core/color/color.dart';
 import 'package:mathgasing/core/constants/constants.dart';
+import 'package:mathgasing/models/level/level.dart';
+import 'package:mathgasing/models/level_bonus/level_bonus.dart';
 import 'package:mathgasing/models/materi/materi.dart';
 import 'package:mathgasing/models/unit/unit.dart';
 import 'package:mathgasing/models/unit_bonus/unit_bonus.dart';
@@ -12,75 +14,51 @@ import 'package:mathgasing/screens/main_screen/map_unit_level/pages/map_screen/w
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/map_screen/widget/unit_widget.dart';
 
 class MapUnitLevel extends StatelessWidget {
-  const MapUnitLevel({Key? key, required this.materi}) : super(key: key);
+  MapUnitLevel({Key? key}) : super(key: key);
 
-  final Materi materi;
-
-  Future<List<Unit>> fetchUnit() async {
-    try {
-      final response = await http.get(
-        Uri.parse(baseurl + 'api/getUnit?id_materi=${materi.id_materi}'),
-      );
-
-      if (response.statusCode == 200) {
-        final jsonData = jsonDecode(response.body);
-
-        if (jsonData is List) {
-          return jsonData.map((e) => Unit.fromJson(e)).toList();
-        } else if (jsonData is Map<String, dynamic>) {
-          if (jsonData.containsKey('data')) {
-            final unitData = jsonData['data'];
-            if (unitData is List) {
-              return unitData.map((e) => Unit.fromJson(e)).toList();
-            } else {
-              return [Unit.fromJson(unitData)];
-            }
-          } else {
-            throw Exception('Missing "data" key in API response');
-          }
-        } else {
-          throw Exception('Unexpected data format');
-        }
-      } else {
-        throw Exception('Failed to load units from API');
-      }
-    } catch (e) {
-      throw Exception('Error fetching units: $e');
-    }
-  }
-
-  Future<List<UnitBonus>> fetchUnitBonus() async {
-    try {
-      final response = await http.get(
-        Uri.parse(baseurl + 'api/getUnitBonus?id_materi=${materi.id_materi}'),
-      );
-
-      if (response.statusCode == 200) {
-        final jsonData = jsonDecode(response.body);
-
-        if (jsonData is List) {
-          return jsonData.map((e) => UnitBonus.fromJson(e)).toList();
-        } else if (jsonData is Map<String, dynamic>) {
-          if (jsonData.containsKey('data')) {
-            final unitBonusData = jsonData['data'];
-            if (unitBonusData is List) {
-              return unitBonusData.map((e) => UnitBonus.fromJson(e)).toList();
-            } else {
-              return [UnitBonus.fromJson(unitBonusData)];
-            }
-          } else {
-            throw Exception('Missing "data" key in API response');
-          }
-        } else {
-          throw Exception('Unexpected data format');
-        }
-      } else {
-        throw Exception('Failed to load unit bonuses from API');
-      }
-    } catch (e) {
-      throw Exception('Error fetching unit bonuses: $e');
-    }
-  }
+  final Materi materi = Materi(
+    id_materi: 1,
+    units: [
+      Unit(
+        id_unit: 1,
+        title: 'title',
+        explanation: 'explanation',
+        levels: [Level(id_level: 2, level_number: 2, id_unit: 2)],
+      ),
+      Unit(
+        id_unit: 1,
+        title: 'title',
+        explanation: 'explanation',
+        levels: [Level(id_level: 2, level_number: 2, id_unit: 2)],
+      ),
+      Unit(
+        id_unit: 1,
+        title: 'title',
+        explanation: 'explanation',
+        levels: [Level(id_level: 2, level_number: 2, id_unit: 2)],
+      ),
+    ],
+    title: 'title',
+    imageCard: 'imageCard',
+    imageBackground: 'imageBackground',
+    imageStatistic: 'imageStatistic',
+  );
+  final Unit unit = Unit(
+    id_unit: 1,
+    title: 'title',
+    explanation: 'explanation',
+    levels: [
+      Level(id_level: 2, level_number: 1, id_unit: 1),
+    ],
+  );
+  final UnitBonus unitBonus = UnitBonus(
+    id_unit_Bonus: 1,
+    title: 'title',
+    explanation: 'explanation',
+    levelsbonus: [
+      LevelBonus(id_level_bonus: 2, level_number: 2, id_unit_bonus: 2),
+    ],
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -109,70 +87,27 @@ class MapUnitLevel extends StatelessWidget {
           },
         ),
       ),
-      body: Stack(children: [
-        Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image:NetworkImage(
-              baseurl +'storage/' +
-                materi.imageBackground.replaceFirst('public/', ''),
-            ),
-              fit: BoxFit.cover,
+      body: Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/penjumlahan_map_background.png'),
+                fit: BoxFit.cover,
+              ),
             ),
           ),
-        ),
-        SingleChildScrollView(
-          child: Container(
-            color: Colors.transparent,
-            constraints: BoxConstraints(
-               minHeight: MediaQuery.of(context).size.height,
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                UnitWidget(unit: unit, materi: materi),
+                UnitWidget(unit: unit, materi: materi),
+                UnitBonusWidget(unitBonus: unitBonus, materi: materi),
+              ],
             ),
-            child: Column(children: [
-                 FutureBuilder<List<Unit>>(
-                  future: fetchUnit(),
-                  builder: (context, unitSnapshot) {
-                    if (unitSnapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    } else if (unitSnapshot.hasError) {
-                      return Center(
-                        child: Text('Error: ${unitSnapshot.error}'),
-                      );
-                    } else {
-                      return Column(
-                        children: unitSnapshot.data!
-                            .map((unit) => UnitWidget(unit: unit, materi: materi))
-                            .toList(),
-                      );
-                    }
-                  },
-                ),
-                FutureBuilder<List<UnitBonus>>(
-                  future: fetchUnitBonus(),
-                  builder: (context, bonusUnitSnapshot) {
-                    if (bonusUnitSnapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    } else if (bonusUnitSnapshot.hasError) {
-                      return Center(
-                        child: Text('Error: ${bonusUnitSnapshot.error}'),
-                      );
-                    } else {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: bonusUnitSnapshot.data!
-                          .map((unitBonus) => UnitBonusWidget(unitBonus: unitBonus, materi: materi))
-                          .toList(),
-                      );
-                    }
-                  },
-                ),
-            ]),
           ),
-        )
-      ]),
+        ],
+      ),
     );
   }
 }

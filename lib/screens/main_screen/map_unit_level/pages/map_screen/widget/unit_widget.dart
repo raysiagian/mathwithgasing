@@ -56,11 +56,12 @@ class UnitWidget extends StatelessWidget {
     }
   }
 
- @override
+  @override
   Widget build(BuildContext context) {
     // Panggil fungsi fetchLevels() saat UnitWidget dibuat atau dirender
     return ListView(
       shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
       children: [
         Padding(
           padding: EdgeInsets.symmetric(vertical: 20.0), // Margin 20 px ke atas dan ke bawah
@@ -68,25 +69,23 @@ class UnitWidget extends StatelessWidget {
             padding: const EdgeInsets.only(left: 10.0, top: 30),
             height: 170,
             color: Color.fromRGBO(0, 0, 0, 0.4),
-            child: Column(  
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   unit.title,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: Colors.white,
-                    fontFamily: GoogleFonts.roboto().fontFamily,
-                  ),
+                        color: Colors.white,
+                        fontFamily: GoogleFonts.roboto().fontFamily,
+                      ),
                 ),
                 const SizedBox(height: 10),
-                Text(
-                  unit.explanation,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500,
-                  )
-                ),
+                Text(unit.explanation,
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                        )),
               ],
             ),
           ),
@@ -124,5 +123,4 @@ class UnitWidget extends StatelessWidget {
       ],
     );
   }
-
 }

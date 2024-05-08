@@ -4,13 +4,11 @@ import 'package:mathgasing/models/materi/materi.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/map_screen/pages/map_unit_level.dart';
 
 class DialogLivesRunOut extends StatelessWidget {
-  const DialogLivesRunOut({
-    super.key, required this.materi
-  });
+  const DialogLivesRunOut({super.key, required this.materi});
 
   final Materi materi;
 
- @override
+  @override
   Widget build(BuildContext context) {
     return Dialog(
       shape: RoundedRectangleBorder(
@@ -36,9 +34,7 @@ class DialogLivesRunOut extends StatelessWidget {
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (context) {
-                  return MapUnitLevel(
-                    materi: materi,
-                  );
+                  return MapUnitLevel();
                 }),
                 (route) => false,
               );

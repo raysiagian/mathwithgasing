@@ -68,7 +68,7 @@ flutter:
   uses-material-design: true
   assets:
   - assets/images/
-  - D:/Semester 6/API/apimathapp/storage/app/
+  
 
   # To add assets to your application, add an assets section, like this:
   # assets:

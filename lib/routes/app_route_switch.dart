@@ -1,21 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:mathgasing/models/level/level.dart';
+import 'package:mathgasing/models/level_type/posttest.dart';
+import 'package:mathgasing/models/level_type/pretest.dart';
+import 'package:mathgasing/models/materi/materi.dart';
+import 'package:mathgasing/models/user/user.dart';
 import 'package:mathgasing/routes/app_route_config.dart';
 import 'package:mathgasing/routes/app_route_const.dart';
 
 class AppRouterSwitch {
-  // Define appropriate values for level and materi
-  static dynamic get level => level;
-  
-  static dynamic get materi => materi;
-  
-  static get pretest => null;
-
-    static get posttest => null;
-
-  
-  static dynamic get user => user;
-  
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     if (kDebugMode) {
       print('===> ${settings.name}');
@@ -30,32 +23,33 @@ class AppRouterSwitch {
         return AppRouter.registerScreen();
       case AppRouteConstants.homescreen:
         return AppRouter.homeScreen(
-          user: user,
+          user: settings.arguments as User,
         );
       case AppRouteConstants.profilescreen:
         return AppRouter.profileScreen();
       case AppRouteConstants.mapunitlevelscreen:
-        return AppRouter.mapunitlevelScreen( // Provide appropriate value for level
-          materi: materi, // Provide appropriate value for materi
+        return AppRouter.mapunitlevelScreen(
+          // Provide appropriate value for level
+          materi: settings.arguments as Materi, // Provide appropriate value for materi
         );
       case AppRouteConstants.pretestscreen:
         return AppRouter.pretestScreen(
-          level: level, // Provide appropriate value for level
-          materi: materi,
-          pretest: pretest, // Provide appropriate value for materi
+          level: settings.arguments as Level, // Provide appropriate value for level
+          materi: settings.arguments as Materi,
+          pretest: settings.arguments as PreTest, // Provide appropriate value for materi
           // pretest: pretest,
         );
       case AppRouteConstants.materialscreen:
         return AppRouter.materialScreen(
-          level: level, // Provide appropriate value for level
-          materi: materi,
+          level: settings.arguments as Level, // Provide appropriate value for level
+          materi: settings.arguments as Materi,
           // Provide appropriate value for materi
         );
       case AppRouteConstants.posttestscreen:
         return AppRouter.posttestScreen(
-          level: level, // Provide appropriate value for level
-          materi: materi, // Provide appropriate value for materi
-          posttest: posttest,
+          level: settings.arguments as Level, // Provide appropriate value for level
+          materi: settings.arguments as Materi, // Provide appropriate value for materi
+          posttest: settings.arguments as PostTest,
         );
       default:
         return onErrorRoute();

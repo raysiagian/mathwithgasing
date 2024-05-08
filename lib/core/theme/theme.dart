@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mathgasing/core/color/color.dart';
 import 'package:mathgasing/core/font/font.dart';
 
-
 class AppTheme {
   static final ThemeData lightTheme = ThemeData(
     colorScheme: ColorScheme.light(
@@ -39,6 +38,7 @@ class AppTheme {
     ),
     textTheme: AppTextTheme.poppinsTheme,
     fontFamily: GoogleFonts.poppins().fontFamily,
+    useMaterial3: false,
   );
 }
 

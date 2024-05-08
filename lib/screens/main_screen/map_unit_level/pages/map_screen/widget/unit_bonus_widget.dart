@@ -20,10 +20,10 @@ class UnitBonusWidget extends StatelessWidget {
   final Materi materi;
 
   Future<List<LevelBonus>> fetchLevelsBonus() async {
-  try {
-    final response = await http.get(
-      Uri.parse(baseurl + 'api/getLevelBonus?id_unit_Bonus=${unitBonus.id_unit_Bonus}'),
-    );
+    try {
+      final response = await http.get(
+        Uri.parse(baseurl + 'api/getLevelBonus?id_unit_Bonus=${unitBonus.id_unit_Bonus}'),
+      );
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
@@ -56,12 +56,11 @@ class UnitBonusWidget extends StatelessWidget {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return ListView(
       shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
       children: [
         Padding(
           padding: EdgeInsets.symmetric(vertical: 20.0),

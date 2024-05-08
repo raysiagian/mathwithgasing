@@ -8,17 +8,14 @@ class BackToMap extends StatelessWidget {
 
   final Materi materi;
 
-
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) {
-            return MapUnitLevel(
-              materi: materi,
-            );
+            return MapUnitLevel();
           }),
           (route) => false,
         );

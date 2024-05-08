@@ -7,7 +7,7 @@ class CardWidget extends StatelessWidget {
   const CardWidget({
     super.key,
     required this.materi,
-    });
+  });
 
   final Materi materi;
 
@@ -19,7 +19,7 @@ class CardWidget extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) {
-            return MapUnitLevel(materi: materi);
+            return MapUnitLevel();
           }),
         );
       },
@@ -37,7 +37,7 @@ class CardWidget extends StatelessWidget {
                   topLeft: Radius.circular(20),
                 ),
                 child: Image.network(
-                  baseurl +'storage/${materi.imageCard.replaceFirst('public/', '')}',
+                  baseurl + 'storage/${materi.imageCard.replaceFirst('public/', '')}',
                   height: 150,
                   fit: BoxFit.cover,
                   width: double.infinity,
