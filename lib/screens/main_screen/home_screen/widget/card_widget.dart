@@ -19,7 +19,7 @@ class CardWidget extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) {
-            return MapUnitLevel();
+            return MapUnitLevel(materi: materi,);
           }),
         );
       },

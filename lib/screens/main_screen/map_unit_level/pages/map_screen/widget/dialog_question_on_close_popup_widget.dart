@@ -45,7 +45,7 @@ class DialogQuestionOnClose extends StatelessWidget {
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(builder: (context) {
-                      return MapUnitLevel();
+                      return MapUnitLevel(materi: materi,);
                     }),
                     (route) => false,
                   );
