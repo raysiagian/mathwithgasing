@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mathgasing/models/level/level.dart';
+import 'package:mathgasing/models/unit/unit.dart';
 import 'package:mathgasing/models/level_type/material_video.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/level_type_screen/material_level_screen/widget/video_player_widget.dart';
 
 class MaterialVideoWidget extends StatelessWidget {
   const MaterialVideoWidget({
     Key? key,
-    required this.level,
+    required this.unit,
     required this.materialVideo,
     }): super(key:key);
 
-    final Level level;
+    final Unit unit;
     final MaterialVideo materialVideo;
 
   @override

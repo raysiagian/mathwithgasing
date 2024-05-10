@@ -7,14 +7,14 @@ class MaterialVideo {
   final String video_Url;
   final String title;
   final String explanation;
-  final int id_level;
+  final int id_unit;
 
   MaterialVideo ({
     required this.id_material_video,
     required this.video_Url,
     required this.title,
     required this.explanation,
-    required this.id_level,
+    required this.id_unit,
   });
 
 
@@ -24,7 +24,7 @@ class MaterialVideo {
       video_Url: json["video_Url"] as String, 
       title: json["title"] as String, 
       explanation: json["explanation"] as String,
-      id_level: json["id_level"] as int,
+      id_unit: json["id_unit"] as int,
     );
   }
 
@@ -33,7 +33,7 @@ class MaterialVideo {
     'video_Url': video_Url,
     'title': title,
     'explanation': explanation,
-    'id_level': id_level,
+    'id_unit': id_unit,
   };
 
 
@@ -46,7 +46,7 @@ class MaterialVideo {
 
   @override
   String toString() {
-    return 'Materi{id_material_video: $id_material_video, video_Url: $video_Url, title: $title, explanation: $explanation, id_level: $id_level}';
+    return 'Materi{id_material_video: $id_material_video, video_Url: $video_Url, title: $title, explanation: $explanation, id_unit: $id_unit}';
   }
 
 }

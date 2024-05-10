@@ -6,12 +6,12 @@ import 'package:mathgasing/models/question_posttest/question_posttest.dart';
 class PostTest {
   final int id_posttest;
   final List<QuestionPostTest> questionsPosttest;
-  final int id_level;
+  final int id_unit;
 
   PostTest({
     required this.id_posttest,
     required this.questionsPosttest,
-    required this.id_level,
+    required this.id_unit,
 
   });
 
@@ -19,7 +19,7 @@ class PostTest {
   factory PostTest.fromJson(Map<String, dynamic> json){
     return PostTest(
       id_posttest: json["id_posttest"] as int, 
-      id_level: json["id_level"] as int,
+      id_unit: json["id_unit"] as int,
       questionsPosttest: [],
       // score_pretest: json["score_pretest"] as int?,
     );
@@ -29,7 +29,7 @@ class PostTest {
   Map<String, dynamic> toJson()=> {
     'id_posttest': id_posttest,
     // 'score_posttest': score_posttest,
-    'id_level': id_level,
+    'id_unit': id_unit,
   };
 
    Map<String, String> requestHeaders = {
@@ -40,7 +40,7 @@ class PostTest {
 
   @override
   String toString() {
-    return 'Materi{id_posttest: $id_posttest, id_level: $id_level}';
+    return 'Materi{id_posttest: $id_posttest, id_unit: $id_unit}';
   }
 
 }

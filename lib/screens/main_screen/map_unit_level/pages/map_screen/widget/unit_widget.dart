@@ -19,43 +19,6 @@ class UnitWidget extends StatelessWidget {
   final Unit unit;
   final Materi materi;
 
-  Future<List<Level>> fetchLevel() async {
-    try {
-      final response = await http.get(
-        Uri.parse(baseurl + 'api/getLevel?id_unit=${unit.id_unit}'), // Updated endpoint
-      );
-
-      if (response.statusCode == 200) {
-        final jsonData = jsonDecode(response.body);
-
-        if (jsonData is List) {
-          // If jsonData is a list, parse it as a list of units
-          return jsonData.map((e) => Level.fromJson(e)).toList();
-        } else if (jsonData is Map<String, dynamic>) {
-          // If jsonData is a map, check if it contains a 'data' key
-          if (jsonData.containsKey('data')) {
-            final levelData = jsonData['data'];
-            if (levelData is List) {
-              // If 'data' is a list, parse it as a list of units
-              return levelData.map((e) => Level.fromJson(e)).toList();
-            } else {
-              // If 'data' is a single object, parse it as a single unit
-              return [Level.fromJson(levelData)];
-            }
-          } else {
-            throw Exception('Missing "data" key in API response');
-          }
-        } else {
-          throw Exception('Unexpected data format');
-        }
-      } else {
-        throw Exception('Failed to load levels from API');
-      }
-    } catch (e) {
-      throw Exception('Error fetching levels: $e');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     // Panggil fungsi fetchLevels() saat UnitWidget dibuat atau dirender
@@ -92,34 +55,7 @@ class UnitWidget extends StatelessWidget {
         ),
         const SizedBox(height: 20),
         // Gunakan FutureBuilder untuk menampilkan widget ketika data level sudah tersedia
-        FutureBuilder<List<Level>>(
-          future: fetchLevel(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: CircularProgressIndicator(), // Tampilkan indikator loading
-              );
-            } else if (snapshot.hasError) {
-              return Center(
-                child: Text('Error: ${snapshot.error}'),
-              );
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(
-                child: Text('No data available'),
-              );
-            } else {
-              // Tampilkan tombol level jika data sudah tersedia
-              return Column(
-                children: snapshot.data!.map((level) {
-                  return LevelButtonWidget(
-                    level: level,
-                    materi: materi,
-                  );
-                }).toList(),
-              );
-            }
-          },
-        ),
+        LevelButtonWidget(unit: unit, materi: materi)
       ],
     );
   }

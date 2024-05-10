@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:mathgasing/core/constants/constants.dart';
 import 'dart:convert';
 
-import 'package:mathgasing/models/level/level.dart';
+import 'package:mathgasing/models/unit/unit.dart';
 import 'package:mathgasing/models/level_type/posttest.dart';
 import 'package:mathgasing/models/materi/materi.dart';
 import 'package:mathgasing/models/question_posttest/question_posttest.dart';
@@ -18,13 +18,13 @@ import 'package:mathgasing/core/color/color.dart';
 class PostTestLevel extends StatefulWidget {
   const PostTestLevel({
     Key? key,
-    required this.level,
+    required this.unit,
     required this.materi,
     required this.posttest,
     this.score_posttest,
   }) : super(key: key);
 
-  final Level level;
+  final Unit unit;
   final Materi materi;
   final PostTest posttest;
   final int? score_posttest;
@@ -182,7 +182,7 @@ class _PostTestLevelState extends State<PostTestLevel> {
       // Create data to be sent in the POST request
       Map<String, dynamic> postData = {
         'id_posttest': widget.posttest.id_posttest,
-        'id_level': widget.level.id_level,
+        'id_unit': widget.unit.id_unit,
         'score_posttest': totalScore,
       };
 
@@ -348,7 +348,7 @@ Future<void> fetchQuestionPostTest() async {
           },
         ),
         title: Text(
-          'Level ${widget.level.level_number}',
+          'Level 3',
           style: TextStyle(
             color: AppColors.primaryColor,
           ),

@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:mathgasing/core/constants/constants.dart';
 import 'dart:convert';
 
-import 'package:mathgasing/models/level/level.dart';
+import 'package:mathgasing/models/unit/unit.dart';
 import 'package:mathgasing/models/level_type/pretest.dart';
 import 'package:mathgasing/models/materi/materi.dart';
 import 'package:mathgasing/models/question_pretest/question_pretest.dart';
@@ -21,13 +21,13 @@ import 'package:mathgasing/core/color/color.dart';
 class PreTestLevel extends StatefulWidget {
   const PreTestLevel({
     Key? key,
-    required this.level,
+    required this.unit,
     required this.materi,
     required this.pretest,
     this.score_pretest,
   }) : super(key: key);
 
-  final Level level;
+  final Unit unit;
   final Materi materi;
   final PreTest pretest;
   final int? score_pretest;
@@ -150,7 +150,7 @@ class _PreTestLevelState extends State<PreTestLevel> {
     // Create data to be sent in the POST request
     Map<String, dynamic> postData = {
       'id_pretest': widget.pretest.id_pretest,
-      'id_level': widget.level.id_level,
+      'id_unit': widget.unit.id_unit,
       'score_pretest': totalScore,
     };
 
@@ -248,7 +248,7 @@ class _PreTestLevelState extends State<PreTestLevel> {
           },
         ),
         title: Text(
-          'Level ${widget.level.level_number}',
+          'Level 1',
           style: TextStyle(
             color: AppColors.primaryColor,
           ),

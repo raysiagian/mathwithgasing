@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mathgasing/models/level/level.dart';
+import 'package:mathgasing/models/unit/unit.dart';
 import 'package:mathgasing/models/level_type/posttest.dart';
 import 'package:mathgasing/models/level_type/pretest.dart';
 import 'package:mathgasing/models/materi/materi.dart';
@@ -75,24 +75,24 @@ class AppRouter {
     );
   }
 
-  static Route<dynamic>? pretestScreen({required Level level, required Materi materi, required PreTest pretest, int? score_pretest}) {
+  static Route<dynamic>? pretestScreen({required Unit unit, required Materi materi, required PreTest pretest, int? score_pretest}) {
     return MaterialPageRoute(
       settings: RouteSettings(name: AppRouteConstants.pretestscreen),
-      builder: (context) => PreTestLevel(level: level, materi: materi, pretest:pretest ,score_pretest: score_pretest),
+      builder: (context) => PreTestLevel(unit: unit, materi: materi, pretest:pretest ,score_pretest: score_pretest),
     );
   }
 
-  static Route<dynamic>? materialScreen({required Materi materi, required Level level,}){
+  static Route<dynamic>? materialScreen({required Materi materi, required Unit unit,}){
     return MaterialPageRoute(
       settings: RouteSettings(name: AppRouteConstants.materialscreen),
-      builder: (context) => MaterialLevel(materi: materi, level: level),
+      builder: (context) => MaterialLevel(materi: materi, unit: unit),
     );
   }
 
-  static Route<dynamic>? posttestScreen({required Materi materi, required Level level,required PostTest posttest, int? score_posttest}){
+  static Route<dynamic>? posttestScreen({required Materi materi, required Unit unit,required PostTest posttest, int? score_posttest}){
     return MaterialPageRoute(
       settings: RouteSettings(name: AppRouteConstants.posttestscreen),
-      builder: (context) => PostTestLevel(materi: materi, level: level, posttest: posttest, score_posttest: score_posttest,),
+      builder: (context) => PostTestLevel(materi: materi, unit: unit, posttest: posttest, score_posttest: score_posttest,),
     );
   }
 }

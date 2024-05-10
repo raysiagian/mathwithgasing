@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:mathgasing/models/level/level.dart';
+import 'package:mathgasing/models/unit/unit.dart';
 import 'package:mathgasing/models/level_type/material_video.dart';
 import 'package:mathgasing/models/materi/materi.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/level_type_screen/material_level_page.dart/widget/material_video_widget.dart';
@@ -11,10 +11,10 @@ class MaterialLevel extends StatefulWidget {
   const MaterialLevel({
     Key? key, 
     required this.materi, 
-    required this.level,
+    required this.unit,
   }): super(key:key);
 
-  final Level level;
+  final Unit unit;
   final Materi materi;
 
   @override
@@ -91,7 +91,7 @@ class _MaterialLevelState extends State<MaterialLevel> {
           },
         ),
         title: Text(
-          'Level ${widget.level.level_number}',
+          'Level 2',
           style: TextStyle(
             color: Theme.of(context).primaryColor,
           ),
@@ -115,7 +115,7 @@ class _MaterialLevelState extends State<MaterialLevel> {
                 children: [
                   for (var materialVideo in materialVideos)
                     MaterialVideoWidget(
-                      level: widget.level, 
+                      unit: widget.unit, 
                       materialVideo: materialVideo,
                     ),
                 ],

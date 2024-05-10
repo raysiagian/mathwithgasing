@@ -5,7 +5,7 @@ import 'package:mathgasing/routes/app_route_const.dart';
 
 class AppRouterSwitch {
 
-  static dynamic get level => level;
+  static dynamic get unit => unit;
   
   static dynamic get materi => materi;
   
@@ -34,25 +34,25 @@ class AppRouterSwitch {
       case AppRouteConstants.profilescreen:
         return AppRouter.profileScreen();
       case AppRouteConstants.mapunitlevelscreen:
-        return AppRouter.mapunitlevelScreen( // Provide appropriate value for level
+        return AppRouter.mapunitlevelScreen( // Provide appropriate value for unit
           materi: materi, // Provide appropriate value for materi
         );
       case AppRouteConstants.pretestscreen:
         return AppRouter.pretestScreen(
-          level: level, // Provide appropriate value for level
+          unit: unit, // Provide appropriate value for unit
           materi: materi,
           pretest: pretest, // Provide appropriate value for materi
           // pretest: pretest,
         );
       case AppRouteConstants.materialscreen:
         return AppRouter.materialScreen(
-          level: level, // Provide appropriate value for level
+          unit: unit, // Provide appropriate value for unit
           materi: materi,
           // Provide appropriate value for materi
         );
       case AppRouteConstants.posttestscreen:
         return AppRouter.posttestScreen(
-          level: level, // Provide appropriate value for level
+          unit: unit, // Provide appropriate value for unit
           materi: materi, // Provide appropriate value for materi
           posttest: posttest,
         );
