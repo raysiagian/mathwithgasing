@@ -74,7 +74,7 @@ class UnitBonusWidget extends StatelessWidget {
               children: [
                 Text(
                   unitBonus.title,
-                  style: Theme.of(context).textTheme.headline6?.copyWith(
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         color: Colors.white,
                         fontFamily: GoogleFonts.roboto().fontFamily,
                       ),
@@ -82,7 +82,7 @@ class UnitBonusWidget extends StatelessWidget {
                 const SizedBox(height: 10),
                 Text(
                   unitBonus.explanation,
-                  style: Theme.of(context).textTheme.subtitle1?.copyWith(
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.w500,
                       ),
