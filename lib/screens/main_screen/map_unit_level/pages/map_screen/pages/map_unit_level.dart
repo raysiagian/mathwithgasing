@@ -7,7 +7,6 @@ import 'package:flutter/widgets.dart';
 
 import 'package:mathgasing/core/color/color.dart';
 import 'package:mathgasing/core/constants/constants.dart';
-import 'package:mathgasing/models/level/level.dart';
 import 'package:mathgasing/models/level_bonus/level_bonus.dart';
 import 'package:mathgasing/models/materi/materi.dart';
 import 'package:mathgasing/models/unit/unit.dart';
