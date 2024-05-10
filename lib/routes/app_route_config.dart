@@ -7,7 +7,7 @@ import 'package:mathgasing/models/user/user.dart';
 import 'package:mathgasing/routes/app_route_const.dart';
 import 'package:mathgasing/screens/auth/login_screen/pages/login_page.dart';
 import 'package:mathgasing/screens/auth/registration_screen/pages/registration_page.dart';
-import 'package:mathgasing/screens/main_screen/map_unit_level/pages/level_type_screen/material_level_page.dart/pages/material_level_page.dart';
+import 'package:mathgasing/screens/main_screen/map_unit_level/pages/level_type_screen/material_level_screen/pages/material_level_page.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/level_type_screen/posttest_level_screen/pages/posttest_level_page.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/level_type_screen/pretest_level_screen/pages/pretest_level_page.dart';
 import 'package:mathgasing/screens/main_screen/home_screen/pages/home_page.dart';
