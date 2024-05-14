@@ -6,6 +6,7 @@ class User {
   final String name;
   final String email;
   final String gender;
+  final String createdAt;
 
 
   User({
@@ -14,7 +15,7 @@ class User {
     required this.email,
     // required this.password,
     required this.gender,
-    // required this.createdAt,
+    required this.createdAt,
     // this.updatedAt,
   });
   
@@ -25,7 +26,8 @@ class User {
       email: json['email'],
       // password: json['password'],
       gender: json['gender'],
-      // createdAt: json['created_at'].toString(), // Convert to String
+      createdAt: json.containsKey('created_at') ? json['created_at'] : null, 
+
       // updatedAt: json['updated_at'] != null ? json['updated_at'].toString() : null, // Convert to String if not null
     );
   }
@@ -37,6 +39,8 @@ class User {
       'email': email,
       // 'password': password,
       'gender': gender,
+      if (createdAt != null) 'created_at': createdAt,
+
       // 'createdAt': createdAt,
       // 'updatedAt': updatedAt,
   };

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mathgasing/models/user/user.dart';
+import 'package:intl/intl.dart';
 
 class ProfileData extends StatelessWidget {
 
@@ -13,6 +14,8 @@ class ProfileData extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    DateTime joinDate = DateTime.parse(user.createdAt);
+    String formattedJoinDate = DateFormat('dd MMMM yyyy').format(joinDate);
     return Container(
       child: Column(
             children: [
@@ -48,7 +51,7 @@ class ProfileData extends StatelessWidget {
                             ),
                             SizedBox(width: 5),
                             Text(
-                              "Bergabung 20 Maret 2024",
+                              "Bergabung : ${formattedJoinDate}",
                               style: TextStyle(
                                 fontSize: 16,
                               ),
