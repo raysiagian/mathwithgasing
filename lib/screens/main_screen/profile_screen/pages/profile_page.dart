@@ -19,7 +19,7 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
 
-      late String _token;
+  late String _token;
   User? _loggedInUser;
 
   @override
@@ -46,7 +46,7 @@ class _ProfileState extends State<Profile> {
   }
 
 
-      Future<User> fetchUser(String token) async {
+  Future<User> fetchUser(String token) async {
     try {
       final response = await http.get(
         Uri.parse(baseurl + 'api/user'),

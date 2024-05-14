@@ -8,12 +8,15 @@ import 'package:mathgasing/models/level_type/posttest.dart';
 import 'package:mathgasing/models/materi/materi.dart';
 import 'package:mathgasing/models/question_posttest/question_posttest.dart';
 import 'package:mathgasing/models/timer/timer.dart';
+import 'package:mathgasing/models/user/user.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/after_level_screen/pages/after_level_postest.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/level_type_screen/posttest_level_screen/widget/question_posttest_widget.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/map_screen/widget/dialog_question_on_close_popup_widget.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/map_screen/widget/selanjutnya_button_widget.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/map_screen/widget/timer_widget.dart';
 import 'package:mathgasing/core/color/color.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class PostTestLevel extends StatefulWidget {
   const PostTestLevel({
@@ -39,6 +42,8 @@ class _PostTestLevelState extends State<PostTestLevel> {
   late TimerModel timerModel;
   late List<QuestionPostTest> questions = [];
   String? selectedOption;
+  late String _token;
+  late User? _loggedInUser;
 
   // @override
   // void initState() {
@@ -60,6 +65,7 @@ class _PostTestLevelState extends State<PostTestLevel> {
     @override
   void initState() {
     super.initState();
+     _loadTokenAndFetchUser();
     fetchQuestionPostTest();
     timerModel = TimerModel(
       durationInSeconds: 10,
@@ -68,6 +74,46 @@ class _PostTestLevelState extends State<PostTestLevel> {
     );
     timerModel.startTimer();
   }
+
+  Future<String?> _loadTokenAndFetchUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+
+    if (token != null) {
+      setState(() {
+        _token = token;
+      });
+
+      // Load user using token
+      final user = await fetchUser(token);
+      setState(() {
+        _loggedInUser = user;
+      });
+    }
+
+    return token; // Return the token value
+  }
+
+  Future<User> fetchUser(String token) async {
+    try {
+      final response = await http.get(
+        Uri.parse(baseurl + 'api/user'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body);
+        return User.fromJson(jsonData);
+      } else {
+        throw Exception('Failed to load user from API: ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      throw Exception('Error fetching user: $e');
+    }
+  }
+
 
   void updateTimerUI(int remainingTime) {
     setState(() {});
@@ -179,19 +225,33 @@ class _PostTestLevelState extends State<PostTestLevel> {
     try {
       print('Sending score to server...');
 
+    String? token = await _loadTokenAndFetchUser();
+    if (token == null) {
+      throw Exception('Token not found');
+    }
+
+
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+      'Accept': 'application/json', // Request JSON response from the server
+    };
+
+
       // Create data to be sent in the POST request
       Map<String, dynamic> postData = {
         'id_posttest': widget.posttest.id_posttest,
         'id_unit': widget.unit.id_unit,
-        'score_posttest': totalScore,
+        'score': totalScore,
       };
 
       // Make the HTTP POST request
-      final response = await http.put(
-        Uri.parse(baseurl + 'api/posttest/${widget.posttest.id_posttest}/update-final-score'),
-        body: jsonEncode(postData),
-        headers: {'Content-Type': 'application/json'},
-      );
+    final response = await http.put(
+      Uri.parse(baseurl + 'api/posttest/${widget.posttest.id_posttest}/update-final-score-posttest'),
+      body: jsonEncode(postData), // Encode the body as JSON
+      headers: headers,
+    );
+
 
       print('Request URL: ${response.request?.url}');
       // print('Request Data: ${jsonEncode(postData)}');
@@ -206,8 +266,11 @@ class _PostTestLevelState extends State<PostTestLevel> {
           ),
         );
       } else {
-        // Handle error response
-        throw Exception('Failed to save score. Status code: ${response.statusCode}');
+        String errorMessage = 'Failed to save score. Status code: ${response.statusCode}';
+        if (response.body != null && response.body.isNotEmpty) {
+        errorMessage += '\nResponse body: ${response.body}';
+      }
+      throw Exception(errorMessage);
       }
     } catch (e) {
       // Handle exceptions

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mathgasing/core/constants/constants.dart';
 import 'dart:convert';
-
+import 'package:mathgasing/models/user/user.dart';
 import 'package:mathgasing/models/unit/unit.dart';
 import 'package:mathgasing/models/level_type/pretest.dart';
 import 'package:mathgasing/models/materi/materi.dart';
@@ -13,10 +13,8 @@ import 'package:mathgasing/screens/main_screen/map_unit_level/pages/map_screen/w
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/level_type_screen/pretest_level_screen/widget/question_pretest_widget.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/map_screen/widget/selanjutnya_button_widget.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/map_screen/widget/timer_widget.dart';
-// import 'package:mathgasing/screens/main_screen/map_unit_level/pages/level_type_screen/pretest_level_screen/pages/final_score_page.dart';
 import 'package:mathgasing/core/color/color.dart';
-
-
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PreTestLevel extends StatefulWidget {
   const PreTestLevel({
@@ -42,10 +40,13 @@ class _PreTestLevelState extends State<PreTestLevel> {
   late TimerModel timerModel;
   late List<QuestionPretest> questions = [];
   String? selectedOption;
+  late String _token;
+  late User? _loggedInUser;
 
   @override
   void initState() {
     super.initState();
+    _loadTokenAndFetchUser();
     fetchQuestionPretest();
     timerModel = TimerModel(
       durationInSeconds: 10,
@@ -53,6 +54,45 @@ class _PreTestLevelState extends State<PreTestLevel> {
       onTimerFinish: timerFinishAction,
     );
     timerModel.startTimer();
+  }
+
+    Future<String?> _loadTokenAndFetchUser() async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+    if (token != null) {
+      setState(() {
+        _token = token;
+      });
+
+      // Load user using token
+      final user = await fetchUser(token);
+      setState(() {
+        _loggedInUser = user;
+      });
+    }
+
+  return token; // Return the token value
+}
+
+  Future<User> fetchUser(String token) async {
+    try {
+      final response = await http.get(
+        Uri.parse(baseurl + 'api/user'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body);
+        return User.fromJson(jsonData);
+      } else {
+        throw Exception('Failed to load user from API: ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      throw Exception('Error fetching user: $e');
+    }
   }
 
   void updateTimerUI(int remainingTime) {
@@ -143,31 +183,41 @@ class _PreTestLevelState extends State<PreTestLevel> {
     }
   }
 
-  Future<void> sendScoreToServer() async {
+Future<void> sendScoreToServer() async {
   try {
     print('Sending score to server...');
 
-    // Create data to be sent in the POST request
-    Map<String, dynamic> postData = {
-      'id_pretest': widget.pretest.id_pretest,
-      'id_unit': widget.unit.id_unit,
-      'score_pretest': totalScore,
+    // Retrieve the token asynchronously
+    String? token = await _loadTokenAndFetchUser();
+    if (token == null) {
+      throw Exception('Token not found');
+    }
+
+    // Set the request headers
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+      'Accept': 'application/json', // Request JSON response from the server
     };
 
-    // Make the HTTP POST request
+    // Construct the request body
+    Map<String, dynamic> postData = {
+      'score': totalScore,
+      'id_unit': widget.unit.id_unit,
+      'id_pretest': widget.pretest.id_pretest,
+    };
+
+    // Send the request
     final response = await http.put(
-      Uri.parse(baseurl + 'api/pretest/${widget.pretest.id_pretest}/update-final-score'),
-      body: jsonEncode(postData),
-      headers: {'Content-Type': 'application/json'},
+      Uri.parse(baseurl + 'api/pretest/${widget.pretest.id_pretest}/update-final-score-pretest'),
+      body: jsonEncode(postData), // Encode the body as JSON
+      headers: headers,
     );
 
-    print('Request URL: ${response.request?.url}');
-    print('Request Data: ${jsonEncode(postData)}');
-
+    // Handle response from the server
     if (response.statusCode == 200) {
       // Handle successful response
       print('Score successfully saved.');
-      // Navigate to the final score page
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => FinalScorePretest(score_pretest: totalScore, materi: widget.materi),
@@ -175,11 +225,16 @@ class _PreTestLevelState extends State<PreTestLevel> {
       );
     } else {
       // Handle error response
-      throw Exception('Failed to save score. Status code: ${response.statusCode}');
+      String errorMessage = 'Failed to save score. Status code: ${response.statusCode}';
+      if (response.body != null && response.body.isNotEmpty) {
+        errorMessage += '\nResponse body: ${response.body}';
+      }
+      throw Exception(errorMessage);
     }
-  } catch (e) {
+  } catch (e, stackTrace) {
     // Handle exceptions
     print('Error: $e');
+    print('Stack trace: $stackTrace');
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -201,6 +256,7 @@ class _PreTestLevelState extends State<PreTestLevel> {
 }
 
 
+
   Future<void> fetchQuestionPretest() async {
     try {
       final response = await http.get(
@@ -208,13 +264,13 @@ class _PreTestLevelState extends State<PreTestLevel> {
       );
 
       if (response.statusCode == 200) {
-       final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
+        final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
         setState(() {
           questions = jsonData.map((e) => QuestionPretest.fromJson(e)).toList();
         });
       } else {
         throw Exception('Failed to load questions');
-      } 
+      }
     } catch (e) {
       print(e.toString());
     }
@@ -284,7 +340,7 @@ class _PreTestLevelState extends State<PreTestLevel> {
               )
             : ElevatedButton(
                 onPressed: pertanyaanSelanjutnya,
-                child:Container(
+                child: Container(
                   height: 44,
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
