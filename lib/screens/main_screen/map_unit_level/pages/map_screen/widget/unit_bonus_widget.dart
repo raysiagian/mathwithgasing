@@ -113,6 +113,7 @@ class UnitBonusWidget extends StatelessWidget {
                   return LevelBonusButtonWidget(
                     levelBonus: levelBonus,
                     materi: materi,
+                    unit_bonus: unitBonus,
                   );
                 }).toList(),
               );

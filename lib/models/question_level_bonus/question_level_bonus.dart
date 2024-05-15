@@ -20,14 +20,7 @@ class QuestionLevelBonus {
     required this.option_4,
     required this.correct_index,
     required this.id_level_bonus,
-  }) : options = {
-    'option_1': option_1,
-    'option_2': option_2,
-    'option_3': option_3,
-    'option_4': option_4,
-  };
-
-    final Map<String, String> options;
+  });
 
   factory QuestionLevelBonus.fromJson(Map<String, dynamic> json) {
     return QuestionLevelBonus(
@@ -42,25 +35,26 @@ class QuestionLevelBonus {
     );
   }
 
-    static Future<List<QuestionLevelBonus>> getQuestionFromAPI() async {
-    try {
-      var url = Uri.parse("http://127.0.0.1:8000/api/getQuestionLevelBonus");
-      final response = await http.get(url, headers: {"Content-Type": "application/json"});
+  static Future<List<QuestionLevelBonus>> getQuestionFromAPI() async {
+  try {
+    var url = Uri.parse("http://127.0.0.1:8000/api/getQuestionLevelBonus");
+    final response = await http.get(url, headers: {"Content-Type": "application/json"});
 
-      if (response.statusCode == 200) {
-        final List<dynamic> jsonData = json.decode(response.body);
-        return jsonData.map((json) => QuestionLevelBonus.fromJson(json)).toList();
-      } else {
-        throw Exception('Failed to load questions from API');
-      }
-    } catch (e) {
-      throw Exception('Error fetching questions: $e');
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      final List<dynamic> jsonData = jsonResponse['data'];
+      return jsonData.map((json) => QuestionLevelBonus.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load questions from API');
     }
+  } catch (e) {
+    throw Exception('Error fetching questions: $e');
   }
+}
 
-    @override
+
+  @override
   String toString() {
     return 'Question(id_question_level_bonus: $id_question_level_bonus, question: $question, option_1: $option_1, option_2: $option_2, option_3: $option_3, option_4: $option_4, correct_index: $correct_index, id_level_bonus: $id_level_bonus)';
   }
-
 }

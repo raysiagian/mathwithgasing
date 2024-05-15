@@ -6,11 +6,11 @@ class FinalScoreBonus extends StatelessWidget {
   const FinalScoreBonus({
     Key? key, 
     required this.materi, 
-    required this.score_bonus
+    required this.score
   }) : super(key: key);
 
   final Materi materi;
-  final int score_bonus;
+  final int score;
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +55,7 @@ class FinalScoreBonus extends StatelessWidget {
                   ),
                   Text(
                     // Nilai
-                    score_bonus.toString(),
+                    score.toString(),
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 24,
