@@ -42,12 +42,11 @@ class DialogQuestionOnClose extends StatelessWidget {
             children: [
               InkWell(
                 onTap: () {
-                  Navigator.pushAndRemoveUntil(
+                  Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) {
                       return MapUnitLevel(materi: materi,);
                     }),
-                    (route) => false,
                   );
                 },
                 child: Container(

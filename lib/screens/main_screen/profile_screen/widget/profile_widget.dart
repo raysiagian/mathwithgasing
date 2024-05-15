@@ -51,7 +51,7 @@ class ProfileData extends StatelessWidget {
                             ),
                             SizedBox(width: 5),
                             Text(
-                              "Bergabung : ${formattedJoinDate}",
+                              "Nyawa : ${formattedJoinDate}",
                               style: TextStyle(
                                 fontSize: 16,
                               ),
@@ -75,6 +75,24 @@ class ProfileData extends StatelessWidget {
                               ),
                             ),
                         ],),
+                        SizedBox(height: 5),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.favorite,
+                              color: Colors.pink,
+                              size: 25.0,
+                              semanticLabel: 'Text to announce in accessibility modes',
+                            ),
+                            SizedBox(width: 5),
+                            Text(
+                              "Nyawa : ${user.lives}",
+                              style: TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                     SizedBox(width: 50,),

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:mathgasing/core/constants/constants.dart';
 
 class QuestionLevelBonus {
   final int id_question_level_bonus;
@@ -20,14 +21,8 @@ class QuestionLevelBonus {
     required this.option_4,
     required this.correct_index,
     required this.id_level_bonus,
-  }) : options = {
-    'option_1': option_1,
-    'option_2': option_2,
-    'option_3': option_3,
-    'option_4': option_4,
-  };
+  });
 
-    final Map<String, String> options;
 
   factory QuestionLevelBonus.fromJson(Map<String, dynamic> json) {
     return QuestionLevelBonus(
@@ -44,7 +39,7 @@ class QuestionLevelBonus {
 
     static Future<List<QuestionLevelBonus>> getQuestionFromAPI() async {
     try {
-      var url = Uri.parse("http://127.0.0.1:8000/api/getQuestionLevelBonus");
+      var url = Uri.parse(baseurl + "api/getQuestionLevelBonus");
       final response = await http.get(url, headers: {"Content-Type": "application/json"});
 
       if (response.statusCode == 200) {
