@@ -53,7 +53,8 @@ void initState() {
     if (token != null) {
       fetchLivesFromServer(); // Get lives from backend when the page is initialized
       fetchQuestionLevelBonus();
-      getLastLeftTime();
+
+      getLastLeftTime(); // Call getLastLeftTime() when the page is initialized
       debugLivesSaved(); // Call the function for debugging
       // If lives are already depleted previously, show the lives run out dialog immediately
       if (lives == 0) {
@@ -127,7 +128,6 @@ void initState() {
     try {
       final userId = _loggedInUser?.id_user ?? '';
       final response = await http.get(Uri.parse(baseurl + 'api/user/$userId/lives'));
-
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
         setState(() {
@@ -653,3 +653,4 @@ class SelanjutnyaButton extends StatelessWidget {
     );
   }
 }
+

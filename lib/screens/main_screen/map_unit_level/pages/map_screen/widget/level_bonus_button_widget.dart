@@ -100,7 +100,6 @@ class _LevelBonusButtonWidgetState extends State<LevelBonusButtonWidget> {
     try {
       final userId = _loggedInUser?.id_user ?? '';
       final response = await http.get(Uri.parse(baseurl + 'api/user/$userId/lives'));
-
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
         return jsonData['lives'];
