@@ -11,7 +11,7 @@ import 'package:mathgasing/screens/main_screen/profile_screen/widget/profile_wid
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Profile extends StatefulWidget {
-  const Profile({super.key});
+  const Profile({Key? key}) : super(key: key); // Perbaikan: Hapus super.key
 
   @override
   State<Profile> createState() => _ProfileState();
@@ -45,7 +45,6 @@ class _ProfileState extends State<Profile> {
     }
   }
 
-
   Future<User> fetchUser(String token) async {
     try {
       final response = await http.get(
@@ -65,7 +64,6 @@ class _ProfileState extends State<Profile> {
       throw Exception('Error fetching user: $e');
     }
   }
- 
 
   @override
   Widget build(BuildContext context) {
@@ -88,22 +86,20 @@ class _ProfileState extends State<Profile> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-         Column(children: [
-          if (_loggedInUser != null) // Tambahkan penanganan kondisional di sini
-            ProfileData(user: _loggedInUser!),
-          SizedBox(height: 15,),
-
-          Container(
-            padding: EdgeInsets.all(15),
-            child: LenacanaonProfileWidget(),
-          ),
-          SizedBox(height: 30,),
-
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: ButtonLogout(),
-          ),
-         ],),
+          Column(children: [
+            if (_loggedInUser != null) // Tambahkan penanganan kondisional di sini
+              ProfileData(user: _loggedInUser!),
+            SizedBox(height: 15,),
+            Container(
+              padding: EdgeInsets.all(15),
+              child: LenacanaonProfileWidget(userId: _loggedInUser?.id_user ?? 0), // Perbaikan: Gunakan userId dari pengguna yang sedang login
+            ),
+            SizedBox(height: 30,),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: ButtonLogout(),
+            ),
+          ]),
         ],
       ),
     );

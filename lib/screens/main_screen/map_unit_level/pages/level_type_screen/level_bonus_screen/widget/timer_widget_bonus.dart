@@ -1,7 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
-class TimerWidgetBonus extends StatelessWidget {
-  final DateTime? lastLeftTime; // Ubah tipe data menjadi DateTime?
+class TimerWidgetBonus extends StatefulWidget {
+  final DateTime? lastLeftTime;
 
   const TimerWidgetBonus({
     Key? key,
@@ -9,28 +11,54 @@ class TimerWidgetBonus extends StatelessWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    if (lastLeftTime == null) {
-      // Jika lastLeftTime belum diinisialisasi, tampilkan teks kosong atau indikator lainnya
-      return Text(
-        'Timer: -', // Atau tampilkan indikator lainnya sesuai kebutuhan
-        style: TextStyle(
-          color: Colors.blue,
-        ),
-      );
-    } else {
-      final currentTime = DateTime.now();
-      final difference = lastLeftTime!.difference(currentTime); // Ubah lastLeftTime menjadi lastLeftTime!
-      final remainingTime = Duration(minutes: 5) + difference;
-      final formattedMinutes = remainingTime.inMinutes.remainder(60).toString().padLeft(2, '0');
-      final formattedSeconds = remainingTime.inSeconds.remainder(60).toString().padLeft(2, '0');
-      final formattedTime = '$formattedMinutes:$formattedSeconds';
-      return Text(
-        'Timer: $formattedTime',
-        style: TextStyle(
-          color: Colors.blue,
-        ),
-      );
+  _TimerWidgetBonusState createState() => _TimerWidgetBonusState();
+}
+
+class _TimerWidgetBonusState extends State<TimerWidgetBonus> {
+  late Timer _timer;
+  Duration _remainingTime = const Duration(minutes: 1);
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.lastLeftTime != null) {
+      _startTimer();
     }
   }
+
+  @override
+  void dispose() {
+    _timer.cancel(); // Hentikan timer sebelum widget dihapus
+    super.dispose();
+  }
+
+  void _startTimer() {
+    final currentTime = DateTime.now();
+    final difference = currentTime.difference(widget.lastLeftTime!);
+    final elapsedDuration = Duration(minutes: 1) - difference;
+    if (elapsedDuration <= Duration.zero) {
+      setState(() {
+        _remainingTime = Duration.zero;
+      });
+    } else {
+      setState(() {
+        _remainingTime = elapsedDuration;
+      });
+      _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        setState(() {
+          if (_remainingTime.inSeconds > 0) {
+            _remainingTime -= const Duration(seconds: 1);
+          } else {
+            timer.cancel();
+          }
+        });
+      });
+    }
+  }
+
+  @override
+Widget build(BuildContext context) {
+  return Container(); // atau SizedBox.shrink();
+}
+
 }

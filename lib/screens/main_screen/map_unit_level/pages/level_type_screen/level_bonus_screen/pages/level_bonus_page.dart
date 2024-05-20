@@ -15,6 +15,7 @@ import 'package:mathgasing/screens/main_screen/map_unit_level/pages/level_type_s
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/map_screen/widget/dialog_lives_reduced.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/map_screen/widget/dialog_lives_runout.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/map_screen/widget/dialog_question_on_close_popup_widget.dart';
+import 'package:mathgasing/screens/main_screen/map_unit_level/pages/map_screen/widget/selanjutnya_button_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LevelBonusPage extends StatefulWidget {
@@ -53,7 +54,6 @@ void initState() {
     if (token != null) {
       fetchLivesFromServer(); // Get lives from backend when the page is initialized
       fetchQuestionLevelBonus();
-
       getLastLeftTime(); // Call getLastLeftTime() when the page is initialized
       debugLivesSaved(); // Call the function for debugging
       // If lives are already depleted previously, show the lives run out dialog immediately
@@ -128,6 +128,7 @@ void initState() {
     try {
       final userId = _loggedInUser?.id_user ?? '';
       final response = await http.get(Uri.parse(baseurl + 'api/user/$userId/lives'));
+
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
         setState(() {
@@ -204,14 +205,11 @@ void initState() {
     setState(() {
       final currentTime = DateTime.now();
       final difference = currentTime.difference(lastLeftTime);
-      final remainingTime = Duration(minutes: 5) - difference;
+      final remainingTime = Duration(minutes: 1) - difference;
 
       if (remainingTime <= Duration.zero) {
-        if (lives < 3 && lives == 1) {
-          addLife(); // Add life after 5 minutes
-        }
-        // Reset the last left time regardless of lives
-        lastLeftTime = DateTime.now();
+        t.cancel(); // Cancel the timer if time is up
+        addLife(); // Add life after 5 minutes
       }
     });
   });
@@ -229,9 +227,9 @@ void initState() {
   String? lastLeftTimeString = prefs.getString('lastLeftTime');
   if (lastLeftTimeString != null) {
     lastLeftTime = DateTime.parse(lastLeftTimeString);
-    int remainingTime = Duration(minutes: 5).inSeconds - DateTime.now().difference(lastLeftTime).inSeconds;
+    int remainingTime = Duration(minutes: 1).inSeconds - DateTime.now().difference(lastLeftTime).inSeconds;
     if (remainingTime > 0) {
-      lives += remainingTime ~/ Duration(minutes: 5).inSeconds;
+      lives += remainingTime ~/ Duration(minutes: 1).inSeconds;
       lives = lives.clamp(0, 3); // Ensure lives don't exceed 3
     }
   } else {
@@ -241,7 +239,7 @@ void initState() {
 
   void addLife() {
   setState(() {
-    if (lives < 3 && lives == 1) {
+    if (lives < 3) {
       lives++;
       saveLives(lives); // Simpan jumlah nyawa yang diperbarui
       lastLeftTime = DateTime.now(); // Reset waktu terakhir meninggalkan halaman
@@ -653,4 +651,3 @@ class SelanjutnyaButton extends StatelessWidget {
     );
   }
 }
-

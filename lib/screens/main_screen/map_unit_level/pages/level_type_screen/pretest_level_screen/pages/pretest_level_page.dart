@@ -40,8 +40,10 @@ class _PreTestLevelState extends State<PreTestLevel> {
   late TimerModel timerModel;
   late List<QuestionPretest> questions = [];
   String? selectedOption;
+  String? lastSelectedOption;
   late String _token;
   late User? _loggedInUser;
+  int correctAnswers = 0; 
 
   @override
   void initState() {
@@ -105,40 +107,85 @@ class _PreTestLevelState extends State<PreTestLevel> {
     moveToNextQuestion();
   }
 
-  void pertanyaanSelanjutnya() {
-    moveToNextQuestion();
+void pertanyaanSelanjutnya() {
+  // Check if lastSelectedOption is not null
+  if (lastSelectedOption != null) {
+    final currentQuestion = questions[index];
+    checkAnswer(currentQuestion, lastSelectedOption);
   }
+  moveToNextQuestion();
+}
+
+
+
+  // void setSelectedOption(String option) {
+  //   setState(() {
+  //     selectedOption = option;
+  //     final currentQuestion = questions[index];
+  //     checkAnswer(currentQuestion, selectedOption);
+  //   });
+  // }
 
   void setSelectedOption(String option) {
+  print("Selected Option: $option");
+  if (option != lastSelectedOption) { // Check if the selected option is new
     setState(() {
-      selectedOption = option;
-      final currentQuestion = questions[index];
-      checkAnswer(currentQuestion, selectedOption);
+      lastSelectedOption = option;
     });
   }
+}
+
+
+
+
+  // void checkAnswer(QuestionPretest currentQuestion, String? selectedOption) {
+  //   if (selectedOption != null) {
+  //     if (selectedOption == currentQuestion.correct_index) {
+  //       increaseScore();
+  //       print("Correct answer! Score increased by 10. Total Score: $totalScore");
+  //     } else {
+  //       print("Wrong answer. Total Score: $totalScore");
+  //     }
+  //     // Reset selected option after checking the answer
+  //     setState(() {
+  //       selectedOption = null;
+  //     });
+  //   } else {
+  //     print("No answer given. Total Score: $totalScore");
+  //   }
+  // }
 
   void checkAnswer(QuestionPretest currentQuestion, String? selectedOption) {
-    if (selectedOption != null) {
-      if (selectedOption == currentQuestion.correct_index) {
-        increaseScore();
+  if (lastSelectedOption != null) {
+    if (lastSelectedOption == currentQuestion.correct_index) {
+      // Periksa apakah opsi yang dipilih terakhir kali adalah jawaban yang benar
+      if (lastSelectedOption == selectedOption) {
+        // Jika jawaban terakhir dan jawaban saat ini sama, tambahkan skor
+        increaseScore(currentQuestion);
         print("Correct answer! Score increased by 10. Total Score: $totalScore");
       } else {
         print("Wrong answer. Total Score: $totalScore");
       }
-      // Reset selected option after checking the answer
-      setState(() {
-        selectedOption = null;
-      });
-    } else {
-      print("No answer given. Total Score: $totalScore");
     }
-  }
-
-  void increaseScore() {
     setState(() {
-      totalScore += 10;
+      lastSelectedOption = null; // Reset lastSelectedOption setelah mengecek jawaban
     });
+  } else {
+    print("No answer given. Total Score: $totalScore");
   }
+}
+
+
+
+  void increaseScore(QuestionPretest currentQuestion) {
+  setState(() {
+    if (lastSelectedOption == currentQuestion.correct_index) {
+      correctAnswers++;
+    }
+    totalScore = ((correctAnswers / questions.length) * 100).toInt();
+  });
+}
+
 
   void moveToNextQuestion() async {
     if (index < questions.length - 1) {

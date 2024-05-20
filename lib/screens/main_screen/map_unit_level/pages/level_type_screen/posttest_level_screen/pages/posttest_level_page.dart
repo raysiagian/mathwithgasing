@@ -10,6 +10,7 @@ import 'package:mathgasing/models/question_posttest/question_posttest.dart';
 import 'package:mathgasing/models/timer/timer.dart';
 import 'package:mathgasing/models/user/user.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/after_level_screen/pages/after_level_postest.dart';
+import 'package:mathgasing/screens/main_screen/map_unit_level/pages/after_level_screen/pages/badge_user.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/level_type_screen/posttest_level_screen/widget/question_posttest_widget.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/map_screen/widget/dialog_question_on_close_popup_widget.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/map_screen/widget/selanjutnya_button_widget.dart';
@@ -42,8 +43,12 @@ class _PostTestLevelState extends State<PostTestLevel> {
   late TimerModel timerModel;
   late List<QuestionPostTest> questions = [];
   String? selectedOption;
+  String? lastSelectedOption;
   late String _token;
   late User? _loggedInUser;
+  int correctAnswers = 0;
+  
+  // get id_posttest => null; 
 
   // @override
   // void initState() {
@@ -126,16 +131,22 @@ class _PostTestLevelState extends State<PostTestLevel> {
   }
 
   void pertanyaanSelanjutnya() {
-    moveToNextQuestion();
+  // Check the answer only if an option has been selected
+  if (lastSelectedOption != null) {
+    final currentQuestion = questions[index];
+    checkAnswer(currentQuestion, lastSelectedOption);
   }
+  moveToNextQuestion();
+}
 
   void setSelectedOption(String option) {
+  print("Selected Option: $option");
+  if (option != lastSelectedOption) { // Check if the selected option is new
     setState(() {
-      selectedOption = option;
-      final currentQuestion = questions[index];
-      checkAnswer(currentQuestion, selectedOption);
+      lastSelectedOption = option;
     });
   }
+}
 
   // void checkAnswer(QuestionPostTest currentQuestion, String? selectedOption) {
   //   if (selectedOption != null) {
@@ -155,29 +166,35 @@ class _PostTestLevelState extends State<PostTestLevel> {
   // }
 
   void checkAnswer(QuestionPostTest currentQuestion, String? selectedOption) {
-    if (selectedOption != null) {
-      if (selectedOption == currentQuestion.correct_index) {
-        increaseScore();
+  if (lastSelectedOption != null) {
+    if (lastSelectedOption == currentQuestion.correct_index) {
+      // Periksa apakah opsi yang dipilih terakhir kali adalah jawaban yang benar
+      if (lastSelectedOption == selectedOption) {
+        // Jika jawaban terakhir dan jawaban saat ini sama, tambahkan skor
+        increaseScore(currentQuestion);
         print("Correct answer! Score increased by 10. Total Score: $totalScore");
       } else {
         print("Wrong answer. Total Score: $totalScore");
       }
-      // Reset selected option after checking the answer
-      setState(() {
-        selectedOption = null;
-      });
-    } else {
-      print("No answer given. Total Score: $totalScore");
     }
-  }
-
-
-
-  void increaseScore() {
     setState(() {
-      totalScore += 10;
+      lastSelectedOption = null; // Reset lastSelectedOption setelah mengecek jawaban
     });
+  } else {
+    print("No answer given. Total Score: $totalScore");
   }
+}
+
+
+
+  void increaseScore(QuestionPostTest currentQuestion) {
+    setState(() {
+    if (lastSelectedOption == currentQuestion.correct_index) {
+      correctAnswers++;
+    }
+    totalScore = ((correctAnswers / questions.length) * 100).toInt();
+  });
+}
 
   void moveToNextQuestion() async {
     if (index < questions.length - 1) {
@@ -257,14 +274,34 @@ class _PostTestLevelState extends State<PostTestLevel> {
       // print('Request Data: ${jsonEncode(postData)}');
 
       if (response.statusCode == 200) {
-        // Handle successful response
-        print('Score successfully saved.');
-        // Navigate to the final score page
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => FinalScorePosttest(score_posttest: totalScore, materi: widget.materi),
-          ),
-        );
+        // // Handle successful response
+        // print('Score successfully saved.');
+        // // Navigate to the final score page
+        // Navigator.of(context).push(
+        //   MaterialPageRoute(
+        //     builder: (context) => FinalScorePosttest(score_posttest: totalScore, materi: widget.materi),
+        //   ),
+        // );
+        if (totalScore == 100) {
+  // Navigasi ke BadgeUserPage() jika skor adalah 100
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => BadgeUserPage(
+                id_posttest: widget.posttest.id_posttest,
+                materi: widget.materi,
+                userId: _loggedInUser!.id_user,
+              ),
+            ),
+          );
+        } else {
+          // Navigasi ke FinalScorePosttest() jika skor tidak 100
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => FinalScorePosttest(score_posttest: totalScore, materi: widget.materi),
+            ),
+          );
+        }
+
       } else {
         String errorMessage = 'Failed to save score. Status code: ${response.statusCode}';
         if (response.body != null && response.body.isNotEmpty) {

@@ -3,9 +3,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:mathgasing/core/constants/constants.dart';
+import 'package:mathgasing/models/level_type/material_video.dart';
+import 'package:mathgasing/models/materi/materi.dart';
+import 'package:mathgasing/models/unit/unit.dart';
+import 'package:mathgasing/screens/main_screen/map_unit_level/pages/level_type_screen/material_level_screen/widget/button_to_map_video.dart';
+import 'package:mathgasing/screens/main_screen/map_unit_level/pages/map_screen/pages/map_unit_level.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class VideoPlayer extends StatefulWidget {
+  const VideoPlayer({
+    Key? key,
+    required this.materi,
+    required this.unit,
+    required this.materialVideo,
+  }) : super(key: key);
+
+  final Materi materi;
+  final Unit unit;
+  final MaterialVideo materialVideo;
+
   @override
   _VideoPlayerState createState() => _VideoPlayerState();
 }
@@ -134,7 +150,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
           _isPlayerReady = true;
         },
         onEnded: (data) {
-          _showSnackBar('Video Ended!');
+          _showButton('Kembali Ke Map');
         },
       ),
       builder: (context, player) => Scaffold(
@@ -216,24 +232,24 @@ class _VideoPlayerState extends State<VideoPlayer> {
 
   Widget get _space => const SizedBox(height: 10);
 
-  void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontWeight: FontWeight.w300,
-            fontSize: 16.0,
+  void _showButton(String message) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              BackToMapVideo(
+                materi: widget.materi,
+                unit: widget.unit,
+                materialVideo: widget.materialVideo,
+              ), // Menggunakan widget.materi untuk mengakses properti materi dari VideoPlayer
+            ],
           ),
-        ),
-        backgroundColor: Colors.blueAccent,
-        behavior: SnackBarBehavior.floating,
-        elevation: 1.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(50.0),
-        ),
-      ),
+        );
+      },
     );
   }
 }

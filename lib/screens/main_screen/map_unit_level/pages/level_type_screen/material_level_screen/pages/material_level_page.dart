@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:video_player/video_player.dart'; // Impor VideoPlayerController
 import 'package:mathgasing/core/constants/constants.dart';
 import 'package:mathgasing/models/unit/unit.dart';
 import 'package:mathgasing/models/level_type/material_video.dart';
@@ -24,17 +25,19 @@ class MaterialLevel extends StatefulWidget {
 
 class _MaterialLevelState extends State<MaterialLevel> {
   late Future<List<MaterialVideo>> _futureMaterialVideos;
+  late VideoPlayerController _videoController; // Tambahkan VideoPlayerController
 
   @override
   void initState() {
     super.initState();
     _futureMaterialVideos = fetchMaterialVideo();
+    _videoController = VideoPlayerController.network('video_url_here'); // Inisialisasi VideoPlayerController
   }
 
   Future<List<MaterialVideo>> fetchMaterialVideo() async {
     try {
       final response = await http.get(
-         Uri.parse(baseurl + 'api/getMaterialVideo?id_unit=${widget.unit.id_unit}'),
+        Uri.parse(baseurl + 'api/getMaterialVideo?id_unit=${widget.unit.id_unit}'),
       );
 
       if (response.statusCode == 200) {
@@ -81,7 +84,8 @@ class _MaterialLevelState extends State<MaterialLevel> {
             Icons.arrow_back_ios,
             color: Theme.of(context).primaryColor,
           ),
-          onPressed: () {
+          onPressed: () async {
+            await _videoController.pause(); // Pause video saat tombol kembali ditekan
             showDialog(
               context: context,
               barrierDismissible: false,
@@ -118,6 +122,7 @@ class _MaterialLevelState extends State<MaterialLevel> {
                     MaterialVideoWidget(
                       unit: widget.unit, 
                       materialVideo: materialVideo,
+                      materi: widget.materi, // Memperbaiki pemanggilan materi
                     ),
                 ],
               ),

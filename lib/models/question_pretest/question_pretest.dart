@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:mathgasing/core/constants/constants.dart';
 
 class QuestionPretest {
   final int id_question_pretest;
