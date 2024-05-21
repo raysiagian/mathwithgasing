@@ -25,9 +25,11 @@ class _LeaderboardTableWidgetState extends State<LeaderboardTableWidget> {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body)['data'];
-      setState(() {
-        leaderboardData = List<Map<String, dynamic>>.from(data);
-      });
+      if (mounted) {
+        setState(() {
+          leaderboardData = List<Map<String, dynamic>>.from(data);
+        });
+      }
     } else {
       throw Exception('Failed to load leaderboard data');
     }

@@ -39,6 +39,7 @@ class LevelBonusPage extends StatefulWidget {
 class _LevelBonusPageState extends State<LevelBonusPage> {
   int index = 0;
   int totalScore = 0;
+  int correctAnswers = 0;
   int lives = 3; // Initial number of lives
   List<QuestionLevelBonus> questions = [];
   String? selectedOption;
@@ -326,11 +327,18 @@ void initState() {
   });
 }
 
+bool isAnswerProcessed = false;
+
 void checkAndProceed() {
+  if (isAnswerProcessed) return; // Prevent multiple calls
+  isAnswerProcessed = true;
+
   final currentQuestion = questions[index];
   if (selectedOption == currentQuestion.correct_index) {
+    correctAnswers++;
+    print("jumlah correct: $correctAnswers");
     setState(() {
-      totalScore++;
+      totalScore = ((correctAnswers / questions.length) * 100).toInt();
     });
   } else {
     setState(() {
@@ -345,15 +353,27 @@ void checkAndProceed() {
     }
   }
 
-  if (index < questions.length - 1) {
-    setState(() {
-      index++;
-      selectedOption = null; // Reset selected option for the next question
-    });
+  // Check if this is the last question
+  if (index == questions.length - 1) {
+    sendScoreAndNavigate(); // Send score and navigate to the final page
   } else {
-    _navigateToAfterLevelBonus();
+    setState(() {
+      index++; // Move to the next question
+      selectedOption = null; // Reset selected option for the next question
+      isAnswerProcessed = false; // Reset for the next question
+    });
   }
 }
+
+void sendScoreAndNavigate() {
+  if (!isAnswerProcessed && selectedOption != null) {
+    checkAndProceed(); // Ensure the last answer is checked before sending the score
+  }
+  sendScoreToServer().then((_) {
+    _navigateToAfterLevelBonus(); // Navigate to the final page
+  });
+}
+
 
 
 

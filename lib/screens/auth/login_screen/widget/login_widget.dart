@@ -28,7 +28,7 @@ class _LoginWidgetState extends State<LoginWidget> {
   Future<void> _login(BuildContext context) async {
     try {
       final response = await http.post(
-        Uri.parse(baseurl+'api/login'),
+        Uri.parse(baseurl + 'api/login'),
         body: {
           'email': _emailController.text,
           'password': _passwordController.text,
@@ -37,21 +37,36 @@ class _LoginWidgetState extends State<LoginWidget> {
 
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
-        final authToken = responseData['token'];
-        final refreshToken = responseData['refresh_token'];
-        final token = responseData['token'];
-        await _saveToken(token);
-        
-        // Simpan token
-        await storage.write(key: 'access_token', value: authToken);
-        await storage.write(key: 'refresh_token', value: refreshToken);
+        final isActive = responseData['is_active'];
+        print('is active: $isActive');
+        print('isActive type: ${isActive.runtimeType}');
 
-        widget.onLoginSuccess(authToken); // Notify the parent widget about login success
-        // Arahkan pengguna ke halaman HomeWrapper
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomeWrapper()),
-        );
+        if (isActive == 1 || isActive == '1') {
+          final authToken = responseData['token'];
+          final refreshToken = responseData['refresh_token'];
+          final token = responseData['token'];
+          await _saveToken(token);
+
+          // Simpan token
+          await storage.write(key: 'access_token', value: authToken);
+          await storage.write(key: 'refresh_token', value: refreshToken);
+
+          widget.onLoginSuccess(authToken); // Notify the parent widget about login success
+          // Arahkan pengguna ke halaman HomeWrapper
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomeWrapper()),
+          );
+        } else {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Akun Anda tidak aktif. Silakan hubungi admin.'),
+                backgroundColor: Colors.red, // Changed to a contrasting color
+              ),
+            );
+          }
+        }
       } else {
         final responseData = json.decode(response.body);
         final errorMessage = responseData['message'] ?? 'Login gagal';
@@ -77,7 +92,7 @@ class _LoginWidgetState extends State<LoginWidget> {
     }
   }
 
-    Future<void> _saveToken(String token) async {
+  Future<void> _saveToken(String token) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('token', token);
   }
@@ -101,7 +116,6 @@ class _LoginWidgetState extends State<LoginWidget> {
       }
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
