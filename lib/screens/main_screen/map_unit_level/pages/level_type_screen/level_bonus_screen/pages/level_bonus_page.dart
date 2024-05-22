@@ -375,9 +375,6 @@ void sendScoreAndNavigate() {
 }
 
 
-
-
-
   void checkAnswer(QuestionLevelBonus question, String? selectedOption) {
     if (selectedOption == question.correct_index) {
       setState(() {
@@ -431,7 +428,6 @@ void sendScoreAndNavigate() {
       'id_level_bonus': widget.levelBonus.id_level_bonus,
       'score': totalScore,
       'id_unit_Bonus': widget.unit_bonus.id_unit_Bonus,
-
     };
 
     // Make the HTTP POST request
@@ -449,14 +445,7 @@ void sendScoreAndNavigate() {
     print('Response Body: ${response.body}');
 
     if (response.statusCode == 200) {
-      // Handle successful response
       print('Score successfully saved.');
-      // Navigate to the final score page
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => FinalScoreBonus(score: totalScore, materi: widget.materi),
-        ),
-      );
     } else {
       String errorMessage = 'Failed to save score. Status code: ${response.statusCode}';
       if (response.body != null && response.body.isNotEmpty) {
@@ -465,7 +454,6 @@ void sendScoreAndNavigate() {
       throw Exception(errorMessage);
     }
   } catch (e) {
-    // Handle exceptions
     print('Error: $e');
     showDialog(
       context: context,
@@ -486,6 +474,7 @@ void sendScoreAndNavigate() {
     );
   }
 }
+
 
 
   Future<void> fetchQuestionLevelBonus() async {
@@ -615,27 +604,17 @@ void sendScoreAndNavigate() {
             }
           },
         )
-      : ElevatedButton(
-          onPressed: sendScoreToServer,
-          child: Container(
-            height: 44,
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 10.0),
-            decoration: BoxDecoration(
-              color: AppColors.primaryColor,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Text(
-              'Selesai',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-              ),
-            ),
-          ),
+      : SelanjutnyaButton(
+          onPressed: () {
+            if (selectedOption != null) {
+              sendScoreAndNavigate();
+            } else {
+              showErrorDialog('Pilih salah satu jawaban sebelum melanjutkan.');
+            }
+          },
         ),
 ),
+
 
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
