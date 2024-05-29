@@ -2,29 +2,67 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mathgasing/models/user/user.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
+import 'package:mathgasing/screens/main_screen/profile_screen/widget/dialog_edit_name.dart';
 
-class ProfileData extends StatelessWidget {
-
+class ProfileData extends StatefulWidget {
   final User user;
 
   const ProfileData({
-    super.key,
+    Key? key,
     required this.user,
-  });
+  }) : super(key: key);
+
+  @override
+  _ProfileDataState createState() => _ProfileDataState();
+}
+
+class _ProfileDataState extends State<ProfileData> {
+  late TextEditingController _nameController;
+  late GlobalKey<FormState> _formKey;
+  late DateTime joinDate;
+  late String formattedJoinDate;
+
+  @override
+  void initState() {
+    super.initState();
+     _nameController = TextEditingController();
+    _formKey = GlobalKey<FormState>();
+    joinDate = DateTime.parse(widget.user.createdAt);
+    formattedJoinDate = DateFormat('dd MMMM yyyy').format(joinDate);
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
+
+  // void _showEditDialog() {
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return DialogEditName(
+  //         user: widget.user,          
+  //       );
+  //     },
+  //   );
+  // }
+
 
   @override
   Widget build(BuildContext context) {
-    DateTime joinDate = DateTime.parse(user.createdAt);
-    String formattedJoinDate = DateFormat('dd MMMM yyyy').format(joinDate);
     return Container(
       child: Column(
+        children: [
+          SizedBox(height: 15),
+          Row(
             children: [
-              SizedBox(height: 15),
               Container(
                 padding: EdgeInsets.only(left: 16.0),
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  user.name,
+                  widget.user.name,
                   style: TextStyle(
                     color: Theme.of(context).primaryColor,
                     fontWeight: FontWeight.bold,
@@ -33,83 +71,90 @@ class ProfileData extends StatelessWidget {
                   textAlign: TextAlign.left,
                 ),
               ),
-              SizedBox(height: 5,),
-              Container(
-                padding: EdgeInsets.only(left: 16.0),
-                child: Row(
+              // IconButton(
+              //   icon: Icon(Icons.edit),
+              //   onPressed: _showEditDialog,
+              // ),
+            ],
+          ),
+          SizedBox(height: 5,),
+          Container(
+            padding: EdgeInsets.only(left: 16.0),
+            child: Row(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    Row(
                       children: [
-                        Row(
-                          children: [
-                            Icon(
-                              CupertinoIcons.calendar,
-                              color: Colors.pink,
-                              size: 25.0,
-                              semanticLabel: 'Text to announce in accessibility modes',
-                            ),
-                            SizedBox(width: 5),
-                            Text(
-                              "Nyawa : ${formattedJoinDate}",
-                              style: TextStyle(
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
+                        Icon(
+                          CupertinoIcons.calendar,
+                          color: Colors.pink,
+                          size: 25.0,
+                          semanticLabel: 'Text to announce in accessibility modes',
                         ),
-                        SizedBox(height: 5),
-                        Row(
-                          children: [
-                            Icon(
-                              CupertinoIcons.mail_solid,
-                              color: Colors.pink,
-                              size: 25.0,
-                              semanticLabel: 'Text to announce in accessibility modes',
-                            ),
-                            SizedBox(width: 5),
-                            Text(
-                              user.email,
-                              style: TextStyle(
-                                fontSize: 16,
-                              ),
-                            ),
-                        ],),
-                        SizedBox(height: 5),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.favorite,
-                              color: Colors.pink,
-                              size: 25.0,
-                              semanticLabel: 'Text to announce in accessibility modes',
-                            ),
-                            SizedBox(width: 5),
-                            Text(
-                              "Nyawa : ${user.lives}",
-                              style: TextStyle(
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
+                        SizedBox(width: 5),
+                        Text(
+                          "Nyawa : $formattedJoinDate",
+                          style: TextStyle(
+                            fontSize: 16,
+                          ),
                         ),
                       ],
                     ),
-                    SizedBox(width: 50,),
-                    Container(
-                      alignment: Alignment.centerRight,
-                      child: Image.asset(
-                        user.gender == 'laki-laki' ? "assets/images/icon_profile man.png" :
-                        user.gender == 'perempuan' ? "assets/images/icon_profile woman.png" :
-                        "assets/images/icon_profile_man.png",
-                        width: 100,
-                        height: 100,
-                      ),
+                    SizedBox(height: 5),
+                    Row(
+                      children: [
+                        Icon(
+                          CupertinoIcons.mail_solid,
+                          color: Colors.pink,
+                          size: 25.0,
+                          semanticLabel: 'Text to announce in accessibility modes',
+                        ),
+                        SizedBox(width: 5),
+                        Text(
+                          widget.user.email,
+                          style: TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                    ],),
+                    SizedBox(height: 5),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.favorite,
+                          color: Colors.pink,
+                          size: 25.0,
+                          semanticLabel: 'Text to announce in accessibility modes',
+                        ),
+                        SizedBox(width: 5),
+                        Text(
+                          "Nyawa : ${widget.user.lives}",
+                          style: TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],),
-              ),
-            ],
+                  ],
+                ),
+                SizedBox(width: 50,),
+                Container(
+                  alignment: Alignment.centerRight,
+                  child: Image.asset(
+                    widget.user.gender == 'laki-laki' ? "assets/images/icon_profile man.png" :
+                    widget.user.gender == 'perempuan' ? "assets/images/icon_profile woman.png" :
+                    "assets/images/icon_profile_man.png",
+                    width: 100,
+                    height: 100,
+                  ),
+                ),
+              ],
+            ),
           ),
+        ],
+      ),
     );
   }
 }

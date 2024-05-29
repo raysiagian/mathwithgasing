@@ -27,7 +27,7 @@ class MaterialVideoWidget extends StatelessWidget {
           SizedBox(height: 30,),
           SizedBox(
             width: 400.0,
-            height: 300.0,
+            height: 400.0,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(

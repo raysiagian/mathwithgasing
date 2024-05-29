@@ -52,7 +52,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
   }
 
   Future<void> _fetchVideoData() async {
-    final response = await http.get(Uri.parse(baseurl +'api/getMaterialVideo'));
+    final response = await http.get(Uri.parse(baseurl + 'api/getMaterialVideo'));
 
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
@@ -75,12 +75,16 @@ class _VideoPlayerState extends State<VideoPlayer> {
       initialVideoId: videoId,
       flags: const YoutubePlayerFlags(
         mute: false,
-        autoPlay: true,
-        disableDragSeek: false,
+        autoPlay: false,
+        disableDragSeek: true,
         loop: false,
         isLive: false,
         forceHD: false,
         enableCaption: true,
+        hideThumbnail: true,
+        hideControls: true,
+        controlsVisibleAtStart: false,
+        showLiveFullscreenButton: false,
       ),
     )..addListener(listener);
   }
@@ -108,106 +112,50 @@ class _VideoPlayerState extends State<VideoPlayer> {
     super.dispose();
   }
 
-  @override
+ @override
   Widget build(BuildContext context) {
     if (_videoUrl.isEmpty) {
       return Center(child: CircularProgressIndicator());
     }
 
-    return YoutubePlayerBuilder(
-      onExitFullScreen: () {
-        SystemChrome.setPreferredOrientations(DeviceOrientation.values);
-      },
-      player: YoutubePlayer(
-        controller: _controller,
-        showVideoProgressIndicator: true,
-        progressIndicatorColor: Colors.blueAccent,
-        topActions: <Widget>[
-          const SizedBox(width: 8.0),
-          Expanded(
-            child: Text(
-              _controller.metadata.title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 18.0,
-              ),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-            ),
-          ),
-          IconButton(
-            icon: const Icon(
-              Icons.settings,
-              color: Colors.white,
-              size: 25.0,
-            ),
-            onPressed: () {
-              debugPrint('Settings Tapped!');
-            },
-          ),
-        ],
-        onReady: () {
-          _isPlayerReady = true;
-        },
-        onEnded: (data) {
-          _showButton('Kembali Ke Map');
-        },
-      ),
-      builder: (context, player) => Scaffold(
-        body: ListView(
-          children: [
-            player,
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      IconButton(
-                        icon: Icon(
-                          _controller.value.isPlaying
-                              ? Icons.pause
-                              : Icons.play_arrow,
-                        ),
-                        onPressed: _isPlayerReady
-                            ? () {
-                                _controller.value.isPlaying
-                                    ? _controller.pause()
-                                    : _controller.play();
-                                setState(() {});
-                              }
-                            : null,
-                      ),
-                      IconButton(
-                        icon: Icon(_muted ? Icons.volume_off : Icons.volume_up),
-                        onPressed: _isPlayerReady
-                            ? () {
-                                _muted
-                                    ? _controller.unMute()
-                                    : _controller.mute();
-                                setState(() {
-                                  _muted = !_muted;
-                                });
-                              }
-                            : null,
-                      ),
-                      FullScreenButton(
-                        controller: _controller,
-                        color: Colors.blueAccent,
-                      ),
-                    ],
-                  ),
-                  _space,
-                ],
-              ),
-            ),
-          ],
+    return Column(
+      children: [
+        YoutubePlayer(
+          controller: _controller,
+          showVideoProgressIndicator: false,
+          onReady: () {
+            _isPlayerReady = true;
+          },
+          onEnded: (e) {
+            print('video ended');
+          },
         ),
-      ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+             ElevatedButton(
+          onPressed: () {
+            if (_isPlayerReady) {
+              _controller.pause();
+            }
+          },
+          child: const Text("Pause"),
+        ),
+        SizedBox(width: 50,),
+        ElevatedButton(
+          onPressed: () {
+            if (_isPlayerReady) {
+              _controller.play();
+            }
+          },
+          child: const Text("Play"),
+        ),
+          ],
+        )
+      ],
     );
   }
+
 
   Color _getStateColor(PlayerState state) {
     switch (state) {
