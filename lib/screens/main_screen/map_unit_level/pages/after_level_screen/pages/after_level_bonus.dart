@@ -16,7 +16,16 @@ class FinalScoreBonus extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
-      body: Center(
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.asset(
+            'assets/images/background_screen.png',
+            fit: BoxFit.cover,
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+          ),
+        Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -66,10 +75,15 @@ class FinalScoreBonus extends StatelessWidget {
               ),
             ),
             SizedBox(height: 40),
-            BackToMap(materi: materi),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: BackToMap(materi: materi),
+            ),
           ],
         ),
       ),
+        ],
+      )
     );
   }
 }

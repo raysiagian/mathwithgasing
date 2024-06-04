@@ -22,7 +22,6 @@ class _RegisterWidgetState extends State<RegisterWidget> {
   final _formKey = GlobalKey<FormState>();
 
   bool _isEmailValid(String email) {
-    // Regular expression for email validation
     String emailRegex = r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$';
     RegExp regExp = RegExp(emailRegex);
     return regExp.hasMatch(email);
@@ -36,16 +35,13 @@ class _RegisterWidgetState extends State<RegisterWidget> {
       headers: {'Content-Type': 'application/json'},
     );
     if (response.statusCode == 200) {
-      // Parsing response JSON
       final Map<String, dynamic> data = json.decode(response.body);
       final bool isAvailable = data['status'];
       return isAvailable;
     } else {
-      // Handle other status codes
       throw Exception('Failed to check email availability');
     }
   } catch (e) {
-    // Error occurred, handle accordingly
     print('Error checking email availability: $e');
     throw Exception('Failed to check email availability');
   }

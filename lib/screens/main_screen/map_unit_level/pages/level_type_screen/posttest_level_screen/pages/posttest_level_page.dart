@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Badge;
 import 'package:http/http.dart' as http;
 import 'package:mathgasing/core/constants/constants.dart';
+import 'package:mathgasing/models/badge/badge.dart';
 import 'dart:convert';
-
 import 'package:mathgasing/models/unit/unit.dart';
 import 'package:mathgasing/models/level_type/posttest.dart';
 import 'package:mathgasing/models/materi/materi.dart';
@@ -47,27 +47,9 @@ class _PostTestLevelState extends State<PostTestLevel> {
   late String _token;
   late User? _loggedInUser;
   int correctAnswers = 0;
+  bool isFirstAttempt = true;
   
-  // get id_posttest => null; 
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   questions = [];
-  //   fetchQuestionPostTest().then((value) {
-  //     setState(() {
-  //       questions = value;
-  //     });
-  //   });
-  //   timerModel = TimerModel(
-  //     durationInSeconds: 10,
-  //     onTimerUpdate: updateTimerUI,
-  //     onTimerFinish: timerFinishAction,
-  //   );
-  //   timerModel.startTimer();
-  // }
-
-    @override
+  @override
   void initState() {
     super.initState();
      _loadTokenAndFetchUser();
@@ -80,7 +62,7 @@ class _PostTestLevelState extends State<PostTestLevel> {
     timerModel.startTimer();
   }
 
-  Future<String?> _loadTokenAndFetchUser() async {
+  Future<void> _loadTokenAndFetchUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
 
@@ -89,14 +71,53 @@ class _PostTestLevelState extends State<PostTestLevel> {
         _token = token;
       });
 
-      // Load user using token
       final user = await fetchUser(token);
       setState(() {
         _loggedInUser = user;
       });
-    }
 
-    return token; // Return the token value
+      try {
+        bool isFirstAttemptValue = await checkFirstAttempt();
+        setState(() {
+          isFirstAttempt = isFirstAttemptValue;
+        });
+
+        prefs.setBool('isFirstAttempt_${widget.posttest.id_posttest}_${_loggedInUser?.id_user}', isFirstAttemptValue);
+
+        print('isFirstAttempt: $isFirstAttempt');
+
+        fetchQuestionPostTest();
+      } catch (e) {
+        showErrorDialog('Error loading first attempt: $e');
+      }
+    } else {
+      print('Token not found');
+    }
+  }
+
+  Future<bool> checkFirstAttempt() async {
+    try {
+      
+
+      final response = await http.get(
+        Uri.parse(baseurl + 'api/checkFirstAttempt?id_posttest=${widget.posttest.id_posttest}'),
+        headers: {
+          'Authorization' : 'Bearer $_token',
+        }
+      );
+
+      print('Response status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body);
+        return jsonData['isFirstAttempt'] ?? false; // Jika nilai isFirstAttempt tidak ada, kembalikan false
+      } else {
+        throw Exception('Failed to check first attempt. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error checking first attempt: $e');
+    }
   }
 
   Future<User> fetchUser(String token) async {
@@ -167,7 +188,7 @@ class _PostTestLevelState extends State<PostTestLevel> {
 
   void checkAnswer(QuestionPostTest currentQuestion, String? selectedOption) {
   if (lastSelectedOption != null) {
-    if (lastSelectedOption == currentQuestion.correct_index) {
+    if (lastSelectedOption == currentQuestion.posttest_correct_index) {
       // Periksa apakah opsi yang dipilih terakhir kali adalah jawaban yang benar
       if (lastSelectedOption == selectedOption) {
         // Jika jawaban terakhir dan jawaban saat ini sama, tambahkan skor
@@ -189,7 +210,7 @@ class _PostTestLevelState extends State<PostTestLevel> {
 
   void increaseScore(QuestionPostTest currentQuestion) {
     setState(() {
-    if (lastSelectedOption == currentQuestion.correct_index) {
+    if (lastSelectedOption == currentQuestion.posttest_correct_index) {
       correctAnswers++;
     }
     totalScore = ((correctAnswers / questions.length) * 100).toInt();
@@ -238,52 +259,35 @@ class _PostTestLevelState extends State<PostTestLevel> {
     }
   }
 
-  Future<void> sendScoreToServer() async {
+   Future<void> sendScoreToServer() async {
     try {
-      print('Sending score to server...');
+      String? token = _token;
+      if (token == null) {
+        throw Exception('Token not found');
+      }
 
-    String? token = await _loadTokenAndFetchUser();
-    if (token == null) {
-      throw Exception('Token not found');
-    }
+      Map<String, String> headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      };
 
-
-    Map<String, String> headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token',
-      'Accept': 'application/json', // Request JSON response from the server
-    };
-
-
-      // Create data to be sent in the POST request
       Map<String, dynamic> postData = {
         'id_posttest': widget.posttest.id_posttest,
         'id_unit': widget.unit.id_unit,
         'score': totalScore,
       };
 
-      // Make the HTTP POST request
-    final response = await http.put(
-      Uri.parse(baseurl + 'api/posttest/${widget.posttest.id_posttest}/update-final-score-posttest'),
-      body: jsonEncode(postData), // Encode the body as JSON
-      headers: headers,
-    );
-
-
-      print('Request URL: ${response.request?.url}');
-      // print('Request Data: ${jsonEncode(postData)}');
+      final response = await http.put(
+        Uri.parse(baseurl + 'api/posttest/${widget.posttest.id_posttest}/update-final-score-posttest'),
+        body: jsonEncode(postData),
+        headers: headers,
+      );
 
       if (response.statusCode == 200) {
-        // // Handle successful response
-        // print('Score successfully saved.');
-        // // Navigate to the final score page
-        // Navigator.of(context).push(
-        //   MaterialPageRoute(
-        //     builder: (context) => FinalScorePosttest(score_posttest: totalScore, materi: widget.materi),
-        //   ),
-        // );
-        if (totalScore == 100) {
-  // Navigasi ke BadgeUserPage() jika skor adalah 100
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+
+        if (isFirstAttempt && totalScore == 100) {
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => BadgeUserPage(
@@ -294,7 +298,6 @@ class _PostTestLevelState extends State<PostTestLevel> {
             ),
           );
         } else {
-          // Navigasi ke FinalScorePosttest() jika skor tidak 100
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => FinalScorePosttest(score_posttest: totalScore, materi: widget.materi),
@@ -302,35 +305,20 @@ class _PostTestLevelState extends State<PostTestLevel> {
           );
         }
 
+        // Update the first attempt flag
+        prefs.setBool('isFirstAttempt_${widget.posttest.id_posttest}_${_loggedInUser!.id_user}', false);
       } else {
         String errorMessage = 'Failed to save score. Status code: ${response.statusCode}';
         if (response.body != null && response.body.isNotEmpty) {
-        errorMessage += '\nResponse body: ${response.body}';
-      }
-      throw Exception(errorMessage);
+          errorMessage += '\nResponse body: ${response.body}';
+        }
+        throw Exception(errorMessage);
       }
     } catch (e) {
-      // Handle exceptions
-      print('Error: $e');
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Error'),
-            content: Text('Failed to save score. Please try again later.'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
+      showErrorDialog('Failed to save score. Please try again later.');
     }
   }
+
 
   // Future<List<QuestionPostTest>> fetchQuestionPretest() async {
   //   try {
@@ -374,36 +362,77 @@ class _PostTestLevelState extends State<PostTestLevel> {
 //   }
 // }
 
-Future<void> fetchQuestionPostTest() async {
-  try {
-    final response = await http.get(Uri.parse(baseurl + 'api/getQuestionPosttest?id_posttest=${widget.posttest.id_posttest}'));
+ Future<void> fetchQuestionPostTest() async {
+    try {
+      final response = await http.get(
+        Uri.parse(baseurl + 'api/getQuestionByPosttest?id_posttest=${widget.posttest.id_posttest}'),
+        // Uri.parse(baseurl + 'api/getQuestionByPretest?id_pretest=${widget.pretest.id_pretest}'),
+      );
 
-    if (response.statusCode == 200) {
-      final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
-      print('Response Data: $jsonData'); // Menampilkan data yang diterima dari respons API
-
-      // Debugging: Menampilkan pertanyaan dari respons API
-      for (var i = 0; i < jsonData.length; i++) {
-        final questionData = jsonData[i];
-        final question = QuestionPostTest.fromJson(questionData);
-        print('Question ${i + 1}: ${question.question}');
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
+        setState(() {
+          questions = jsonData.map((e) => QuestionPostTest.fromJson(e)).toList();
+        });
+      } else {
+        throw Exception('Failed to load questions');
       }
-
-      setState(() {
-        questions = jsonData.map((e) => QuestionPostTest.fromJson(e)).toList();
-      });
-    } else {
-      throw Exception('Failed to load questions');
+    } catch (e) {
+      print(e.toString());
     }
-  } catch (e) {
-    print('Error: $e');
-    // Tampilkan pesan kesalahan jika gagal memuat pertanyaan
+  }
+
+// Future<void> fetchQuestionPostTest() async {
+//   try {
+//     // final response = await http.get(Uri.parse(baseurl + 'api/getQuestionByPosttest?id_posttest=${widget.posttest.id_posttest}'));
+//     Uri.parse(baseurl + 'api/getQuestionByPosttest?id_posttest=${widget.posttest.id_posttest}');
+//     if (response.statusCode == 200) {
+//       final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
+//       print('Response Data: $jsonData'); // Menampilkan data yang diterima dari respons API
+
+//       // Debugging: Menampilkan pertanyaan dari respons API
+//       for (var i = 0; i < jsonData.length; i++) {
+//         final questionData = jsonData[i];
+//         final question = QuestionPostTest.fromJson(questionData);
+//         print('Question ${i + 1}: ${question.question}');
+//       }
+
+//       setState(() {
+//         questions = jsonData.map((e) => QuestionPostTest.fromJson(e)).toList();
+//       });
+//     } else {
+//       throw Exception('Failed to load questions');
+//     }
+//   } catch (e) {
+//     print('Error: $e');
+//     // Tampilkan pesan kesalahan jika gagal memuat pertanyaan
+//     showDialog(
+//       context: context,
+//       builder: (BuildContext dialogContext) {
+//         return AlertDialog(
+//           title: Text('Error'),
+//           content: Text('Failed to load questions'),
+//           actions: <Widget>[
+//             TextButton(
+//               onPressed: () {
+//                 Navigator.of(dialogContext).pop();
+//               },
+//               child: Text('OK'),
+//             ),
+//           ],
+//         );
+//       },
+//     );
+//   }
+// }
+
+ void showErrorDialog(String message) {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: Text('Error'),
-          content: Text('Failed to load questions'),
+          content: Text(message),
           actions: <Widget>[
             TextButton(
               onPressed: () {
@@ -416,7 +445,6 @@ Future<void> fetchQuestionPostTest() async {
       },
     );
   }
-}
 
 
 
@@ -454,27 +482,30 @@ Future<void> fetchQuestionPostTest() async {
           ),
         ),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  TimerWidget(timerModel: timerModel),
-                  SizedBox(height: 20),
-                  if (questions.isNotEmpty)
-                    QuestionPostTestWidget(
-                      question: questions[index],
-                      indexAction: index,
-                      totalQuestion: questions.length,
-                      onOptionSelected: setSelectedOption,
-                    ),
-                ],
+      body: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    TimerWidget(timerModel: timerModel),
+                    SizedBox(height: 20),
+                    if (questions.isNotEmpty)
+                      QuestionPostTestWidget(
+                        question: questions[index],
+                        indexAction: index,
+                        totalQuestion: questions.length,
+                        onOptionSelected: setSelectedOption,
+                      ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15),

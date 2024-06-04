@@ -42,8 +42,8 @@ class _PreTestLevelState extends State<PreTestLevel> {
   String? selectedOption;
   String? lastSelectedOption;
   late String _token;
-  late User? _loggedInUser;
-  int correctAnswers = 0; 
+  User? _loggedInUser;
+  int correctAnswers = 0;
 
   @override
   void initState() {
@@ -58,24 +58,23 @@ class _PreTestLevelState extends State<PreTestLevel> {
     timerModel.startTimer();
   }
 
-    Future<String?> _loadTokenAndFetchUser() async {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? token = prefs.getString('token');
+  Future<String?> _loadTokenAndFetchUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
 
     if (token != null) {
       setState(() {
         _token = token;
       });
 
-      // Load user using token
       final user = await fetchUser(token);
       setState(() {
         _loggedInUser = user;
       });
     }
 
-  return token; // Return the token value
-}
+    return token;
+  }
 
   Future<User> fetchUser(String token) async {
     try {
@@ -107,85 +106,52 @@ class _PreTestLevelState extends State<PreTestLevel> {
     moveToNextQuestion();
   }
 
-void pertanyaanSelanjutnya() {
-  // Check if lastSelectedOption is not null
-  if (lastSelectedOption != null) {
-    final currentQuestion = questions[index];
-    checkAnswer(currentQuestion, lastSelectedOption);
+  void pertanyaanSelanjutnya() {
+    // Check if lastSelectedOption is not null
+    if (lastSelectedOption != null) {
+      final currentQuestion = questions[index];
+      checkAnswer(currentQuestion, lastSelectedOption);
+    }
+    moveToNextQuestion();
   }
-  moveToNextQuestion();
-}
-
-
-
-  // void setSelectedOption(String option) {
-  //   setState(() {
-  //     selectedOption = option;
-  //     final currentQuestion = questions[index];
-  //     checkAnswer(currentQuestion, selectedOption);
-  //   });
-  // }
 
   void setSelectedOption(String option) {
-  print("Selected Option: $option");
-  if (option != lastSelectedOption) { // Check if the selected option is new
-    setState(() {
-      lastSelectedOption = option;
-    });
+    print("Selected Option: $option");
+    if (option != lastSelectedOption) { // Check if the selected option is new
+      setState(() {
+        lastSelectedOption = option;
+      });
+    }
   }
-}
-
-
-
-
-  // void checkAnswer(QuestionPretest currentQuestion, String? selectedOption) {
-  //   if (selectedOption != null) {
-  //     if (selectedOption == currentQuestion.correct_index) {
-  //       increaseScore();
-  //       print("Correct answer! Score increased by 10. Total Score: $totalScore");
-  //     } else {
-  //       print("Wrong answer. Total Score: $totalScore");
-  //     }
-  //     // Reset selected option after checking the answer
-  //     setState(() {
-  //       selectedOption = null;
-  //     });
-  //   } else {
-  //     print("No answer given. Total Score: $totalScore");
-  //   }
-  // }
 
   void checkAnswer(QuestionPretest currentQuestion, String? selectedOption) {
-  if (lastSelectedOption != null) {
-    if (lastSelectedOption == currentQuestion.correct_index) {
-      // Periksa apakah opsi yang dipilih terakhir kali adalah jawaban yang benar
-      if (lastSelectedOption == selectedOption) {
-        // Jika jawaban terakhir dan jawaban saat ini sama, tambahkan skor
-        increaseScore(currentQuestion);
-        print("Correct answer! Score increased by 10. Total Score: $totalScore");
-      } else {
-        print("Wrong answer. Total Score: $totalScore");
+    if (lastSelectedOption != null) {
+      if (lastSelectedOption == currentQuestion.pretest_correct_index) {
+        // Periksa apakah opsi yang dipilih terakhir kali adalah jawaban yang benar
+        if (lastSelectedOption == selectedOption) {
+          // Jika jawaban terakhir dan jawaban saat ini sama, tambahkan skor
+          increaseScore(currentQuestion);
+          print("Correct answer! Score increased by 10. Total Score: $totalScore");
+        } else {
+          print("Wrong answer. Total Score: $totalScore");
+        }
       }
+      setState(() {
+        lastSelectedOption = null; // Reset lastSelectedOption setelah mengecek jawaban
+      });
+    } else {
+      print("No answer given. Total Score: $totalScore");
     }
-    setState(() {
-      lastSelectedOption = null; // Reset lastSelectedOption setelah mengecek jawaban
-    });
-  } else {
-    print("No answer given. Total Score: $totalScore");
   }
-}
-
-
 
   void increaseScore(QuestionPretest currentQuestion) {
-  setState(() {
-    if (lastSelectedOption == currentQuestion.correct_index) {
-      correctAnswers++;
-    }
-    totalScore = ((correctAnswers / questions.length) * 100).toInt();
-  });
-}
-
+    setState(() {
+      if (lastSelectedOption == currentQuestion.pretest_correct_index) {
+        correctAnswers++;
+      }
+      totalScore = ((correctAnswers / questions.length) * 100).toInt();
+    });
+  }
 
   void moveToNextQuestion() async {
     if (index < questions.length - 1) {
@@ -203,12 +169,10 @@ void pertanyaanSelanjutnya() {
       });
       print("Moving to next question. Index: $index");
     } else {
-      // Pretest selesai, kirim skor ke server
       try {
         await sendScoreToServer();
       } catch (e) {
         print('Error: $e');
-        // Tampilkan pesan kesalahan jika gagal menyimpan skor
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -230,84 +194,76 @@ void pertanyaanSelanjutnya() {
     }
   }
 
-Future<void> sendScoreToServer() async {
-  try {
-    print('Sending score to server...');
+  Future<void> sendScoreToServer() async {
+    try {
+      print('Sending score to server...');
 
-    // Retrieve the token asynchronously
-    String? token = await _loadTokenAndFetchUser();
-    if (token == null) {
-      throw Exception('Token not found');
-    }
-
-    // Set the request headers
-    Map<String, String> headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token',
-      'Accept': 'application/json', // Request JSON response from the server
-    };
-
-    // Construct the request body
-    Map<String, dynamic> postData = {
-      'score': totalScore,
-      'id_unit': widget.unit.id_unit,
-      'id_pretest': widget.pretest.id_pretest,
-    };
-
-    // Send the request
-    final response = await http.put(
-      Uri.parse(baseurl + 'api/pretest/${widget.pretest.id_pretest}/update-final-score-pretest'),
-      body: jsonEncode(postData), // Encode the body as JSON
-      headers: headers,
-    );
-
-    // Handle response from the server
-    if (response.statusCode == 200) {
-      // Handle successful response
-      print('Score successfully saved.');
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => FinalScorePretest(score_pretest: totalScore, materi: widget.materi),
-        ),
-      );
-    } else {
-      // Handle error response
-      String errorMessage = 'Failed to save score. Status code: ${response.statusCode}';
-      if (response.body != null && response.body.isNotEmpty) {
-        errorMessage += '\nResponse body: ${response.body}';
+      // Retrieve the token asynchronously
+      String? token = await _loadTokenAndFetchUser();
+      if (token == null) {
+        throw Exception('Token not found');
       }
-      throw Exception(errorMessage);
-    }
-  } catch (e, stackTrace) {
-    // Handle exceptions
-    print('Error: $e');
-    print('Stack trace: $stackTrace');
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Error'),
-          content: Text('Failed to save score. Please try again later.'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('OK'),
-            ),
-          ],
+
+      // Set the request headers
+      Map<String, String> headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      };
+
+      Map<String, dynamic> postData = {
+        'score': totalScore,
+        'id_unit': widget.unit.id_unit,
+        'id_pretest': widget.pretest.id_pretest,
+      };
+
+      final response = await http.put(
+        Uri.parse(baseurl + 'api/pretest/${widget.pretest.id_pretest}/update-final-score-pretest'),
+        body: jsonEncode(postData),
+        headers: headers,
+      );
+
+      if (response.statusCode == 200) {
+        print('Score successfully saved.');
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => FinalScorePretest(score_pretest: totalScore, materi: widget.materi),
+          ),
         );
-      },
-    );
+      } else {
+        String errorMessage = 'Failed to save score. Status code: ${response.statusCode}';
+        if (response.body.isNotEmpty) {
+          errorMessage += '\nResponse body: ${response.body}';
+        }
+        throw Exception(errorMessage);
+      }
+    } catch (e, stackTrace) {
+      print('Error: $e');
+      print('Stack trace: $stackTrace');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Error'),
+            content: Text('Failed to save score. Please try again later.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
-}
-
-
 
   Future<void> fetchQuestionPretest() async {
     try {
       final response = await http.get(
-        Uri.parse(baseurl + 'api/getQuestionPretest?id_pretest=${widget.pretest.id_pretest}'),
+        Uri.parse(baseurl + 'api/getQuestionByPretest?id_pretest=${widget.pretest.id_pretest}'),
       );
 
       if (response.statusCode == 200) {
@@ -357,27 +313,30 @@ Future<void> sendScoreToServer() async {
           ),
         ),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  TimerWidget(timerModel: timerModel),
-                  SizedBox(height: 20),
-                  if (questions.isNotEmpty)
-                    QuestionPretestWidget(
-                      question: questions[index],
-                      indexAction: index,
-                      totalQuestion: questions.length,
-                      onOptionSelected: setSelectedOption,
-                    ),
-                ],
+      body: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    TimerWidget(timerModel: timerModel),
+                    SizedBox(height: 20),
+                    if (questions.isNotEmpty)
+                      QuestionPretestWidget(
+                        question: questions[index],
+                        indexAction: index,
+                        totalQuestion: questions.length,
+                        onOptionSelected: setSelectedOption,
+                      ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -406,7 +365,6 @@ Future<void> sendScoreToServer() async {
                 ),
               ),
       ),
-
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }

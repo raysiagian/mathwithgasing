@@ -1,27 +1,30 @@
 class Badge {
-  final int id_posttest;
+  final int id_bagde;
   final String image;
+  final String imageUrl;
   final String title;
   final String explanation;
 
   Badge({
-    required this.id_posttest,
+    required this.id_bagde,
     required this.image,
+    required this.imageUrl,
     required this.title,
     required this.explanation,
   });
 
   factory Badge.fromJson(Map<String, dynamic> json) {
     return Badge(
-      id_posttest: json["id_posttest"] as int,
-      image: json['image'] ?? '', // Tambahkan pengecekan null di sini
-      title: json['title'] ?? '', // Tambahkan pengecekan null di sini
-      explanation: json['explanation'] ?? '', // Tambahkan pengecekan null di sini
+      id_bagde: json["id_bagde"] as int,
+      image: json['image'] ?? '',
+      imageUrl: json["imageUrl"] ?? '',  
+      title: json['title'] ?? '',
+      explanation: json['explanation'] ?? '',
     );
   }
 
   @override
   String toString() {
-    return 'Badge{id_posttest: $id_posttest, image: $image, title: $title, explanation: $explanation}';
+    return 'Badge{id_bagde:$id_bagde, image: $image, title: $title, explanation: $explanation, imageUrl: $imageUrl}';
   }
 }

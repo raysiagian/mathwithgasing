@@ -83,7 +83,7 @@ class _LevelBonusButtonWidgetState extends State<LevelBonusButtonWidget> {
 
   Future<List<LevelBonus>> fetchLevelsBonus() async {
     try {
-      final response = await http.get(Uri.parse(baseurl + 'api/getLevelBonus'));
+      final response = await http.get(Uri.parse(baseurl + 'api/levelbonus'));
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;

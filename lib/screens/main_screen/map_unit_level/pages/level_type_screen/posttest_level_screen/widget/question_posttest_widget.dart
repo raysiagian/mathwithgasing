@@ -55,24 +55,24 @@ class _QuestionPostTestWidgetState extends State<QuestionPostTestWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             OptionWidget(
-              option: widget.question.option_1,
-              isSelected: selectedOption == widget.question.option_1,
-              onOptionSelected: () => setSelectedOption(widget.question.option_1),
+              option: widget.question.posttest_option_1,
+              isSelected: selectedOption == widget.question.posttest_option_1,
+              onOptionSelected: () => setSelectedOption(widget.question.posttest_option_1),
             ),
             OptionWidget(
-              option: widget.question.option_2,
-              isSelected: selectedOption == widget.question.option_2,
-              onOptionSelected: () => setSelectedOption(widget.question.option_2),
+              option: widget.question.posttest_option_2,
+              isSelected: selectedOption == widget.question.posttest_option_2,
+              onOptionSelected: () => setSelectedOption(widget.question.posttest_option_2),
             ),
             OptionWidget(
-              option: widget.question.option_3,
-              isSelected: selectedOption == widget.question.option_3,
-              onOptionSelected: () => setSelectedOption(widget.question.option_3),
+              option: widget.question.posttest_option_3,
+              isSelected: selectedOption == widget.question.posttest_option_3,
+              onOptionSelected: () => setSelectedOption(widget.question.posttest_option_3),
             ),
             OptionWidget(
-              option: widget.question.option_4,
-              isSelected: selectedOption == widget.question.option_4,
-              onOptionSelected: () => setSelectedOption(widget.question.option_4),
+              option: widget.question.posttest_option_4,
+              isSelected: selectedOption == widget.question.posttest_option_4,
+              onOptionSelected: () => setSelectedOption(widget.question.posttest_option_4),
             ),
           ],
         ),
@@ -93,7 +93,7 @@ class _QuestionPostTestWidgetState extends State<QuestionPostTestWidget> {
     setState(() {
       selectedOption = option;
     });
-    widget.onOptionSelected(option); // Notify the parent widget about the selected option
+    widget.onOptionSelected(option);
   }
 }
 

@@ -24,7 +24,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    _loadTokenAndFetchUser(); // Panggil metode untuk memuat token dan pengguna
+    _loadTokenAndFetchUser();
   }
 
   _loadTokenAndFetchUser() async {
@@ -44,26 +44,49 @@ class _HomeState extends State<Home> {
     }
   }
 
-    Future<User> fetchUser(String token) async {
-    try {
-      final response = await http.get(
-        Uri.parse(baseurl+'api/user'),
-        headers: {
-          'Authorization': 'Bearer $token',
-        },
-      );
+  //   Future<User> fetchUser(String token) async {
+  //   try {
+  //     final response = await http.get(
+  //       Uri.parse(baseurl+'api/user'),
+  //       headers: {
+  //         'Authorization': 'Bearer $token',
+  //       },
+  //     );
 
-      if (response.statusCode == 200) {
-        final jsonData = jsonDecode(response.body);
-        return User.fromJson(jsonData);
-      } else {
-        throw Exception('Failed to load user from API: ${response.reasonPhrase}');
-      }
-    } catch (e) {
-      throw Exception('Error fetching user: $e');
+  //     if (response.statusCode == 200) {
+  //       final jsonData = jsonDecode(response.body);
+  //       return User.fromJson(jsonData);
+  //     } else {
+  //       throw Exception('Failed to load user from API: ${response.reasonPhrase}');
+  //     }
+  //   } catch (e) {
+  //     throw Exception('Error fetching user: $e');
+  //   }
+  // }
+
+  Future<User> fetchUser(String token) async {
+  try {
+    final response = await http.get(
+      Uri.parse(baseurl + 'api/user'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body);
+
+      print('API Response: $jsonData');
+
+      return User.fromJson(jsonData);
+    } else {
+      throw Exception('Failed to load user from API: ${response.reasonPhrase}');
     }
+  } catch (e) {
+    throw Exception('Error fetching user: $e');
   }
- 
+}
+
   Future<List<Materi>> fetchMateri() async {
     try {
       final response = await http.get(Uri.parse(baseurl + 'api/getMateri'));

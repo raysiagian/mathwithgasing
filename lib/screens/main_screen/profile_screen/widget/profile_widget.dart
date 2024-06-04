@@ -51,7 +51,7 @@ class ProfileData extends StatelessWidget {
                             ),
                             SizedBox(width: 5),
                             Text(
-                              "Nyawa : ${formattedJoinDate}",
+                              "Bergabung : ${formattedJoinDate}",
                               style: TextStyle(
                                 fontSize: 16,
                               ),

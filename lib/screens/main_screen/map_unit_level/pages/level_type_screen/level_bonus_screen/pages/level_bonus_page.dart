@@ -40,11 +40,11 @@ class _LevelBonusPageState extends State<LevelBonusPage> {
   int index = 0;
   int totalScore = 0;
   int correctAnswers = 0;
-  int lives = 3; // Initial number of lives
+  int lives = 3;
   List<QuestionLevelBonus> questions = [];
   String? selectedOption;
-  late DateTime lastLeftTime; // Last time leaving the page
-  late Timer timer; // Timer to add lives after 5 minutes
+  late DateTime lastLeftTime;
+  late Timer timer;
   late String _token;
   late User? _loggedInUser;
 
@@ -53,21 +53,21 @@ void initState() {
   super.initState();
   _loadTokenAndFetchUser().then((token) {
     if (token != null) {
-      fetchLivesFromServer(); // Get lives from backend when the page is initialized
+      fetchLivesFromServer();
       fetchQuestionLevelBonus();
-      getLastLeftTime(); // Call getLastLeftTime() when the page is initialized
-      debugLivesSaved(); // Call the function for debugging
-      // If lives are already depleted previously, show the lives run out dialog immediately
+      getLastLeftTime();
+      debugLivesSaved();
       if (lives == 0) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          _showLivesRunOutDialog(context);
+          if (mounted) _showLivesRunOutDialog(context);
         });
       } else {
-        startTimer(); // Start the timer if lives are not depleted yet
+        startTimer();
       }
     }
   });
 }
+
 
   Future<String?> _loadTokenAndFetchUser() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -84,14 +84,12 @@ void initState() {
       setState(() {
         _loggedInUser = user;
       });
-      return token; // Return the token value
+      return token;
     } catch (e) {
       print('Error fetching user: $e');
-      // Handle error fetching user
       return null;
     }
   } else {
-    // Handle case where token is null
     return null;
   }
 }
@@ -117,13 +115,13 @@ void initState() {
   }
 
   @override
-  void dispose() {
-    saveLastLeftTime(); // Call the method to save the last left time when leaving the page
-    if (timer.isActive) {
-      timer.cancel(); // Cancel the timer when the page is disposed
-    }
-    super.dispose();
+void dispose() {
+  saveLastLeftTime();
+  if (timer.isActive) {
+    timer.cancel();
   }
+  super.dispose();
+}
 
   Future<void> fetchLivesFromServer() async {
     try {
@@ -155,7 +153,6 @@ void initState() {
 
     final userId = _loggedInUser?.id_user ?? '';
 
-    // Buat data untuk dikirim dalam permintaan PUT
     Map<String, dynamic> postData = {
       'lives': updatedLives,
     };
@@ -203,32 +200,37 @@ void initState() {
   void startTimer() {
   const oneSecond = Duration(seconds: 1);
   timer = Timer.periodic(oneSecond, (Timer t) {
+    if (!mounted) return;
+
     setState(() {
       final currentTime = DateTime.now();
       final difference = currentTime.difference(lastLeftTime);
-      final remainingTime = Duration(minutes: 1) - difference;
+      final remainingTime = Duration(minutes: 15) - difference;
+
+      print('Timer running. Remaining time: ${remainingTime.inSeconds} seconds');
 
       if (remainingTime <= Duration.zero) {
-        t.cancel(); // Cancel the timer if time is up
-        addLife(); // Add life after 5 minutes
+        t.cancel();
+        addLife();
       }
     });
   });
 }
 
 
+
   void saveLastLeftTime() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    DateTime currentTime = DateTime.now();
-    await prefs.setString('lastLeftTime', currentTime.toIso8601String());
-  }
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  DateTime currentTime = DateTime.now();
+  await prefs.setString('lastLeftTime', currentTime.toIso8601String());
+}
 
   void getLastLeftTime() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? lastLeftTimeString = prefs.getString('lastLeftTime');
   if (lastLeftTimeString != null) {
     lastLeftTime = DateTime.parse(lastLeftTimeString);
-    int remainingTime = Duration(minutes: 1).inSeconds - DateTime.now().difference(lastLeftTime).inSeconds;
+    int remainingTime = Duration(minutes: 15).inSeconds - DateTime.now().difference(lastLeftTime).inSeconds;
     if (remainingTime > 0) {
       lives += remainingTime ~/ Duration(minutes: 1).inSeconds;
       lives = lives.clamp(0, 3); // Ensure lives don't exceed 3
@@ -236,16 +238,19 @@ void initState() {
   } else {
     lastLeftTime = DateTime.now();
   }
+  print('Last left time: $lastLeftTime');
 }
+
 
   void addLife() {
   setState(() {
     if (lives < 3) {
       lives++;
-      saveLives(lives); // Simpan jumlah nyawa yang diperbarui
-      lastLeftTime = DateTime.now(); // Reset waktu terakhir meninggalkan halaman
-      updateLivesOnServer(lives); // Perbarui nyawa di server
-      startTimer(); // Mulai ulang timer untuk nyawa berikutnya
+      print('Life added. Current lives: $lives');
+      saveLives(lives);
+      lastLeftTime = DateTime.now();
+      updateLivesOnServer(lives);
+      startTimer();
     }
   });
 }
@@ -254,7 +259,7 @@ void initState() {
 
   void saveLives(int lives) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('userLives', lives); // Save lives to user session
+    await prefs.setInt('userLives', lives);
     print('Lives saved: $lives');
   }
 
@@ -287,23 +292,30 @@ void initState() {
   );
   await Future.delayed(Duration(seconds: 2));
 
-  // Setelah dialog ditutup, perbarui jumlah nyawa pengguna di backend
   await updateLivesOnServer(lives);
   Navigator.of(context).pop();
 }
 
   void _showLivesRunOutDialog(BuildContext context) {
-  showDialog(
+  showDialog<void>(
     context: context,
     builder: (BuildContext context) {
-      return DialogLivesRunOut(
-        materi: widget.materi,
+      return AlertDialog(
+        title: Text('Lives Run Out'),
+        content: Text('Your lives have run out. Please wait for more lives to be added.'),
+        actions: <Widget>[
+          TextButton(
+            child: Text('OK'),
+            onPressed: () {
+              if (mounted) {
+                Navigator.of(context).pop();
+              }
+            },
+          ),
+        ],
       );
     },
   );
-
-  // Setelah dialog ditutup, perbarui jumlah nyawa pengguna di backend
-  updateLivesOnServer(lives);
 }
 
   void _showDialogQuestionOnClose(BuildContext context) {
@@ -330,7 +342,7 @@ void initState() {
 bool isAnswerProcessed = false;
 
 void checkAndProceed() {
-  if (isAnswerProcessed) return; // Prevent multiple calls
+  if (isAnswerProcessed) return;
   isAnswerProcessed = true;
 
   final currentQuestion = questions[index];
@@ -343,34 +355,33 @@ void checkAndProceed() {
   } else {
     setState(() {
       lives--;
-      saveLives(lives); // Save the updated lives count
+      saveLives(lives);
     });
     if (lives == 0) {
       _showLivesRunOutDialog(context);
-      return; // Stop further execution if lives are 0
+      return;
     } else {
       _showLivesReducedDialog(context);
     }
   }
 
-  // Check if this is the last question
   if (index == questions.length - 1) {
-    sendScoreAndNavigate(); // Send score and navigate to the final page
+    sendScoreAndNavigate();
   } else {
     setState(() {
-      index++; // Move to the next question
-      selectedOption = null; // Reset selected option for the next question
-      isAnswerProcessed = false; // Reset for the next question
+      index++;
+      selectedOption = null;
+      isAnswerProcessed = false;
     });
   }
 }
 
 void sendScoreAndNavigate() {
   if (!isAnswerProcessed && selectedOption != null) {
-    checkAndProceed(); // Ensure the last answer is checked before sending the score
+    checkAndProceed();
   }
   sendScoreToServer().then((_) {
-    _navigateToAfterLevelBonus(); // Navigate to the final page
+    _navigateToAfterLevelBonus();
   });
 }
 
@@ -383,7 +394,7 @@ void sendScoreAndNavigate() {
     } else {
       setState(() {
         lives--;
-        saveLives(lives); // Save the updated lives count
+        saveLives(lives);
         updateLivesOnServer(lives); 
       });
       if (lives == 0) {
@@ -479,7 +490,7 @@ void sendScoreAndNavigate() {
 
   Future<void> fetchQuestionLevelBonus() async {
   try {
-    final response = await http.get(Uri.parse(baseurl + 'api/getQuestionLevelBonus'));
+    final response = await http.get(Uri.parse(baseurl + 'api/getQuestionLevelBonus?id_level_bonus=${widget.levelBonus.id_level_bonus}'));
     print('Response status: ${response.statusCode}');
     print('Response body: ${response.body}');
     if (response.statusCode == 200) {
@@ -499,25 +510,28 @@ void sendScoreAndNavigate() {
 
 
 
-  void showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Error'),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              child: Text('OK'),
-              onPressed: () {
+  Future<void> showErrorDialog(String message) async {
+  if (!mounted) return; // Ensure widget is still mounted
+  showDialog<void>(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Error'),
+        content: Text(message),
+        actions: <Widget>[
+          TextButton(
+            child: Text('OK'),
+            onPressed: () {
+              if (mounted) {
                 Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
+              }
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -567,30 +581,33 @@ void sendScoreAndNavigate() {
           ],
         ),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  SizedBox(height: 20),
-                  if (questions.isEmpty)
-                    Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  else
-                    QuestionLevelBonusWidget(
-                      question: questions[index],
-                      indexAction: index,
-                      totalQuestion: questions.length,
-                      onOptionSelected: setSelectedOption,
-                    ),
-                ],
+      body: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SizedBox(height: 20),
+                    if (questions.isEmpty)
+                      Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    else
+                      QuestionLevelBonusWidget(
+                        question: questions[index],
+                        indexAction: index,
+                        totalQuestion: questions.length,
+                        onOptionSelected: setSelectedOption,
+                      ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       floatingActionButton: Padding(
   padding: const EdgeInsets.symmetric(horizontal: 15),

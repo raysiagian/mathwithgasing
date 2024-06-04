@@ -15,11 +15,21 @@ class ScorePretest {
 
   factory ScorePretest.fromJson(Map<String, dynamic> json) {
     return ScorePretest(
-      idScorePretest: json['id_ScorePretest'] ?? 0,
-      idPretest: json['id_pretest'] ?? 0,
-      idUser: json['id_user'] ?? 0,
-      idUnit: json['id_unit'] ?? 0,
-      scorePretest: json['score'] ?? 0,
+      idScorePretest: _parseToInt(json['id_ScorePretest']),
+      idPretest: _parseToInt(json['id_pretest']),
+      idUser: _parseToInt(json['id_user']),
+      idUnit: _parseToInt(json['id_unit']),
+      scorePretest: _parseToInt(json['score']),
     );
+  }
+
+  static int _parseToInt(dynamic value) {
+    if (value is String) {
+      return int.tryParse(value) ?? 0;
+    } else if (value is int) {
+      return value;
+    } else {
+      return 0;
+    }
   }
 }

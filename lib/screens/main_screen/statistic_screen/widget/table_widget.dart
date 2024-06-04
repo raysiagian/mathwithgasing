@@ -28,8 +28,8 @@ class _TableWidgetState extends State<TableWidget> {
   void initState() {
     super.initState();
     _loadTokenAndFetchUser();
-     futurePretestScores = Future.value([]); // Inisialisasi futurePretestScores
-  futurePosttestScores = Future.value([]); // Inisialisasi futurePosttestScores
+     futurePretestScores = Future.value([]);
+  futurePosttestScores = Future.value([]);
   }
 
   _loadTokenAndFetchUser() async {
@@ -118,7 +118,6 @@ class _TableWidgetState extends State<TableWidget> {
     if (response.statusCode == 200) {
       final List<dynamic> jsonData = jsonDecode(response.body)['data'];
 
-      // Buat map untuk menyimpan skor pertama untuk setiap unit
       Map<int, ScorePosttest> firstScoresMap = {};
       for (var item in jsonData) {
         ScorePosttest score = ScorePosttest.fromJson(item);
@@ -178,7 +177,7 @@ class _TableWidgetState extends State<TableWidget> {
                       idPosttest: 0,
                       idUser: pretest.idUser,
                       idUnit: pretest.idUnit,
-                      scorePosttest: 0, // Default value if no posttest score found
+                      scorePosttest: 0,
                     ),
                   );
 

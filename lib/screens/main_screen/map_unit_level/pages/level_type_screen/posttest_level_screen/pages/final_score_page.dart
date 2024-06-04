@@ -18,7 +18,7 @@ class FinalScorePage extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => Home(authToken: '',)),
-            ); // Navigate back to the previous page
+            );
           },
         ),
       ),

@@ -61,7 +61,6 @@ class FinalScorePretest extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      // Nilai
                       score_pretest.toString(),
                       style: TextStyle(
                         color: Colors.black,

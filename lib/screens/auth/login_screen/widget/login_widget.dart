@@ -47,12 +47,10 @@ class _LoginWidgetState extends State<LoginWidget> {
           final token = responseData['token'];
           await _saveToken(token);
 
-          // Simpan token
           await storage.write(key: 'access_token', value: authToken);
           await storage.write(key: 'refresh_token', value: refreshToken);
 
-          widget.onLoginSuccess(authToken); // Notify the parent widget about login success
-          // Arahkan pengguna ke halaman HomeWrapper
+          widget.onLoginSuccess(authToken);
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => HomeWrapper()),
@@ -62,7 +60,7 @@ class _LoginWidgetState extends State<LoginWidget> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('Akun Anda tidak aktif. Silakan hubungi admin.'),
-                backgroundColor: Colors.red, // Changed to a contrasting color
+                backgroundColor: Colors.red,
               ),
             );
           }
@@ -74,7 +72,7 @@ class _LoginWidgetState extends State<LoginWidget> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(errorMessage),
-              backgroundColor: Colors.red, // Changed to a contrasting color
+              backgroundColor: Colors.red,
             ),
           );
         }
@@ -85,7 +83,7 @@ class _LoginWidgetState extends State<LoginWidget> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Terjadi kesalahan. Silakan coba lagi.'),
-            backgroundColor: Colors.red, // Changed to a contrasting color
+            backgroundColor: Colors.red,
           ),
         );
       }
@@ -105,10 +103,8 @@ class _LoginWidgetState extends State<LoginWidget> {
   @override
   void initState() {
     super.initState();
-    // Cek apakah token sudah ada saat inisialisasi widget
     _getToken().then((token) {
       if (token != null) {
-        // Token sudah ada, beralih ke halaman beranda
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => HomeWrapper()),

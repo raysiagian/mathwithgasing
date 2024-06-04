@@ -1,13 +1,14 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:mathgasing/core/constants/constants.dart';
 import 'package:mathgasing/screens/auth/login_screen/pages/login_page.dart';
 import 'package:mathgasing/screens/main_screen/home_wrapper/pages/home_wrapper.dart';
+import 'package:mathgasing/screens/main_screen/profile_screen/widget/dialog_logout_popup_widget.dart';
 import 'package:mathgasing/screens/onboarding_screen/pages/onboarding_page.dart';
 import 'package:mathgasing/screens/splash_screen/widget/splashscreen_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -29,26 +30,27 @@ class _SplashScreenState extends State<SplashScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isFirstTime = prefs.getBool('firstTime') ?? true;
     bool isLoggedIn = prefs.getString('token') != null;
+    int isActive = prefs.getInt('is_active') ?? 1; 
 
-    if (isFirstTime) {
-      // Jika pengguna baru pertama kali menggunakan aplikasi
-      prefs.setBool('firstTime', false); // Tandai bahwa aplikasi sudah pernah dibuka sebelumnya
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => Onboarding()),
-      );
+    if (isActive == 2) {
+      showErrorDialog('Akun tidak aktif');
     } else {
-      // Jika pengguna bukan baru pertama kali menggunakan aplikasi
-      if (isLoggedIn) {
-        // Jika pengguna sudah login sebelumnya
-        checkToken();
-      } else {
-        // Jika pengguna belum login sebelumnya
+      if (isFirstTime) {
+        prefs.setBool('firstTime', false); 
+
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => Login()),
+          MaterialPageRoute(builder: (context) => Onboarding()),
         );
+      } else {
+        if (isLoggedIn) {
+          checkToken();
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => Login()),
+          );
+        }
       }
     }
   }
@@ -58,39 +60,30 @@ class _SplashScreenState extends State<SplashScreen> {
     String? token = prefs.getString('token');
 
     if (token != null && token.isNotEmpty) {
-      // Jika token tersedia, lakukan pengecekan validitas token
       try {
         final response = await http.get(
-          Uri.parse(baseurl +'api/profile'),
+          Uri.parse(baseurl + 'api/user'),
           headers: {
             'Authorization': 'Bearer $token',
           },
         );
 
         if (response.statusCode == 200) {
-          // Jika token valid, arahkan pengguna ke halaman utama
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => HomeWrapper()),
-          );
+          checkUserActiveStatus(token);
         } else {
-          // Jika token tidak valid, arahkan pengguna ke halaman login
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => Login()),
           );
         }
       } catch (e) {
-        // Tangani kesalahan jaringan atau kesalahan lainnya
         print('Error: $e');
-        // Jika terjadi kesalahan, arahkan pengguna ke halaman login
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => Login()),
         );
       }
     } else {
-      // Jika token tidak tersedia, arahkan pengguna ke halaman login
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => Login()),
@@ -98,7 +91,66 @@ class _SplashScreenState extends State<SplashScreen> {
     }
   }
 
-@override
+  Future<void> checkUserActiveStatus(String token) async {
+    try {
+      final response = await http.get(
+        Uri.parse(baseurl + 'api/user'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final profileData = json.decode(response.body);
+        int isActive = int.tryParse(profileData['is_active'].toString()) ?? 1;
+
+        if (isActive == 1) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomeWrapper()),
+          );
+        } else {
+          showErrorDialog('Akun tidak aktif');
+        }
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => Login()),
+        );
+      }
+    } catch (e) {
+      print('Error: $e');
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => Login()),
+      );
+    }
+  }
+
+  void showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => DialogLogout()),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(

@@ -1,5 +1,3 @@
-// login_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:mathgasing/screens/auth/login_screen/widget/login_widget.dart';
 import 'package:mathgasing/screens/main_screen/home_wrapper/pages/home_wrapper.dart';
@@ -13,8 +11,6 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   void _handleLoginSuccess(String authToken) {
-    // Handle successful login here, e.g., navigate to the home screen
-    // You can also store the authToken in a state management solution like Provider or Riverpod
   }
 
   @override

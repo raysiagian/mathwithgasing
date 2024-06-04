@@ -27,7 +27,7 @@ class StatisticWidget extends StatelessWidget {
         height: 130,
         width: 130,
         child: Image.network(
-          baseurl + 'storage/${materi.imageStatistic.replaceFirst('public/', '')}',
+          '${materi.imageStatistic}',
           fit: BoxFit.cover,
           width: double.infinity,
         ),

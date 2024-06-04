@@ -36,16 +36,16 @@ class DialogLogout extends StatelessWidget {
           ),
           SizedBox(height: 20),
           Text(
-            'Kamu Yakin Ingin\nBerhenti',
+            'Kamu Yakin Ingin\nKeluar',
             style: Theme.of(context).textTheme.titleMedium,
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: 10),
-          Text(
-            'Progress pengerjaanmu akan hilang',
-            style: Theme.of(context).textTheme.bodyMedium,
-            textAlign: TextAlign.center,
-          ),
+          // SizedBox(height: 10),
+          // Text(
+          //   'Progress pengerjaanmu akan hilang',
+          //   style: Theme.of(context).textTheme.bodyMedium,
+          //   textAlign: TextAlign.center,
+          // ),
           SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -53,21 +53,18 @@ class DialogLogout extends StatelessWidget {
               InkWell(
                 onTap: () async {
                   try {
-                    // Ambil token akses dari penyimpanan aman
                     final String? token = await _getToken();
 
                     if (token != null) {
-                      // Kirim permintaan HTTP POST ke endpoint logout
                       final response = await http.post(
                         Uri.parse(baseurl + 'api/logout'),
                         headers: <String, String>{
                           'Content-Type': 'application/json; charset=UTF-8',
-                          'Authorization': 'Bearer $token', // Gunakan token akses yang diperoleh dari penyimpanan aman
+                          'Authorization': 'Bearer $token',
                         },
                       );
 
                       if (response.statusCode == 200) {
-                        // Hapus token dari penyimpanan lokal setelah logout berhasil
                         await _removeToken();
 
                         Navigator.pushReplacement(
@@ -75,7 +72,6 @@ class DialogLogout extends StatelessWidget {
                           MaterialPageRoute(builder: (context) => Login()),
                         );
                       } else {
-                        // Tampilkan pesan kesalahan jika logout gagal
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text('Logout gagal'),
@@ -83,7 +79,6 @@ class DialogLogout extends StatelessWidget {
                         );
                       }
                     } else {
-                      // Token akses tidak ditemukan, mungkin pengguna belum login
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text('Anda belum login'),
@@ -91,7 +86,6 @@ class DialogLogout extends StatelessWidget {
                       );
                     }
                   } catch (e) {
-                    // Tangani kesalahan jika terjadi error
                     print('Error: $e');
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(

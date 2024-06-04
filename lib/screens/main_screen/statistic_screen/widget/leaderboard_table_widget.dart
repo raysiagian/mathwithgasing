@@ -21,7 +21,7 @@ class _LeaderboardTableWidgetState extends State<LeaderboardTableWidget> {
   }
 
   Future<void> fetchData() async {
-    final response = await http.get(Uri.parse(baseurl + 'api/leaderboard'));
+    final response = await http.get(Uri.parse(baseurl + 'api/dataLeaderboard'));
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body)['data'];

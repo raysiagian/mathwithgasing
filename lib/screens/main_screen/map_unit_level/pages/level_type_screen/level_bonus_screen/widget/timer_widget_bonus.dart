@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 
 class TimerWidgetBonus extends StatefulWidget {
@@ -15,8 +14,8 @@ class TimerWidgetBonus extends StatefulWidget {
 }
 
 class _TimerWidgetBonusState extends State<TimerWidgetBonus> {
-  late Timer _timer;
-  Duration _remainingTime = const Duration(minutes: 1);
+  late Timer _timer = Timer(const Duration(seconds: 0), () {});
+  Duration _remainingTime = const Duration(minutes: 15);
 
   @override
   void initState() {
@@ -28,14 +27,16 @@ class _TimerWidgetBonusState extends State<TimerWidgetBonus> {
 
   @override
   void dispose() {
-    _timer.cancel(); // Hentikan timer sebelum widget dihapus
+    if (_timer.isActive) {
+      _timer.cancel();
+    }
     super.dispose();
   }
 
   void _startTimer() {
     final currentTime = DateTime.now();
     final difference = currentTime.difference(widget.lastLeftTime!);
-    final elapsedDuration = Duration(minutes: 1) - difference;
+    final elapsedDuration = Duration(minutes: 15) - difference;
     if (elapsedDuration <= Duration.zero) {
       setState(() {
         _remainingTime = Duration.zero;
@@ -57,8 +58,7 @@ class _TimerWidgetBonusState extends State<TimerWidgetBonus> {
   }
 
   @override
-Widget build(BuildContext context) {
-  return Container(); // atau SizedBox.shrink();
-}
-
+  Widget build(BuildContext context) {
+    return Container();
+  }
 }

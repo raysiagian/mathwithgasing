@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http; // Import http package
+import 'package:http/http.dart' as http;
 import 'package:mathgasing/core/constants/constants.dart';
 import 'package:mathgasing/models/materi/materi.dart';
 import 'package:mathgasing/models/unit/unit.dart';
@@ -20,7 +20,6 @@ class UnitWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Panggil fungsi fetchLevels() saat UnitWidget dibuat atau dirender
     return ListView(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
@@ -53,7 +52,6 @@ class UnitWidget extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20),
-        // Gunakan FutureBuilder untuk menampilkan widget ketika data level sudah tersedia
         LevelButtonWidget(unit: unit, materi: materi)
       ],
     );

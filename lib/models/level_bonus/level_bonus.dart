@@ -59,7 +59,7 @@ class LevelBonus {
         throw Exception('Failed to update score: ${response.statusCode}');
       }
     } catch (e) {
-      throw Exception('Error updating score: $e');
+      throw Exception('Gagal Memperbaharui Skor: $e');
     }
   }
 

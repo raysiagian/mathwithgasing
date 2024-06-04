@@ -16,30 +16,26 @@ class UnitBonusWidget extends StatelessWidget {
     required this.materi,
   }) : super(key: key);
 
-  final UnitBonus unitBonus; // Placeholder for the Unit class
+  final UnitBonus unitBonus;
   final Materi materi;
 
   Future<List<LevelBonus>> fetchLevelsBonus() async {
     try {
       final response = await http.get(
-        Uri.parse(baseurl + 'api/getLevelBonus?id_unit_Bonus=${unitBonus.id_unit_Bonus}'),
+        Uri.parse(baseurl + 'api/levelbonus/getByUnit/${unitBonus.id_unit_Bonus}'),
       );
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
 
         if (jsonData is List) {
-          // If jsonData is a list, parse it as a list of units
           return jsonData.map((e) => LevelBonus.fromJson(e)).toList();
         } else if (jsonData is Map<String, dynamic>) {
-          // If jsonData is a map, check if it contains a 'data' key
           if (jsonData.containsKey('data')) {
             final levelData = jsonData['data'];
             if (levelData is List) {
-              // If 'data' is a list, parse it as a list of units
               return levelData.map((e) => LevelBonus.fromJson(e)).toList();
             } else {
-              // If 'data' is a single object, parse it as a single unit
               return [LevelBonus.fromJson(levelData)];
             }
           } else {

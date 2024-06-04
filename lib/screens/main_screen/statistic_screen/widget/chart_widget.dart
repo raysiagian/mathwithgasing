@@ -41,13 +41,11 @@ class _ChartWidgetState extends State<ChartWidget> {
         _token = token;
       });
 
-      // Load user using token
       final user = await fetchUser(token);
       setState(() {
         _loggedInUser = user;
       });
 
-      // Fetch scores after user is loaded
       if (_loggedInUser != null) {
         setState(() {
           futurePretestScores = fetchPretestScores(_loggedInUser!.id_user, widget.materi.id_materi);
@@ -88,7 +86,6 @@ class _ChartWidgetState extends State<ChartWidget> {
     if (response.statusCode == 200) {
       final List<dynamic> jsonData = jsonDecode(response.body)['data'];
 
-      // Buat map untuk menyimpan skor pertama untuk setiap unit
       Map<int, ScorePretest> firstScoresMap = {};
       for (var item in jsonData) {
         ScorePretest score = ScorePretest.fromJson(item);
@@ -120,7 +117,6 @@ class _ChartWidgetState extends State<ChartWidget> {
     if (response.statusCode == 200) {
       final List<dynamic> jsonData = jsonDecode(response.body)['data'];
 
-      // Buat map untuk menyimpan skor pertama untuk setiap unit
       Map<int, ScorePosttest> firstScoresMap = {};
       for (var item in jsonData) {
         ScorePosttest score = ScorePosttest.fromJson(item);

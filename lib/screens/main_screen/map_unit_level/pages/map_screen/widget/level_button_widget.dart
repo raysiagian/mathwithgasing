@@ -86,8 +86,8 @@ class LevelButtonWidget extends StatelessWidget {
 
   Future<List<PreTest>> fetchPretest() async {
     try {
-      final response = await http.get(Uri.parse(baseurl + 'api/getPretest?id_unit=${unit.id_unit}'));
-
+      final response = await http.get(Uri.parse(baseurl + 'api/getPretestByUnit?id_unit=${unit.id_unit}'));
+      // final response = await http.get(Uri.parse('$baseurl/api/getByUnitPretest/${unit.id_unit}'));
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
         return jsonData.map((e) => PreTest.fromJson(e)).toList();
@@ -128,7 +128,7 @@ class LevelButtonWidget extends StatelessWidget {
 
   Future<List<MaterialVideo>> fetchMaterialVideo() async {
     try {
-      final response = await http.get(Uri.parse(baseurl + 'api/getMaterialVideo?id_unit=${unit.id_unit}'));
+      final response = await http.get(Uri.parse(baseurl + 'api/getMaterialVideoByUnit?id_unit=${unit.id_unit}'));
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
@@ -144,7 +144,7 @@ class LevelButtonWidget extends StatelessWidget {
 
   Future<List<PostTest>> fetchPosttest() async {
     try {
-      final response = await http.get(Uri.parse(baseurl + 'api/getPosttest?id_unit=${unit.id_unit}'));
+      final response = await http.get(Uri.parse(baseurl + 'api/getPosttestByUnit?id_unit=${unit.id_unit}'));
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
@@ -266,7 +266,7 @@ class LevelButtonWidget extends StatelessWidget {
                   fontSize: 30,
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
-                ),
+              ),
               ),
             ),
           ),
@@ -275,10 +275,8 @@ class LevelButtonWidget extends StatelessWidget {
        InkWell(
         onTap: () async {
           try {
-            // Validasi apakah video materi sudah ditonton
             final data = await fetchDataWatchVideoByUnit(unit.id_unit);
             
-            // Fetch daftar PostTest
             List<PostTest> posttests = await fetchPosttest();
             
             if (posttests.isNotEmpty) {
@@ -293,7 +291,6 @@ class LevelButtonWidget extends StatelessWidget {
                 ),
               );
             } else {
-              // Jika tidak ada posttest yang tersedia, tampilkan dialog
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
@@ -313,7 +310,6 @@ class LevelButtonWidget extends StatelessWidget {
               );
             }
           } catch (e) {
-            // Tampilkan dialog jika terjadi error
             showDialog(
               context: context,
               builder: (BuildContext context) {

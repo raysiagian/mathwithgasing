@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mathgasing/core/constants/constants.dart';
-import 'package:mathgasing/models/level_type/posttest.dart';
 import 'package:mathgasing/models/materi/materi.dart';
 import 'package:mathgasing/models/user/user.dart';
 import 'package:mathgasing/screens/main_screen/map_unit_level/pages/after_level_screen/widget/button_to_map_widget.dart';
@@ -11,70 +10,61 @@ import 'package:shared_preferences/shared_preferences.dart';
 class BadgeUserPage extends StatefulWidget {
   final int id_posttest;
   final Materi materi;
-  final int userId; // Tambahkan userId di sini
+  final int userId;
 
-  const BadgeUserPage({Key? key, required this.id_posttest, required this.materi, required this.userId}) : super(key: key);
+  const BadgeUserPage({
+    Key? key, 
+    required this.id_posttest, 
+    required this.materi, 
+    required this.userId,
+  }) : super(key: key);
 
   @override
   _BadgeUserPageState createState() => _BadgeUserPageState();
 }
 
 class _BadgeUserPageState extends State<BadgeUserPage> {
-  late Future<Map<String, dynamic>> _badgeData = Future<Map<String, dynamic>>.value({});
+  late Future<Map<String, dynamic>> _badgeData;
   late String _token;
   late User? _loggedInUser;
 
   @override
-void initState() {
-  super.initState();
-  _initializeData();
-}
-
-Future<void> _initializeData() async {
-  final token = await _loadTokenAndFetchUser();
-  if (token != null) {
-    print('id_posttest: ${widget.id_posttest}');
-    print('userId: ${widget.userId}');
-    _badgeData = fetchBadgeData();
-  } else {
-    // Handle case when token is not found
-    print('Token not found.');
-    setState(() {
-      _badgeData = Future<Map<String, dynamic>>.value(null);
-    });
+  void initState() {
+    super.initState();
+    _badgeData = _initializeData(); // Assign the future returned by _initializeData to _badgeData
   }
-}
 
-
+  Future<Map<String, dynamic>> _initializeData() async {
+    final token = await _loadTokenAndFetchUser();
+    if (token != null) {
+      print('id_posttest: ${widget.id_posttest}');
+      print('userId: ${widget.userId}');
+      return fetchBadgeData();
+    } else {
+      print('Token not found.');
+      return Future<Map<String, dynamic>>.value({});
+    }
+  }
 
   Future<String?> _loadTokenAndFetchUser() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String? token = prefs.getString('token');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
 
-  if (token != null) {
-    setState(() {
+    if (token != null) {
       _token = token;
-    });
 
-    // Load user using token
-    final user = await fetchUser(token);
-    setState(() {
+      final user = await fetchUser(token);
       _loggedInUser = user;
-    });
 
-    // Debugging: Print id_user yang sedang login
-    print('Logged in user: ${_loggedInUser?.id_user}');
+      print('Logged in user: ${_loggedInUser?.id_user}');
+      return token;
+    }
 
-    return token; // Return the token value
+    print('Token not found.');
+    return null;
   }
 
-  // Debugging: Print pesan jika token tidak ditemukan
-  print('Token not found.');
-
-  return null; // Return null if token is not found
-}
-
-Future<User> fetchUser(String token) async {
+  Future<User> fetchUser(String token) async {
     try {
       final response = await http.get(
         Uri.parse(baseurl + 'api/user'),
@@ -94,32 +84,42 @@ Future<User> fetchUser(String token) async {
     }
   }
 
-  Future<Map<String, dynamic>> fetchBadgeData() async {
-    print('_loggedInUser: $_loggedInUser'); 
+
+Future<Map<String, dynamic>> fetchBadgeData() async {
   final response = await http.get(Uri.parse(baseurl + 'api/badges/by-posttest/${widget.id_posttest}'));
+
+  // Cetak header respons
+  print('Response Headers: ${response.headers}');
 
   if (response.statusCode == 200) {
     final data = jsonDecode(response.body);
-    print('Badge data: $data'); // Debugging
+    
+    // Cetak data respons
+    print('Response Data: $data');
+    
     if (data['data'] != null && data['data'].isNotEmpty) {
       final badgeData = data['data'][0] as Map<String, dynamic>;
-      print('Badge data: $badgeData'); // Debugging
-      final int badgeId = badgeData['id_bagde']; // Ubah kunci menjadi id_badge
+      final int badgeId = badgeData['id_bagde'];
 
-      print('badgeId: $badgeId'); // Debugging
-
-      // Simpan lencana pengguna jika userId tidak null
-     if (_loggedInUser != null) {
-      await saveBadgeUser(_loggedInUser!.id_user, badgeId);
-    } else {
-      throw Exception('User not logged in');
-    }
-
-
-      return data;
+      if (_loggedInUser != null) {
+        await saveBadgeUser(_loggedInUser!.id_user, badgeId);
+      } else {
+        throw Exception('User not logged in');
+      }
+      return {
+        'headers': response.headers,
+        'data': badgeData
+      };
     } else {
       throw Exception('Badge data is empty');
     }
+  } else if (response.statusCode == 404) {
+    final errorData = jsonDecode(response.body);
+    print('Error: ${errorData['message']}');
+    return {
+      'headers': response.headers,
+      'error': errorData['message']
+    };
   } else {
     throw Exception('Failed to load badge data');
   }
@@ -133,7 +133,7 @@ Future<User> fetchUser(String token) async {
       url,
       body: {
         'id_user': userId.toString(),
-        'id_badge': badgeId.toString(),
+        'id_bagde': badgeId.toString(),
       },
     );
 
@@ -144,43 +144,48 @@ Future<User> fetchUser(String token) async {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final Materi materi = widget.materi;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Badge User Page'),
-      ),
-      body: FutureBuilder(
-        future: _badgeData,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else {
-            // Tampilkan data badge setelah berhasil dimuat
-            final data = snapshot.data as Map<String, dynamic>?; // Tambahkan ? untuk menandakan nullable
-            if (data == null || data['data'] == null || data['data'].isEmpty) {
-              return Center(child: Text('No data available'));
-            }
-            final badgeData = data['data'][0] as Map<String, dynamic>;
-            final String? title = badgeData['title'];
-            final String? explanation = badgeData['explanation'];
+@override
+Widget build(BuildContext context) {
+  final Materi materi = widget.materi;
+  return Scaffold(
+    appBar: AppBar(
+      title: Text('Lencana Pemenang'),
+    ),
+    body: FutureBuilder(
+      future: _badgeData,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else {
+          final data = snapshot.data as Map<String, dynamic>?;
+          if (data == null || data.isEmpty || data.containsKey('error')) {
+            return Center(child: Text(data != null ? data['error'] : 'No data available'));
+          }
 
-            return Center(
+          final String? title = data['data']['title'];
+          final String? explanation = data['data']['explanation'];
+          final String? imageUrl = data['data']['imageUrl'];
+          final headers = data['headers']; // Mengakses header respons
+
+          if (title == null || explanation == null || imageUrl == null) {
+            return Center(child: Text('Incomplete badge data'));
+          }
+
+          return Center(
+            child: SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Image.network(
-                  //   baseurl + 'storage/' + 'public/images/7xIL3fVK9meBGZDCRmx07v8meI0A2bkriX811oST.png',
-                  //   width: 100,
-                  //   height: 100,
-                  //   // Sesuaikan ukuran dan properti lainnya sesuai kebutuhan
-                  // ),
+                  Image.network(
+                    imageUrl,
+                    width: 100,
+                    height: 100,
+                  ),
                   SizedBox(height: 20),
                   Text(
-                    title!,
+                    title,
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -188,7 +193,7 @@ Future<User> fetchUser(String token) async {
                   ),
                   SizedBox(height: 10),
                   Text(
-                    explanation!,
+                    explanation,
                     style: TextStyle(
                       fontSize: 18,
                     ),
@@ -201,10 +206,11 @@ Future<User> fetchUser(String token) async {
                   ),
                 ],
               ),
-            );
-          }
-        },
-      ),
-    );
-  }
+            ),
+          );
+        }
+      },
+    ),
+  );
+}
 }

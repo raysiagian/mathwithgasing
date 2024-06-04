@@ -1,29 +1,28 @@
-
 class QuestionPretest {
   final int id_question_pretest;
   final String question;
-  final String option_1;
-  final String option_2;
-  final String option_3;
-  final String option_4;
-  final String correct_index;
-  final int id_pretest;
+  final String pretest_option_1;
+  final String pretest_option_2;
+  final String pretest_option_3;
+  final String pretest_option_4;
+  final String pretest_correct_index;
+  // final int id_pretest;
 
   QuestionPretest({
     required this.id_question_pretest,
     required this.question,
-    required this.option_1,
-    required this.option_2,
-    required this.option_3,
-    required this.option_4,
-    required this.correct_index,
-    required this.id_pretest,
+    required this.pretest_option_1,
+    required this.pretest_option_2,
+    required this.pretest_option_3,
+    required this.pretest_option_4,
+    required this.pretest_correct_index,
+    // required this.id_pretest,
 
   }) : options = {
-    'option_1': option_1,
-    'option_2': option_2,
-    'option_3': option_3,
-    'option_4': option_4,
+    'pretest_option_1': pretest_option_1,
+    'pretest_option_2': pretest_option_2,
+    'pretest_option_3': pretest_option_3,
+    'pretest_option_4': pretest_option_4,
   };
 
   // Tambahkan deklarasi options di sini
@@ -33,17 +32,17 @@ class QuestionPretest {
     return QuestionPretest(
       id_question_pretest: json['id_question_pretest'] as int,
       question: json['question'] as String,
-      option_1: json['option_1'] as String,
-      option_2: json['option_2'] as String,
-      option_3: json['option_3'] as String,
-      option_4: json['option_4'] as String,
-      correct_index: json['correct_index'] as String,
-      id_pretest: json['id_pretest'] as int,
+      pretest_option_1: json['pretest_option_1'] as String,
+      pretest_option_2: json['pretest_option_2'] as String,
+      pretest_option_3: json['pretest_option_3'] as String,
+      pretest_option_4: json['pretest_option_4'] as String,
+      pretest_correct_index: json['pretest_correct_index'] as String,
+      // id_pretest: json['id_pretest'] as int,
     );
   }
    
   @override
   String toString() {
-    return 'Question(id_question_prestest: $id_question_pretest, question: $question, option_1: $option_1, option_2: $option_2, option_3: $option_3, option_4: $option_4, correct_index: $correct_index, id_pretest: $id_pretest)';
+    return 'Question(id_question_prestest: $id_question_pretest, question: $question, pretest_option_1: $pretest_option_1, pretest_option_2: $pretest_option_2, pretest_option_3: $pretest_option_3, pretest_option_4: $pretest_option_4, pretest_correct_index: $pretest_correct_index,)';
   }
 }

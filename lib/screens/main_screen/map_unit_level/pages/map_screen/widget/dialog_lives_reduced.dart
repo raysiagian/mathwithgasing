@@ -33,7 +33,7 @@ class DialogLivesReduced extends StatelessWidget {
           ),
           SizedBox(height: 10),
           Text(
-            'Sisa Nyawa: $lives', // Menampilkan nilai lives di sini
+            'Sisa Nyawa: $lives',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,

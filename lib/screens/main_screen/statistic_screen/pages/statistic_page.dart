@@ -75,76 +75,78 @@ class _StatisticState extends State<Statistic> {
               ),
             ),
           ),
-          Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  color: Colors.white,
-                  child: FutureBuilder<List<Materi>>(
-                    future: futureMateri,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator());
-                      } else if (snapshot.hasError) {
-                        return Center(
-                          child: Text('Error: ${snapshot.error}'),
-                        );
-                      } else {
-                        final materiList = snapshot.data!;
-                        return LayoutBuilder(builder: (context, constraints) {
-                          return Column(
-                            children: [
-                              GridView.count(
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                crossAxisCount: 2,
-                                crossAxisSpacing: 4,
-                                mainAxisSpacing: 2,
-                                children: materiList
-                                    .map((materi) => StatisticWidget(
-                                          materi: materi,
-                                          onSelected: _onMateriSelected,
-                                        ))
-                                    .toList(),
-                              ),
-                            ],
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    color: Colors.white,
+                    child: FutureBuilder<List<Materi>>(
+                      future: futureMateri,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return Center(child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return Center(
+                            child: Text('Error: ${snapshot.error}'),
                           );
-                        });
-                      }
-                    },
+                        } else {
+                          final materiList = snapshot.data!;
+                          return LayoutBuilder(builder: (context, constraints) {
+                            return Column(
+                              children: [
+                                GridView.count(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 4,
+                                  mainAxisSpacing: 2,
+                                  children: materiList
+                                      .map((materi) => StatisticWidget(
+                                            materi: materi,
+                                            onSelected: _onMateriSelected,
+                                          ))
+                                      .toList(),
+                                ),
+                              ],
+                            );
+                          });
+                        }
+                      },
+                    ),
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      color: Colors.white,
-                      child: Column(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.symmetric(vertical: 2),
-                            child: Text(
-                              "Leaderboard",
-                              style: TextStyle(
-                                color: Theme.of(context).primaryColor,
-                                fontSize: 20,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        color: Colors.white,
+                        child: Column(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.symmetric(vertical: 2),
+                              child: Text(
+                                "Leaderboard",
+                                style: TextStyle(
+                                  color: Theme.of(context).primaryColor,
+                                  fontSize: 20,
+                                ),
                               ),
                             ),
-                          ),
-                          LeaderboardTableWidget(),
-                        ],
+                            LeaderboardTableWidget(),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(height: 15),
-            ],
+                SizedBox(height: 15),
+              ],
+            ),
           ),
         ],
       ),

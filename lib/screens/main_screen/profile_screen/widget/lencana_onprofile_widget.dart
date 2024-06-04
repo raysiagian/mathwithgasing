@@ -4,7 +4,7 @@ import 'package:mathgasing/screens/main_screen/profile_screen/pages/lencana_page
 class LenacanaonProfileWidget extends StatelessWidget {
   final int userId;
 
-  const LenacanaonProfileWidget({Key? key, required this.userId,}) : super(key: key);
+  const LenacanaonProfileWidget({Key? key, required this.userId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

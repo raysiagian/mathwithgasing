@@ -7,29 +7,21 @@ class UnitBonus {
    final int id_unit_Bonus;
    final String title;
    final String explanation;
-   final List<LevelBonus> levelsbonus; // Menambahkan levelbonus sebagai List<LevelButton>
 
+    
    UnitBonus({
       required this.id_unit_Bonus,
       required this.title,
       required this.explanation,
-      required this.levelsbonus, // Menginisialisasi levelbonus
    });
 
   factory UnitBonus.fromJson(Map<String, dynamic> json) {
     return UnitBonus(
-      id_unit_Bonus: json["id_unit_Bonus"] as int,
-      title: json["title"] as String,
-      explanation: json["explanation"] as String,
-      levelsbonus: [],
+      id_unit_Bonus: json['id_unit_Bonus'] as int,
+      title: json['title'] as String,
+      explanation: json['explanation'] as String,
     );
   }
-
-  Map<String, dynamic> toJson() => {
-    'id_unit_Bonus': id_unit_Bonus,
-    'title': title,
-    'explanation': explanation,
-  };
 
   @override
   String toString() {

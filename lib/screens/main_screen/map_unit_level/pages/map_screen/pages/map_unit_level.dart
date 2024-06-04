@@ -23,7 +23,7 @@ class MapUnitLevel extends StatelessWidget {
    Future<List<Unit>> fetchUnit() async {
     try {
       final response = await http.get(
-        Uri.parse(baseurl + 'api/getUnit?id_materi=${materi.id_materi}'),
+        Uri.parse(baseurl + 'api/getUnitByMateri?id_materi=${materi.id_materi}'),
       );
 
       if (response.statusCode == 200) {
@@ -56,7 +56,9 @@ class MapUnitLevel extends StatelessWidget {
   Future<List<UnitBonus>> fetchUnitBonus() async {
     try {
       final response = await http.get(
-        Uri.parse(baseurl + 'api/getUnitBonus?id_materi=${materi.id_materi}'),
+        // Uri.parse(baseurl + 'api/unitbonus/getByMateri?id_materi=${materi.id_materi}'),
+        // Uri.parse(baseurl + 'api/unitbonus/getByMateri?id_materi=${materi.id_materi}'),
+        Uri.parse(baseurl + 'api/unitbonus/getByMateri/${materi.id_materi}'),
       );
 
       if (response.statusCode == 200) {
@@ -119,7 +121,7 @@ class MapUnitLevel extends StatelessWidget {
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: NetworkImage(
-                  baseurl + 'storage/' + materi.imageBackground.replaceFirst('public/', ''),
+                 '${materi.imageBackground}',
                 ),
                 fit: BoxFit.cover,
               ),
@@ -173,11 +175,10 @@ class MapUnitLevel extends StatelessWidget {
                     child: Text('No unit bonuses available'),
                   );
                 } else {
-                  // Jika data unit bonus tersedia, tampilkan UnitBonusWidget untuk setiap unit bonus
                   return Column(
                     children: snapshot.data!.map((unitBonus) {
                       return UnitBonusWidget(
-                        unitBonus: unitBonus, // Perubahan di sini, menggunakan unitBonus bukan unit
+                        unitBonus: unitBonus,
                         materi: materi,
                       );
                     }).toList(),

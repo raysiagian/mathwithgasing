@@ -37,7 +37,7 @@ class _MaterialLevelState extends State<MaterialLevel> {
   Future<List<MaterialVideo>> fetchMaterialVideo() async {
     try {
       final response = await http.get(
-        Uri.parse(baseurl + 'api/getMaterialVideo?id_unit=${widget.unit.id_unit}'),
+        Uri.parse(baseurl + 'api/getMaterialVideoByUnit?id_unit=${widget.unit.id_unit}'),
       );
 
       if (response.statusCode == 200) {
@@ -122,7 +122,7 @@ class _MaterialLevelState extends State<MaterialLevel> {
                     MaterialVideoWidget(
                       unit: widget.unit, 
                       materialVideo: materialVideo,
-                      materi: widget.materi, // Memperbaiki pemanggilan materi
+                      materi: widget.materi,
                     ),
                 ],
               ),

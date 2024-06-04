@@ -11,7 +11,7 @@ import 'package:mathgasing/screens/main_screen/profile_screen/widget/profile_wid
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Profile extends StatefulWidget {
-  const Profile({Key? key}) : super(key: key); // Perbaikan: Hapus super.key
+  const Profile({Key? key}) : super(key: key);
 
   @override
   State<Profile> createState() => _ProfileState();
@@ -25,7 +25,7 @@ class _ProfileState extends State<Profile> {
   @override
   void initState() {
     super.initState();
-    _loadTokenAndFetchUser(); // Panggil metode untuk memuat token dan pengguna
+    _loadTokenAndFetchUser();
   }
 
   _loadTokenAndFetchUser() async {
@@ -45,25 +45,49 @@ class _ProfileState extends State<Profile> {
     }
   }
 
-  Future<User> fetchUser(String token) async {
-    try {
-      final response = await http.get(
-        Uri.parse(baseurl + 'api/user'),
-        headers: {
-          'Authorization': 'Bearer $token',
-        },
-      );
+  // Future<User> fetchUser(String token) async {
+  //   try {
+  //     final response = await http.get(
+  //       Uri.parse(baseurl + 'api/user'),
+  //       headers: {
+  //         'Authorization': 'Bearer $token',
+  //       },
+  //     );
 
-      if (response.statusCode == 200) {
-        final jsonData = jsonDecode(response.body);
-        return User.fromJson(jsonData);
-      } else {
-        throw Exception('Failed to load user from API: ${response.reasonPhrase}');
-      }
-    } catch (e) {
-      throw Exception('Error fetching user: $e');
+  //     if (response.statusCode == 200) {
+  //       final jsonData = jsonDecode(response.body);
+  //       return User.fromJson(jsonData);
+  //     } else {
+  //       throw Exception('Failed to load user from API: ${response.reasonPhrase}');
+  //     }
+  //   } catch (e) {
+  //     throw Exception('Error fetching user: $e');
+  //   }
+  // }
+
+    Future<User> fetchUser(String token) async {
+  try {
+    final response = await http.get(
+      Uri.parse(baseurl + 'api/user'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body);
+
+      // Debugging output
+      print('API Response: $jsonData');
+
+      return User.fromJson(jsonData);
+    } else {
+      throw Exception('Failed to load user from API: ${response.reasonPhrase}');
     }
+  } catch (e) {
+    throw Exception('Error fetching user: $e');
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -87,12 +111,12 @@ class _ProfileState extends State<Profile> {
         fit: StackFit.expand,
         children: [
           Column(children: [
-            if (_loggedInUser != null) // Tambahkan penanganan kondisional di sini
+            if (_loggedInUser != null)
               ProfileData(user: _loggedInUser!),
             SizedBox(height: 15,),
             Container(
               padding: EdgeInsets.all(15),
-              child: LenacanaonProfileWidget(userId: _loggedInUser?.id_user ?? 0), // Perbaikan: Gunakan userId dari pengguna yang sedang login
+              child: LenacanaonProfileWidget(userId: _loggedInUser?.id_user ?? 0,),
             ),
             SizedBox(height: 30,),
             Padding(

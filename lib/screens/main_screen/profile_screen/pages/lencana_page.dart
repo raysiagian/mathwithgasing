@@ -15,7 +15,7 @@ class LenacanaPage extends StatefulWidget {
 }
 
 class _LenacanaPageState extends State<LenacanaPage> {
-  late int _loggedInUserId; 
+  late int _loggedInUserId;
   List<Map<String, String>> lencanaList = [];
   late String _token;
   bool isLoading = false;
@@ -38,6 +38,7 @@ class _LenacanaPageState extends State<LenacanaPage> {
         _token = token;
         _loggedInUserId = userId; // Simpan ID pengguna yang sedang login
       });
+      await fetchLencanaData(); // Ensure this is awaited
     }
   }
 
@@ -51,18 +52,20 @@ class _LenacanaPageState extends State<LenacanaPage> {
         Uri.parse(baseurl + 'api/lencana-pengguna/${widget.userId}'),
       );
 
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
       if (response.statusCode == 200) {
         final List<dynamic> responseData = jsonDecode(response.body)['data'];
+        print('Lencana data: $responseData');
 
-        // Periksa apakah respons merupakan List<dynamic>
         if (responseData.isNotEmpty) {
-          // Ambil informasi badge berdasarkan id_badge
           await fetchBadgeInfo(responseData);
         } else {
           throw Exception('Response data is empty');
         }
       } else {
-        throw Exception('Failed to load lencana: ${response.reasonPhrase}');
+        throw Exception('Gagal Menampilkan Lencana: ${response.reasonPhrase}');
       }
     } catch (e) {
       setState(() {
@@ -76,41 +79,46 @@ class _LenacanaPageState extends State<LenacanaPage> {
   }
 
   Future<void> fetchBadgeInfo(List<dynamic> lencanaData) async {
-  Set<int> addedBadgeIds = {}; // Buat set untuk menyimpan BadgeId yang sudah ditambahkan
+    Set<int> addedBadgeIds = {};
 
-  for (var lencana in lencanaData) {
-    final idBadge = lencana['id_badge'];
-    if (!addedBadgeIds.contains(idBadge)) { // Periksa apakah BadgeId sudah ditambahkan sebelumnya
-      final badgeInfoResponse = await http.get(
-        Uri.parse(baseurl + 'api/badges/$idBadge'),
-      );
-      print('Fetching badge info for id_badge: $idBadge');
+    final badgeInfoResponse = await http.get(
+      Uri.parse(baseurl + 'api/badges'),
+    );
+    
+    print('Badge Info Response status: ${badgeInfoResponse.statusCode}');
+    print('Badge Info Response body: ${badgeInfoResponse.body}');
 
-      if (badgeInfoResponse.statusCode == 200) {
-        final badgeInfo = jsonDecode(badgeInfoResponse.body)['data'];
-        final badgeTitle = badgeInfo['title'];
-        final badgeImage = badgeInfo['imageUrl'];
-        final badgeExplanation = badgeInfo['explanation'];
+    if (badgeInfoResponse.statusCode == 200) {
+      final List<dynamic> badges = jsonDecode(badgeInfoResponse.body)['data'];
 
-        print('Badge title: $badgeTitle');
-        print('Badge image URL: $badgeImage');
-        print('Badge explanation: $badgeExplanation');
+      for (var lencana in lencanaData) {
+        final idBadge = int.parse(lencana['id_bagde']);
+        if (!addedBadgeIds.contains(idBadge)) { 
+          final badgeInfo = badges.firstWhere((badge) => badge['id_bagde'] == idBadge, orElse: () => null);
 
-        lencanaList.add({
-          'title': badgeTitle,
-          'image': badgeImage,
-          'explanation': badgeExplanation,
-        });
-        addedBadgeIds.add(idBadge); // Tambahkan BadgeId ke dalam set
-      } else {
-        throw Exception('Failed to fetch badge info: ${badgeInfoResponse.reasonPhrase}');
+          if (badgeInfo != null) {
+            final badgeTitle = badgeInfo['title'];
+            final badgeImage = badgeInfo['imageUrl'];
+            final badgeExplanation = badgeInfo['explanation'];
+
+            print('Badge info: $badgeInfo');
+
+            lencanaList.add({
+              'title': badgeTitle,
+              'imageUrl': badgeImage,
+              'explanation': badgeExplanation,
+            });
+            addedBadgeIds.add(idBadge);
+          } else {
+            print('Data Lencana Tidak Ditemukan: $idBadge');
+          }
+        }
       }
+    } else {
+      throw Exception('Gagal Menampilkan Data Lencana: ${badgeInfoResponse.reasonPhrase}');
     }
+    print('Lencana list: $lencanaList');
   }
-}
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -142,10 +150,8 @@ class _LenacanaPageState extends State<LenacanaPage> {
               : lencanaList.isEmpty
                   ? Center(child: Text('Tidak ada lencana yang ditemukan'))
                   : GridView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3, // Ubah sesuai kebutuhan Anda
+                        crossAxisCount: 2,
                         mainAxisSpacing: 10.0,
                         crossAxisSpacing: 10.0,
                         childAspectRatio: 1.0,
@@ -158,57 +164,49 @@ class _LenacanaPageState extends State<LenacanaPage> {
     );
   }
 
-  Widget _buildBadgeTile(Map<String, String> badgeInfo) {
-   return GridTile(
-  child: Container(
-    width: 350,
-    height: 350,
-    margin: EdgeInsets.all(8.0),
-    padding: EdgeInsets.all(8.0),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(8.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.blue.withOpacity(0.5),
-          spreadRadius: 1,
-          blurRadius: 2,
-          offset: Offset(0, 1),
-        ),
-      ],
+Widget _buildBadgeTile(Map<String, String> badgeInfo) {
+  return Card(
+    elevation: 4.0,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10.0),
     ),
-   child: Column(
+    child: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ClipRRect(
-          //   borderRadius: BorderRadius.circular(8.0),
-          //   child: Image.network(
-          //     badgeInfo['imageUrl'] ?? '',
-          //     fit: BoxFit.cover,
-          //   ),
-          // ),
-          // SizedBox(height: 8.0),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 3.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  badgeInfo['title'] ?? '',
-                  style: TextStyle(color: Colors.white, fontSize: 16.0),
-                ),
-                SizedBox(height: 4.0),
-                if (badgeInfo['explanation'] != null)
-                  Text(
-                    badgeInfo['explanation']!,
-                    style: TextStyle(color: Colors.white),
-                  ),
-              ],
+          Expanded(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10.0),
+              child: Image.network(
+                badgeInfo['imageUrl'] ?? '',
+                height: 100,
+                fit: BoxFit.cover,
+                width: double.infinity,
+              ),
             ),
           ),
+          SizedBox(height: 8.0),
+          Text(
+            badgeInfo['title'] ?? '',
+            style: TextStyle(
+              fontSize: 16.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 4.0),
+          if (badgeInfo['explanation'] != null)
+            Text(
+              badgeInfo['explanation']!,
+              style: TextStyle(
+                fontSize: 14.0,
+                color: Colors.grey[600],
+              ),
+            ),
         ],
       ),
-  ),
-);
+    ),
+  );
+}
 
-  }
 }

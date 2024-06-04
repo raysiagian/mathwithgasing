@@ -37,7 +37,7 @@ class CardWidget extends StatelessWidget {
                   topLeft: Radius.circular(20),
                 ),
                 child: Image.network(
-                  baseurl + 'storage/${materi.imageCard.replaceFirst('public/', '')}',
+                  '${materi.imageCard}',
                   height: 150,
                   fit: BoxFit.cover,
                   width: double.infinity,
