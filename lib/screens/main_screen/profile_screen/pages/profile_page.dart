@@ -5,7 +5,6 @@ import 'package:mathgasing/core/constants/constants.dart';
 import 'package:mathgasing/models/user/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:mathgasing/screens/main_screen/profile_screen/widget/button_logout_widget.dart';
-import 'package:mathgasing/screens/main_screen/profile_screen/widget/dialog_logout_popup_widget.dart';
 import 'package:mathgasing/screens/main_screen/profile_screen/widget/lencana_onprofile_widget.dart';
 import 'package:mathgasing/screens/main_screen/profile_screen/widget/profile_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
