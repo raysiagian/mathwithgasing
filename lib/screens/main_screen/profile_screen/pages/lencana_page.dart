@@ -42,41 +42,54 @@ class _LenacanaPageState extends State<LenacanaPage> {
     }
   }
 
-  Future<void> fetchLencanaData() async {
-    setState(() {
-      isLoading = true;
-    });
+Future<void> fetchLencanaData() async {
+  setState(() {
+    isLoading = true;
+  });
 
-    try {
-      final response = await http.get(
-        Uri.parse(baseurl + 'api/lencana-pengguna/${widget.userId}'),
-      );
+  try {
+    final response = await http.get(
+      Uri.parse(baseurl + 'api/lencana-pengguna/${widget.userId}'),
+    );
 
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
 
-      if (response.statusCode == 200) {
-        final List<dynamic> responseData = jsonDecode(response.body)['data'];
-        print('Lencana data: $responseData');
+    if (response.statusCode == 200) {
+      final List<dynamic> responseData = jsonDecode(response.body)['data'];
+      print('Lencana data: $responseData');
 
-        if (responseData.isNotEmpty) {
-          await fetchBadgeInfo(responseData);
-        } else {
-          throw Exception('Response data is empty');
-        }
+      if (responseData.isNotEmpty) {
+        await fetchBadgeInfo(responseData);
       } else {
-        throw Exception('Gagal Menampilkan Lencana: ${response.reasonPhrase}');
+        throw Exception('Response data is empty');
       }
-    } catch (e) {
-      setState(() {
-        error = 'Error fetching lencana: $e';
-      });
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
+    } else {
+      throw Exception('Ups, kamu belum memiliki lencana');
     }
+  } catch (e) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Ups, kamu belum memiliki lencana'),
+        content: Text('ayo kerjakan semua levelnya dan raih lencana.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+  } finally {
+    setState(() {
+      isLoading = false;
+    });
   }
+}
+
 
   Future<void> fetchBadgeInfo(List<dynamic> lencanaData) async {
     Set<int> addedBadgeIds = {};

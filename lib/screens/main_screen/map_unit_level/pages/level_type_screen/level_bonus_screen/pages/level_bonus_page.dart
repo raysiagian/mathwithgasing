@@ -107,13 +107,12 @@ void initState() {
         final jsonData = jsonDecode(response.body);
         return User.fromJson(jsonData);
       } else {
-        throw Exception('Failed to load user from API: ${response.reasonPhrase}');
+        throw Exception('Gagal memuat pengguna dari API: ${response.reasonPhrase}');
       }
     } catch (e) {
-      throw Exception('Error fetching user: $e');
+      throw Exception('Gagal memuat pengguna: $e');
     }
   }
-
   @override
 void dispose() {
   saveLastLeftTime();
@@ -123,7 +122,7 @@ void dispose() {
   super.dispose();
 }
 
-  Future<void> fetchLivesFromServer() async {
+Future<void> fetchLivesFromServer() async {
     try {
       final userId = _loggedInUser?.id_user ?? '';
       final response = await http.get(Uri.parse(baseurl + 'api/user/$userId/lives'));
@@ -133,22 +132,19 @@ void dispose() {
         setState(() {
           lives = jsonResponse['lives'];
         });
-        saveLives(lives); // Save lives to local storage
-        print('Lives retrieved from server: $lives');
+        saveLives(lives);
       } else {
-        throw Exception('Failed to load lives from server');
+        throw Exception('Gagal memuat nyawa dari server');
       }
     } catch (e) {
-      print('Error fetching lives: $e');
-      showErrorDialog('Failed to load lives. Please try again later.');
+      showErrorDialog('Gagal memuat nyawa. Silahkan coba lagi nanti.');
     }
   }
-
-  Future<void> updateLivesOnServer(int updatedLives) async {
+Future<void> updateLivesOnServer(int updatedLives) async {
   try {
     String? token = await _loadTokenAndFetchUser();
     if (token == null) {
-      throw Exception('Token not found');
+      throw Exception('Token tidak ditemukan');
     }
 
     final userId = _loggedInUser?.id_user ?? '';
@@ -157,7 +153,6 @@ void dispose() {
       'lives': updatedLives,
     };
 
-    // Kirim permintaan HTTP PUT ke server
     final response = await http.put(
       Uri.parse(baseurl + 'api/users/$userId/update-lives'),
       body: jsonEncode(postData),
@@ -172,27 +167,27 @@ void dispose() {
     print('Response Body: ${response.body}');
 
     if (response.statusCode == 200) {
-      print('User lives updated successfully.');
+      print('Nyawa pengguna berhasil diperbarui');
     } else {
-      String errorMessage = 'Failed to update user lives. Status code: ${response.statusCode}';
+      String errorMessage = 'Gagal memperbarui nyawa pengguna. Kode status: ${response.statusCode}';
       if (response.body != null && response.body.isNotEmpty) {
         errorMessage += '\nResponse body: ${response.body}';
       }
       throw Exception(errorMessage);
     }
   } catch (e) {
-    print('Error updating user lives: $e');
-    showErrorDialog('Failed to update user lives. Please try again later.');
+    showErrorDialog('Gagal memeperbarui nyawa pengguna. Silahkan coba lagi nanti.');
   }
 }
 
-  Future<String> getUserIdFromSession() async {
+
+Future<String> getUserIdFromSession() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? userId = prefs.getString('userId');
   if (userId != null) {
     return userId;
   } else {
-    throw Exception('User ID not found in session');
+    throw Exception('User ID tidak ditemukan dalam sesi');
   }
 }
 
@@ -296,13 +291,13 @@ void dispose() {
   Navigator.of(context).pop();
 }
 
-  void _showLivesRunOutDialog(BuildContext context) {
+ void _showLivesRunOutDialog(BuildContext context) {
   showDialog<void>(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
         title: Text('Lives Run Out'),
-        content: Text('Your lives have run out. Please wait for more lives to be added.'),
+        content: Text('Nyawa kamu sudah habis. Silahkan tunggu sampai nyawa bertambah.'),
         actions: <Widget>[
           TextButton(
             child: Text('OK'),
