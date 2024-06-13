@@ -116,7 +116,37 @@ class _GenderChooseState extends State<GenderChoose> {
                   ),
                 ),
               ),
-            )
+            ),
+             SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: OutlinedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: Theme.of(context).colorScheme.secondary),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: SizedBox(
+                    height: 44,
+                    width: double.infinity,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Text(
+                        'Kembali',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       ),
