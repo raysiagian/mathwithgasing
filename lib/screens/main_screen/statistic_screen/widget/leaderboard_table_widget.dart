@@ -33,7 +33,7 @@ class _LeaderboardTableWidgetState extends State<LeaderboardTableWidget> {
         });
       }
     } else {
-      throw Exception('Failed to load leaderboard data');
+      throw Exception('Gagal menampilkan data leaderboard');
     }
   }
 

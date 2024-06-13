@@ -1,7 +1,10 @@
 import 'dart:convert';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:mathgasing/core/color/color.dart';
+import 'package:mathgasing/screens/auth/login_screen/pages/forget_password_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mathgasing/core/constants/constants.dart';
 import 'package:mathgasing/screens/auth/registration_screen/pages/registration_page.dart';
@@ -144,6 +147,27 @@ class _LoginWidgetState extends State<LoginWidget> {
                   }
                   return null;
                 },
+              ),
+              SizedBox(height: 10,),
+              Container(
+                alignment: Alignment.centerRight,
+                child: Padding(padding: const EdgeInsets.all(0),
+                  child: RichText(
+                    text: TextSpan(
+                      text: 'Lupa Password',
+                      style: TextStyle(
+                        color: AppColors.primaryColor,
+                      ),
+                      recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => ForgetPasswordPage()),
+                        );
+                      },
+                    ), 
+                  ),
+                ),
               ),
               SizedBox(height: 100),
               GestureDetector(
