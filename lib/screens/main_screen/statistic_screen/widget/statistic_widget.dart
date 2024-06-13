@@ -3,7 +3,6 @@ import 'package:mathgasing/core/constants/constants.dart';
 import 'package:mathgasing/models/materi/materi.dart';
 import 'package:mathgasing/screens/main_screen/statistic_screen/pages/statistic_detail.dart';
 
-
 class StatisticWidget extends StatelessWidget {
   final Materi materi;
   final Function(Materi) onSelected;
@@ -16,6 +15,7 @@ class StatisticWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return InkWell(
       onTap: () {
         onSelected(materi);
@@ -24,12 +24,43 @@ class StatisticWidget extends StatelessWidget {
         }));
       },
       child: Container(
-        height: 130,
+        height: 300,
         width: 130,
-        child: Image.network(
-          '${materi.imageStatistic}',
-          fit: BoxFit.cover,
-          width: double.infinity,
+        child: Card(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          color: Colors.white,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topRight: Radius.circular(10),
+                  topLeft: Radius.circular(10),
+                ),
+                child: Image.network(
+                  '${materi.imageStatistic}',
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: 130,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(
+                  child: Text(
+                    materi.title,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: theme.colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
+ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:mathgasing/core/color/color.dart';
 import 'package:mathgasing/core/constants/constants.dart';
 import 'package:mathgasing/models/materi/materi.dart';
 import 'package:mathgasing/screens/main_screen/statistic_screen/widget/leaderboard_table_widget.dart';
@@ -47,6 +48,7 @@ class _StatisticState extends State<Statistic> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -82,7 +84,7 @@ class _StatisticState extends State<Statistic> {
                   padding: const EdgeInsets.all(8.0),
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 16),
-                    color: Colors.white,
+                    // color: Colors.white,
                     child: FutureBuilder<List<Materi>>(
                       future: futureMateri,
                       builder: (context, snapshot) {
@@ -124,19 +126,38 @@ class _StatisticState extends State<Statistic> {
                     children: [
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 16),
-                        color: Colors.white,
+                          decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.4), 
+                          borderRadius: BorderRadius.circular(15.0), // Circular radius
+                        ),
                         child: Column(
                           children: [
                             Container(
                               padding: EdgeInsets.symmetric(vertical: 2),
-                              child: Text(
-                                "Leaderboard",
-                                style: TextStyle(
-                                  color: Theme.of(context).primaryColor,
-                                  fontSize: 20,
-                                ),
+                              child: Column(
+                                children: [
+                                  SizedBox(height: 10,),
+                                  Text(
+                                    "Leaderboard",
+                                    style: TextStyle(
+                                      color: AppColors.darkerColor,
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  SizedBox(height: 5,),
+                                  Text(
+                                    "Top 10 Skor Tertinggi",
+                                     style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  )
+                                ],
                               ),
                             ),
+                            SizedBox(height: 5,),
                             LeaderboardTableWidget(),
                           ],
                         ),
